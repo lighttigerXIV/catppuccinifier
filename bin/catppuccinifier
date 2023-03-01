@@ -1,0 +1,49 @@
+#!/bin/python3
+
+import sys
+import os
+import subprocess
+
+arguments = sys.argv
+
+flavor = arguments[1]
+
+image = arguments[2]
+
+currentDirectory = os.getcwd()
+
+try:
+    
+    if flavor == "latte":
+        print("Generating...")
+        command = "cd {} ; magick {} /opt/catppuccinifier/flavors/latte-hald-clut.png -hald-clut {}-{}".format(currentDirectory, image, flavor, image)
+
+    elif flavor == "frappe":
+        print("Generating...")
+        command = "cd {} ; magick {} /opt/catppuccinifier/flavors/frappe-hald-clut.png -hald-clut {}-{}".format(currentDirectory, image, flavor, image)
+
+    elif flavor == "macchiato":
+        print("Generating...")
+        command = "cd {} ; magick {} /opt/catppuccinifier/flavors/macchiato-hald-clut.png -hald-clut {}-{}".format(currentDirectory, image, flavor, image)
+
+    elif flavor == "mocha":
+        print("Generating...")
+        command = "cd {} ; magick {} /opt/catppuccinifier/flavors/mocha-hald-clut.png -hald-clut {}-{}".format(currentDirectory, image, flavor, image)
+
+    else:
+        command = None
+
+    if(command == None):
+        print("Flavor not found")
+
+    else:
+        
+        result = subprocess.run(command, shell=True)
+
+        if(result.returncode == 0):
+            print("Successfully generated image with {} flavor".format(flavor))
+
+
+except Exception as e:
+    
+    print(type(e))
