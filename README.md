@@ -7,7 +7,7 @@ This little script helps you catppuccinify your wallpapers in a user friendly wa
     sudo pacman -S graphicsmagick imagemagick
   
 ### Debian 
-    sudo apt install python3 imagemagick
+    sudo apt install imagemagick
     
 ## Install 
     git clone https://github.com/lighttigerXIV/catppuccinifier.git

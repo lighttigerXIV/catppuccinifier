@@ -1,49 +1,24 @@
-#!/bin/python3
+#!/bin/bash
+set -e
 
-import sys
-import os
-import subprocess
+fn_help() {
+cat << EOF
+Usage: $0 <FLAVOR> <IMAGE>
 
-arguments = sys.argv
+Options:
+  FLAVOR   [mocha, macchiato, frappe, latte]
+  IMAGE    path to an image file
+EOF
+exit 1
+}
 
-flavor = arguments[1]
+flavor="$1"; [[ -z "$flavor" ]] && fn_help
+image="$2"; [[ -z "$image" ]] && fn_help
+hald_clut="/opt/catppuccinifier/flavors/$flavor-hald-clut.png"
+[[ -z $hald_clut ]] && fn_help
+out="`dirname $image`/$flavor-`basename $image`"
 
-image = arguments[2]
+printf "Generating $flavor for `basename $image`...\n"
+magick $image $hald_clut -hald-clut $out
+printf "Saved to $out\n"
 
-currentDirectory = os.getcwd()
-
-try:
-    
-    if flavor == "latte":
-        print("Generating...")
-        command = "cd {} ; magick {} /opt/catppuccinifier/flavors/latte-hald-clut.png -hald-clut {}-{}".format(currentDirectory, image, flavor, image)
-
-    elif flavor == "frappe":
-        print("Generating...")
-        command = "cd {} ; magick {} /opt/catppuccinifier/flavors/frappe-hald-clut.png -hald-clut {}-{}".format(currentDirectory, image, flavor, image)
-
-    elif flavor == "macchiato":
-        print("Generating...")
-        command = "cd {} ; magick {} /opt/catppuccinifier/flavors/macchiato-hald-clut.png -hald-clut {}-{}".format(currentDirectory, image, flavor, image)
-
-    elif flavor == "mocha":
-        print("Generating...")
-        command = "cd {} ; magick {} /opt/catppuccinifier/flavors/mocha-hald-clut.png -hald-clut {}-{}".format(currentDirectory, image, flavor, image)
-
-    else:
-        command = None
-
-    if(command == None):
-        print("Flavor not found")
-
-    else:
-        
-        result = subprocess.run(command, shell=True)
-
-        if(result.returncode == 0):
-            print("Successfully generated image with {} flavor".format(flavor))
-
-
-except Exception as e:
-    
-    print(type(e))
