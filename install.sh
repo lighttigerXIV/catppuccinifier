@@ -12,12 +12,12 @@ elif ! which magick >/dev/null; then
 
 else
 
-    if ! [ -d /opt/catppuccinifier/ ]; then
+    if ! [ -d ~/.local/share/catppuccinifier/ ]; then
 
-        sudo mkdir /opt/catppuccinifier
+        sudo mkdir ~/.local/share/catppuccinifier
     fi
 
-    sudo cp -p -r $SCRIPT_DIR/src/flavors/ /opt/catppuccinifier/
+    sudo cp -p -r $SCRIPT_DIR/src/flavors/ ~/.local/share/catppuccinifier/
 
     sudo cp -p $SCRIPT_DIR/bin/catppuccinifier /usr/local/bin/
 fi
