@@ -16,19 +16,19 @@ try:
     
     if flavor == "latte":
         print("Generating...")
-        command = "cd {} ; magick {} /opt/catppuccinifier/flavors/latte-hald-clut.png -hald-clut {}-{}".format(currentDirectory, image, flavor, image)
+        command = "cd {} ; magick {} ~/.local/share/catppuccinifier/flavors/latte-hald-clut.png -hald-clut {}-{}".format(currentDirectory, image, flavor, image)
 
     elif flavor == "frappe":
         print("Generating...")
-        command = "cd {} ; magick {} /opt/catppuccinifier/flavors/frappe-hald-clut.png -hald-clut {}-{}".format(currentDirectory, image, flavor, image)
+        command = "cd {} ; magick {} ~/.local/share/catppuccinifier/flavors/frappe-hald-clut.png -hald-clut {}-{}".format(currentDirectory, image, flavor, image)
 
     elif flavor == "macchiato":
         print("Generating...")
-        command = "cd {} ; magick {} /opt/catppuccinifier/flavors/macchiato-hald-clut.png -hald-clut {}-{}".format(currentDirectory, image, flavor, image)
+        command = "cd {} ; magick {} ~/.local/share/catppuccinifier/flavors/macchiato-hald-clut.png -hald-clut {}-{}".format(currentDirectory, image, flavor, image)
 
     elif flavor == "mocha":
         print("Generating...")
-        command = "cd {} ; magick {} /opt/catppuccinifier/flavors/mocha-hald-clut.png -hald-clut {}-{}".format(currentDirectory, image, flavor, image)
+        command = "cd {} ; magick {} ~/.local/share/catppuccinifier/flavors/mocha-hald-clut.png -hald-clut {}-{}".format(currentDirectory, image, flavor, image)
 
     else:
         command = None
