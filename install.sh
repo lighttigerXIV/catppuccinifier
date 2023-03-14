@@ -1,23 +1,27 @@
 #!/bin/bash
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
-if ! which python3 >/dev/null; then
-    
-    echo "Please install python3"
+if ! which magick >/dev/null; then
 
-elif ! which magick >/dev/null; then
-    
     echo "Please install image magick"
 
 else
 
-    if ! [ -d /opt/catppuccinifier/ ]; then
+    if [[ "$*" == "--local" ]] || [[ "$*" == "-l" ]]; then
 
-        sudo mkdir /opt/catppuccinifier
+        cp $SCRIPT_DIR/bin/catppuccinifier $HOME/.local/bin/
+        
+    else
+
+        sudo cp -p -r $SCRIPT_DIR/bin/catppuccinifier /usr/local/bin/
+
     fi
 
-    sudo cp -p -r $SCRIPT_DIR/src/flavors/ /opt/catppuccinifier/
+    if ! [ -d $HOME/.local/share/catppuccinifier ]; then
 
-    sudo cp -p $SCRIPT_DIR/bin/catppuccinifier /usr/local/bin/
+        mkdir $HOME/.local/share/catppuccinifier
+    fi
+
+    cp -p -r $SCRIPT_DIR/src/flavors/ $HOME/.local/share/catppuccinifier/
 fi

@@ -1,49 +1,68 @@
-#!/bin/python3
+#!/bin/bash
 
-import sys
-import os
-import subprocess
+CURRENT_DIR=$(pwd)
 
-arguments = sys.argv
+FLAVOR=$1
 
-flavor = arguments[1]
+IMAGE=$2
 
-image = arguments[2]
 
-currentDirectory = os.getcwd()
+if [ -d $HOME/.local/bin ];then
 
-try:
+    BIN_DIRECTORY="$HOME/.local/bin"
+
+else
+
+    BIN_DIRECTORY="$HOME/usr/local/bin"
+
+fi
+
+
+
+if [ "$FLAVOR" == "latte" ] || [ "$FLAVOR" == "-l" ];then
+
+    echo "Generating latte image..."
+    magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/latte-hald-clut.png -hald-clut "latte"-$IMAGE
+
+elif [ "$FLAVOR" == "frappe" ] || [ "$FLAVOR" == "-f" ];then
+
+    echo "Generating frappe image..."
+    magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/frappe-hald-clut.png -hald-clut "frappe"-$IMAGE
+
+elif [ "$FLAVOR" == "macchiato" ] || [ "$FLAVOR" == "-ma" ];then
+
+    echo "Generating macchiato image..."
+    magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/macchiato-hald-clut.png -hald-clut "macchiato"-$IMAGE
+
+elif [ "$FLAVOR" == "mocha" ] || [ "$FLAVOR" == "-mo" ];then
+
+    echo "Generating mocha image..."
+    magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/mocha-hald-clut.png -hald-clut "mocha"-$IMAGE
+
+elif [ "$FLAVOR" == "all" ] || [ "$FLAVOR" == "-a" ];then
+
+    echo "Generating image with all flavors..."
     
-    if flavor == "latte":
-        print("Generating...")
-        command = "cd {} ; magick {} /opt/catppuccinifier/flavors/latte-hald-clut.png -hald-clut {}-{}".format(currentDirectory, image, flavor, image)
-
-    elif flavor == "frappe":
-        print("Generating...")
-        command = "cd {} ; magick {} /opt/catppuccinifier/flavors/frappe-hald-clut.png -hald-clut {}-{}".format(currentDirectory, image, flavor, image)
-
-    elif flavor == "macchiato":
-        print("Generating...")
-        command = "cd {} ; magick {} /opt/catppuccinifier/flavors/macchiato-hald-clut.png -hald-clut {}-{}".format(currentDirectory, image, flavor, image)
-
-    elif flavor == "mocha":
-        print("Generating...")
-        command = "cd {} ; magick {} /opt/catppuccinifier/flavors/mocha-hald-clut.png -hald-clut {}-{}".format(currentDirectory, image, flavor, image)
-
-    else:
-        command = None
-
-    if(command == None):
-        print("Flavor not found")
-
-    else:
-        
-        result = subprocess.run(command, shell=True)
-
-        if(result.returncode == 0):
-            print("Successfully generated image with {} flavor".format(flavor))
-
-
-except Exception as e:
+    magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/latte-hald-clut.png -hald-clut "latte"-$IMAGE
     
-    print(type(e))
+    magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/frappe-hald-clut.png -hald-clut "frappe"-$IMAGE
+    
+    magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/macchiato-hald-clut.png -hald-clut "macchiato"-$IMAGE
+    
+    magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/mocha-hald-clut.png -hald-clut "mocha"-$IMAGE
+
+else
+
+    echo "Flavor not found..."
+    echo ""
+    echo "Flavors:"
+    echo ""
+
+    echo "\"latte\" or \"-l\" "
+    echo "\"frappe\" or \"-f\" "
+    echo "\"macchiato\" or \"-ma\" "
+    echo "\"mocha\" or \"-mo\" "
+    echo "\"all\" or \"-a\" "
+    echo ""
+    echo "For more information visit catppuccinifier project: https://github.com/lighttigerXIV/catppuccinifier/tree/master"
+fi
