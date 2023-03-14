@@ -7,9 +7,16 @@ This little script helps you catppuccinify your wallpapers in a user friendly wa
     sudo pacman -S graphicsmagick imagemagick
   
 ### Debian 
-    sudo apt install python3 imagemagick
+    sudo apt install imagemagick
     
-## Install 
+## Install
+### Locally
+    git clone https://github.com/lighttigerXIV/catppuccinifier.git
+    cd catppuccinifier
+    chmod +x ./install.sh
+    ./install.sh -l
+    
+### Root
     git clone https://github.com/lighttigerXIV/catppuccinifier.git
     cd catppuccinifier
     chmod +x ./install.sh
@@ -21,10 +28,11 @@ To use the script just do something like this:
 
 ```catppuccinifier <flavor> <image>```
 
-```catppuccinifier latte nebula.jpg```
-
-```catppuccinifier frappe nebula.jpg```
-
-```catppuccinifier macchiato nebula.jpg```
-
-```catppuccinifier mocha nebula.jpg```
+### Commands
+| Flavor | Parameter | Abbreviated Parameter |
+|---------|-------|-----------|
+| Latte | latte | -l |
+| Frappe | frappe | -f |
+| Macchiato | macchiato | -ma |
+| Mocha | mocha | -mo |
+| All | all | -a |
