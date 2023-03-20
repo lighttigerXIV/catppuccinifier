@@ -39,6 +39,11 @@ elif [ "$FLAVOR" == "mocha" ] || [ "$FLAVOR" == "-mo" ];then
     echo "Generating mocha image..."
     magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/mocha-hald-clut.png -hald-clut "mocha"-$IMAGE
 
+elif [ "$FLAVOR" == "oled" ] || [ "$FLAVOR" == "-o" ];then
+
+    echo "Generating oled image..."
+    magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/oled-hald-clut.png -hald-clut "oled"-$IMAGE
+
 elif [ "$FLAVOR" == "all" ] || [ "$FLAVOR" == "-a" ];then
 
     echo "Generating image with all flavors..."
@@ -51,6 +56,8 @@ elif [ "$FLAVOR" == "all" ] || [ "$FLAVOR" == "-a" ];then
     
     magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/mocha-hald-clut.png -hald-clut "mocha"-$IMAGE
 
+    magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/oled-hald-clut.png -hald-clut "oled"-$IMAGE
+
 else
 
     echo "Flavor not found..."
@@ -62,6 +69,7 @@ else
     echo "\"frappe\" or \"-f\" "
     echo "\"macchiato\" or \"-ma\" "
     echo "\"mocha\" or \"-mo\" "
+    echo "\"oled\" or \"-o\" "
     echo "\"all\" or \"-a\" "
     echo ""
     echo "For more information visit catppuccinifier project: https://github.com/lighttigerXIV/catppuccinifier/tree/master"
