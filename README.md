@@ -37,6 +37,7 @@ Parameter | Abv. | Description |
 | **noise-2** | **-n2** | Sets the attenuate level to 2 |
 | **noise-3** | **-n3** | Sets the attenuate level to 3 |
 | **noise-4** | **-n4** | Sets the attenuate level to 4 |
+| **version** | **-v** | Shows the current program version |
 
 **Note:** Default noise level is 0
 
