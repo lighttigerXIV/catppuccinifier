@@ -16,5 +16,3 @@ if [ -d $HOME/.local/share/catppuccinifier ];then
     rm -rf $HOME/.local/share/catppuccinifier
 
 fi
-
-echo "Catppuccinifier uninstalled successfully"
