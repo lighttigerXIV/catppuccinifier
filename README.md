@@ -35,4 +35,5 @@ To use the script just do something like this:
 | Frappe | frappe | -f |
 | Macchiato | macchiato | -ma |
 | Mocha | mocha | -mo |
+| Oled | oled | -o |
 | All | all | -a |
