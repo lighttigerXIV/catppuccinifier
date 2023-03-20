@@ -1,3 +1,4 @@
+#!/bin/bash
 
 if [ -f /usr/local/bin/catppuccinifier ];then
 
