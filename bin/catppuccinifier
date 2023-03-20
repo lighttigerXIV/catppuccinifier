@@ -1,76 +1,84 @@
 #!/bin/bash
 
 CURRENT_DIR=$(pwd)
-
-FLAVOR=$1
-
-IMAGE=$2
+IMAGE=${@:$#} #Image is the last parameter
+NOISE=0
 
 
-if [ -d $HOME/.local/bin ];then
+#Gets noise level
+for parameter in "$@"; do
 
-    BIN_DIRECTORY="$HOME/.local/bin"
+    if [[ "$parameter" == "noise-1" ]] || [[ "$parameter" == "n1" ]]; then
 
-else
+        NOISE=1
+    fi
 
-    BIN_DIRECTORY="$HOME/usr/local/bin"
+    if [[ "$parameter" == "noise-2" ]] || [[ "$parameter" == "n2" ]]; then
 
-fi
+        NOISE=2
+    fi
+
+    if [[ "$parameter" == "noise-3" ]] || [[ "$parameter" == "n3" ]]; then
+
+        NOISE=3
+    fi
+
+    if [[ "$parameter" == "noise-4" ]] || [[ "$parameter" == "n4" ]]; then
+
+        NOISE=4
+    fi
+done
 
 
+for parameter in "$@"; do
 
-if [ "$FLAVOR" == "latte" ] || [ "$FLAVOR" == "-l" ];then
+    if [ "$parameter" == "latte" ] || [ "$parameter" == "-l" ]; then
 
-    echo "Generating latte image..."
-    magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/latte-hald-clut.png -hald-clut "latte"-$IMAGE
+        echo "Generating latte image with noise level at $NOISE..."
+        magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/noise-$NOISE/latte.png -hald-clut "latte"-$IMAGE
 
-elif [ "$FLAVOR" == "frappe" ] || [ "$FLAVOR" == "-f" ];then
+    fi
 
-    echo "Generating frappe image..."
-    magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/frappe-hald-clut.png -hald-clut "frappe"-$IMAGE
+    if [ "$parameter" == "frappe" ] || [ "$parameter" == "-f" ]; then
 
-elif [ "$FLAVOR" == "macchiato" ] || [ "$FLAVOR" == "-ma" ];then
+        echo "Generating frappe image with noise level at $NOISE..."
+        magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/noise-$NOISE/frappe.png -hald-clut "frappe"-$IMAGE
 
-    echo "Generating macchiato image..."
-    magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/macchiato-hald-clut.png -hald-clut "macchiato"-$IMAGE
+    fi
 
-elif [ "$FLAVOR" == "mocha" ] || [ "$FLAVOR" == "-mo" ];then
+    if [ "$parameter" == "macchiato" ] || [ "$parameter" == "-ma" ]; then
 
-    echo "Generating mocha image..."
-    magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/mocha-hald-clut.png -hald-clut "mocha"-$IMAGE
+        echo "Generating macchiato image with noise level at $NOISE..."
+        magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/noise-$NOISE/macchiato.png -hald-clut "macchiato"-$IMAGE
 
-elif [ "$FLAVOR" == "oled" ] || [ "$FLAVOR" == "-o" ];then
+    fi
 
-    echo "Generating oled image..."
-    magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/oled-hald-clut.png -hald-clut "oled"-$IMAGE
+    if [ "$parameter" == "mocha" ] || [ "$parameter" == "-mo" ]; then
 
-elif [ "$FLAVOR" == "all" ] || [ "$FLAVOR" == "-a" ];then
+        echo "Generating mocha image with noise level at $NOISE..."
+        magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/noise-$NOISE/mocha.png -hald-clut "mocha"-$IMAGE
 
-    echo "Generating image with all flavors..."
-    
-    magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/latte-hald-clut.png -hald-clut "latte"-$IMAGE
-    
-    magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/frappe-hald-clut.png -hald-clut "frappe"-$IMAGE
-    
-    magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/macchiato-hald-clut.png -hald-clut "macchiato"-$IMAGE
-    
-    magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/mocha-hald-clut.png -hald-clut "mocha"-$IMAGE
+    fi
 
-    magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/oled-hald-clut.png -hald-clut "oled"-$IMAGE
+    if [ "$parameter" == "oled" ] || [ "$parameter" == "-o" ]; then
 
-else
+        echo "Generating oled image with noise level at $NOISE..."
+        magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/noise-$NOISE/oled.png -hald-clut "oled"-$IMAGE
 
-    echo "Flavor not found..."
-    echo ""
-    echo "Flavors:"
-    echo ""
+    fi
 
-    echo "\"latte\" or \"-l\" "
-    echo "\"frappe\" or \"-f\" "
-    echo "\"macchiato\" or \"-ma\" "
-    echo "\"mocha\" or \"-mo\" "
-    echo "\"oled\" or \"-o\" "
-    echo "\"all\" or \"-a\" "
-    echo ""
-    echo "For more information visit catppuccinifier project: https://github.com/lighttigerXIV/catppuccinifier/tree/master"
-fi
+    if [ "$parameter" == "all" ] || [ "$parameter" == "-a" ]; then
+
+        echo "Generating image with all flavors with noise level at $NOISE..."
+
+        magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/noise-$NOISE/latte.png -hald-clut "latte"-$IMAGE
+
+        magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/noise-$NOISE/frappe.png -hald-clut "frappe"-$IMAGE
+
+        magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/noise-$NOISE/macchiato.png -hald-clut "macchiato"-$IMAGE
+
+        magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/noise-$NOISE/mocha.png -hald-clut "mocha"-$IMAGE
+
+        magick $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/noise-$NOISE/oled.png -hald-clut "oled"-$IMAGE
+    fi
+done
