@@ -1,6 +1,6 @@
 ## About
 This little script helps you catppuccinify your wallpapers in a user friendly way.
-For now it's only availabe on linux.
+For now it's only availabe on **linux**.
 
 ## Dependencies
 
