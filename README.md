@@ -52,4 +52,4 @@ Parameter | Abv. | Description |
 
 ## Thanks
 - [lighttigerXIV](https://github.com/lighttigerXIV)
-- [Gingeh](https://github.com/Gingeh) -> Provided the  LUTS
+- [Gingeh](https://github.com/Gingeh)
