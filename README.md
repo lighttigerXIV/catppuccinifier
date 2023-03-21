@@ -50,3 +50,6 @@ Parameter | Abv. | Description |
 
 ```catppuccinifier mocha noise-3 your_image.png```
 
+## Thanks
+- [lighttigerXIV](https://github.com/lighttigerXIV)
+- [Gingeh](https://github.com/Gingeh) -> Provided the  LUTS
