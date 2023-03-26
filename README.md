@@ -1,6 +1,13 @@
 ## About
-This little script helps you catppuccinify your wallpapers in a user friendly way.
+This project gives you a script and a gui for catppuccinifying your wallpapers.
 For now it's only availabe on **linux**.
+
+
+<img src="https://user-images.githubusercontent.com/35658492/227786042-a2d272df-bf90-4d66-8e4f-9eb2a0c0d91a.png" height="400" > <img src="https://user-images.githubusercontent.com/35658492/227786196-26910de7-37b2-4646-a43e-3f6a30f4c447.png" height="400">
+
+
+
+
 
 ## Dependencies
 
