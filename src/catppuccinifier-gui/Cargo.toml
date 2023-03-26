@@ -1,0 +1,20 @@
+[package]
+name = "catppuccinifier-gui"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+gtk4 = "0.6.4"
+glib = "0.17.5"
+gtk = "0.17.0"
+gdk-pixbuf = "0.17.0"
+pango = "0.17.4"
+futures = "0.3.27"
+tokio = { version = "1.26.0", features = ["full"] }
+gio = "0.17.4"
+webbrowser = "0.8.8"
+
+[dependencies.adw]
+package = "libadwaita"
+version = "0.3.1"

@@ -40,35 +40,35 @@ for parameter in "$@"; do
     if [ "$parameter" == "latte" ] || [ "$parameter" == "-l" ]; then
 
         echo "Generating latte image with noise level at $NOISE..."
-        convert $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/noise-$NOISE/latte.png -hald-clut "latte"-$IMAGE
+        convert "$CURRENT_DIR/$IMAGE" "$HOME"/.local/share/catppuccinifier/flavors/noise-$NOISE/latte.png -hald-clut "latte-$IMAGE"
 
     fi
 
     if [ "$parameter" == "frappe" ] || [ "$parameter" == "-f" ]; then
 
         echo "Generating frappe image with noise level at $NOISE..."
-        convert $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/noise-$NOISE/frappe.png -hald-clut "frappe"-$IMAGE
+        convert "$CURRENT_DIR/$IMAGE" "$HOME"/.local/share/catppuccinifier/flavors/noise-$NOISE/frappe.png -hald-clut "frappe-$IMAGE"
 
     fi
 
     if [ "$parameter" == "macchiato" ] || [ "$parameter" == "-ma" ]; then
 
         echo "Generating macchiato image with noise level at $NOISE..."
-        convert $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/noise-$NOISE/macchiato.png -hald-clut "macchiato"-$IMAGE
+        convert "$CURRENT_DIR/$IMAGE" "$HOME"/.local/share/catppuccinifier/flavors/noise-$NOISE/macchiato.png -hald-clut "macchiato-$IMAGE"
 
     fi
 
     if [ "$parameter" == "mocha" ] || [ "$parameter" == "-mo" ]; then
 
         echo "Generating mocha image with noise level at $NOISE..."
-        convert $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/noise-$NOISE/mocha.png -hald-clut "mocha"-$IMAGE
+        convert "$CURRENT_DIR/$IMAGE" "$HOME"/.local/share/catppuccinifier/flavors/noise-$NOISE/mocha.png -hald-clut "mocha-$IMAGE"
 
     fi
 
     if [ "$parameter" == "oled" ] || [ "$parameter" == "-o" ]; then
 
         echo "Generating oled image with noise level at $NOISE..."
-        convert $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/noise-$NOISE/oled.png -hald-clut "oled"-$IMAGE
+        convert "$CURRENT_DIR/$IMAGE" "$HOME"/.local/share/catppuccinifier/flavors/noise-$NOISE/oled.png -hald-clut "oled-$IMAGE"
 
     fi
 
@@ -76,14 +76,14 @@ for parameter in "$@"; do
 
         echo "Generating image with all flavors with noise level at $NOISE..."
 
-        convert $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/noise-$NOISE/latte.png -hald-clut "latte"-$IMAGE
+        convert "$CURRENT_DIR/$IMAGE" "$HOME"/.local/share/catppuccinifier/flavors/noise-$NOISE/latte.png -hald-clut "latte-$IMAGE"
 
-        convert $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/noise-$NOISE/frappe.png -hald-clut "frappe"-$IMAGE
+        convert "$CURRENT_DIR/$IMAGE" "$HOME"/.local/share/catppuccinifier/flavors/noise-$NOISE/frappe.png -hald-clut "frappe-$IMAGE"
 
-        convert $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/noise-$NOISE/macchiato.png -hald-clut "macchiato"-$IMAGE
+        convert "$CURRENT_DIR/$IMAGE" "$HOME"/.local/share/catppuccinifier/flavors/noise-$NOISE/macchiato.png -hald-clut "macchiato-$IMAGE"
 
-        convert $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/noise-$NOISE/mocha.png -hald-clut "mocha"-$IMAGE
+        convert "$CURRENT_DIR/$IMAGE" "$HOME"/.local/share/catppuccinifier/flavors/noise-$NOISE/mocha.png -hald-clut "mocha-$IMAGE"
 
-        convert $CURRENT_DIR/$IMAGE $HOME/.local/share/catppuccinifier/flavors/noise-$NOISE/oled.png -hald-clut "oled"-$IMAGE
+        convert "$CURRENT_DIR/$IMAGE" "$HOME"/.local/share/catppuccinifier/flavors/noise-$NOISE/oled.png -hald-clut "oled-$IMAGE"
     fi
 done
