@@ -1,5 +1,5 @@
 [Desktop Entry]
 Name=Catppuccinifier
-Exec=catppuccinifier-gui
-Icon=
+Exec=/home/lighttigerxiv/.local/bin/catppuccinifier-gui
+Icon=/home/lighttigerxiv/.local/share/icons/hicolor/512x512/apps/catppuccinifier.png
 Type=Application
