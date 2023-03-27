@@ -17,7 +17,7 @@ For now it's only availabe on **linux**.
     sudo pacman -S imagemagick
   
 ### Debian 
-    sudo apt install imagemagick
+    sudo apt install imagemagick libadwaita-1-0
     
 ## Install
 ### Locally
