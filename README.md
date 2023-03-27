@@ -14,7 +14,7 @@ For now it's only availabe on **linux**.
 ## Dependencies
 
 ### Arch Linux
-    sudo pacman -S imagemagick
+    sudo pacman -S imagemagick libadwaita
   
 ### Debian 
     sudo apt install imagemagick libadwaita-1-0
