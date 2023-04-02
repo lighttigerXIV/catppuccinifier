@@ -3,9 +3,9 @@ This project gives you a script and a gui for catppuccinifying your wallpapers.
 For now it's only availabe on **linux**.
 
 
-<img src="https://user-images.githubusercontent.com/35658492/227786042-a2d272df-bf90-4d66-8e4f-9eb2a0c0d91a.png" height="600" >
+<img src="https://user-images.githubusercontent.com/35658492/229366244-aa61e131-06d1-4f1c-a507-65927cb4cc4a.png" width="600" >
 
-<img src="https://user-images.githubusercontent.com/35658492/227786196-26910de7-37b2-4646-a43e-3f6a30f4c447.png" height="600">
+<img src="https://user-images.githubusercontent.com/35658492/227786196-26910de7-37b2-4646-a43e-3f6a30f4c447.png" width="600">
 
 
 
@@ -23,14 +23,14 @@ For now it's only availabe on **linux**.
 ### Locally
     git clone https://github.com/lighttigerXIV/catppuccinifier.git
     cd catppuccinifier
-    chmod +x ./install.sh
-    ./install.sh -l
+    chmod +x ./manage
+    ./manage install -l
     
 ### Root
     git clone https://github.com/lighttigerXIV/catppuccinifier.git
     cd catppuccinifier
-    chmod +x ./install.sh
-    ./install.sh
+    chmod +x ./manage
+    ./manage install
     
 ## How to use
 
@@ -47,7 +47,6 @@ Parameter | Abv. | Description |
 | **noise-2** | **-n2** | Sets the attenuate level to 2 |
 | **noise-3** | **-n3** | Sets the attenuate level to 3 |
 | **noise-4** | **-n4** | Sets the attenuate level to 4 |
-| **version** | **-v** | Shows the current program version |
 
 **Note:** Default noise level is 0
 
