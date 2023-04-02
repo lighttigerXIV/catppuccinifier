@@ -32,6 +32,11 @@ For now it's only availabe on **linux**.
     chmod +x ./manage
     ./manage install
     
+## Uninstall
+Go to the folder where you cloned the repo and type:
+
+    ./manage uninstall
+    
 ## How to use
 
 ### Parameters
