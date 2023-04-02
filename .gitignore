@@ -1,1 +1,3 @@
 src/catppuccinifier-gui/target
+src/catppuccinifier-cli/target
+src/manage-cli/target

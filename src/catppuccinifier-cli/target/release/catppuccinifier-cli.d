@@ -1,0 +1,1 @@
+/home/lighttigerxiv/Development/Linux/catppuccinifier/src/catppuccinifier-cli/target/release/catppuccinifier-cli: /home/lighttigerxiv/Development/Linux/catppuccinifier/src/catppuccinifier-cli/src/main.rs
