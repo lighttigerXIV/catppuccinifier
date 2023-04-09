@@ -1,0 +1,1 @@
+C:\Users\lighttigerxiv\Downloads\catppuccinifier\src\catppuccinfier-cli-windows\target\release\catppuccinfier-cli-windows.exe: C:\Users\lighttigerxiv\Downloads\catppuccinifier\src\catppuccinfier-cli-windows\src\main.rs
