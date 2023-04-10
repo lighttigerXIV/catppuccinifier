@@ -28,19 +28,19 @@ fn main() {
 
                             Command::new("/bin/sh")
                                 .arg("-c")
-                                .arg(format!("cp '{}/bin/catppuccinifier' '{}/.local/bin/'", exec_folder_path, home_folder_path))
+                                .arg(format!("cp '{}/installation-files/catppuccinifier' '{}/.local/bin/'", exec_folder_path, home_folder_path))
                                 .output()
                                 .expect("ERROR: Couldn't copy catppuccinifier");
 
                             Command::new("/bin/sh")
                                 .arg("-c")
-                                .arg(format!("cp '{}/bin/catppuccinifier-gui' '{}/.local/bin/'", exec_folder_path, home_folder_path))
+                                .arg(format!("cp '{}/installation-files/catppuccinifier-gui' '{}/.local/bin/'", exec_folder_path, home_folder_path))
                                 .output()
                                 .expect("ERROR: Couldn't copy catppuccinifier-gui");
 
                             Command::new("/bin/sh")
                                 .arg("-c")
-                                .arg(format!("sed -i \"s|Exec=.*|Exec={}/.local/bin/catppuccinifier-gui|g\" desktop/Catppuccinifier.desktop", home_folder_path))
+                                .arg(format!("sed -i \"s|Exec=.*|Exec={}/.local/bin/catppuccinifier-gui|g\" installation-files/Catppuccinifier.desktop", home_folder_path))
                                 .output()
                                 .expect("ERROR: Couldn't modify desktop file");
 
@@ -51,19 +51,19 @@ fn main() {
 
                             Command::new("/bin/sh")
                                 .arg("-c")
-                                .arg(format!("cp '{}/bin/catppuccinifier' /usr/local/bin/", exec_folder_path))
+                                .arg(format!("cp '{}/installation-files/catppuccinifier' /usr/local/bin/", exec_folder_path))
                                 .output()
                                 .expect("ERROR: Couldn't copy catppuccinifier");
 
                             Command::new("/bin/sh")
                                 .arg("-c")
-                                .arg(format!("cp '{}/bin/catppuccinifier-gui' /usr/local/bin/", exec_folder_path))
+                                .arg(format!("cp '{}/installation-files/catppuccinifier-gui' /usr/local/bin/", exec_folder_path))
                                 .output()
                                 .expect("ERROR: Couldn't copy catppuccinifier-gui");
 
                             Command::new("/bin/sh")
                                 .arg("-c")
-                                .arg(format!("sed -i \"s|Exec=.*|Exec=/usr/local/bin/catppuccinifier-gui|g\" desktop/Catppuccinifier.desktop"))
+                                .arg(format!("sed -i \"s|Exec=.*|Exec=/usr/local/bin/catppuccinifier-gui|g\" installation-files/Catppuccinifier.desktop"))
                                 .output()
                                 .expect("ERROR: Couldn't modify desktop file");
                         }
@@ -81,7 +81,7 @@ fn main() {
 
                         Command::new("/bin/sh")
                                 .arg("-c")
-                                .arg(format!("cp -p -r '{}/src/flavors/' '{}/.local/share/catppuccinifier/flavors/'", exec_folder_path, home_folder_path))
+                                .arg(format!("cp -p -r '{}/installation-files/flavors/' '{}/.local/share/catppuccinifier/flavors/'", exec_folder_path, home_folder_path))
                                 .output()
                                 .expect("ERROR: Couldn't copy flavors");
 
@@ -98,7 +98,7 @@ fn main() {
 
                         Command::new("/bin/sh")
                                 .arg("-c")
-                                .arg(format!("cp '{}/images/catppuccinifier.png' '{}/.local/share/icons/hicolor/512x512/apps/'", exec_folder_path, home_folder_path))
+                                .arg(format!("cp '{}/installation-files/catppuccinifier.png' '{}/.local/share/icons/hicolor/512x512/apps/'", exec_folder_path, home_folder_path))
                                 .output()
                                 .expect("ERROR: Couldn't copy icon");
 
@@ -106,13 +106,13 @@ fn main() {
                         //Copies the desktop file
                         Command::new("/bin/sh")
                                 .arg("-c")
-                                .arg(format!("sed -i \"s|Icon=.*|Icon={}/.local/share/icons/hicolor/512x512/apps/catppuccinifier.png|g\" desktop/Catppuccinifier.desktop", home_folder_path))
+                                .arg(format!("sed -i \"s|Icon=.*|Icon={}/.local/share/icons/hicolor/512x512/apps/catppuccinifier.png|g\" installation-files/Catppuccinifier.desktop", home_folder_path))
                                 .output()
                                 .expect("ERROR: Couldn't modify desktop file");
 
                         Command::new("/bin/sh")
                                 .arg("-c")
-                                .arg(format!("cp '{}/desktop/Catppuccinifier.desktop' '{}/.local/share/applications/'", exec_folder_path, home_folder_path))
+                                .arg(format!("cp '{}/installation-files/Catppuccinifier.desktop' '{}/.local/share/applications/'", exec_folder_path, home_folder_path))
                                 .output()
                                 .expect("ERROR: Couldn't modify desktop file");
                     },
