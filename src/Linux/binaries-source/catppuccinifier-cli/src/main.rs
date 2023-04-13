@@ -1,8 +1,6 @@
 use std::env;
-use std::path::PathBuf;
 use std::process::Command;
-use clap::{command, ArgAction, Arg, value_parser};
-use clap::parser::ValuesRef;
+use clap::{command, ArgAction, Arg};
 
 
 fn get_cli() -> clap::Command {
