@@ -1,15 +1,13 @@
 ## About
 This project gives you a script and a gui for catppuccinifying your wallpapers.
-For now it's only availabe on **linux**.
 
+The cli version is available on linux and windows.
+
+The gui version is oly available for linux users at the moment.
 
 <img src="https://user-images.githubusercontent.com/35658492/229366244-aa61e131-06d1-4f1c-a507-65927cb4cc4a.png" width="600" >
 
-<img src="https://user-images.githubusercontent.com/35658492/227786196-26910de7-37b2-4646-a43e-3f6a30f4c447.png" width="600">
-
-
-
-
+<img src="https://user-images.githubusercontent.com/35658492/232163107-7f8c5d30-1912-4e9d-9a35-1f21b9feef28.png" width="600">
 
 ## Dependencies
 
@@ -19,50 +17,57 @@ For now it's only availabe on **linux**.
 ### Debian 
     sudo apt install imagemagick libadwaita-1-0
     
-## Install
-### Locally
-    git clone https://github.com/lighttigerXIV/catppuccinifier.git
-    cd catppuccinifier
-    chmod +x ./manage
+### Windows
+In order to install catppuccinifier you need the **image magick** too. It can be download [here](https://imagemagick.org/script/download.php#windows)
+    
+## Installation
+### Download
+To install catppuccinifier in your system go to the [releases](https://github.com/lighttigerXIV/catppuccinifier/releases) page, download the correct zip for you OS and extract it.
+
+### Linux
+#### Option 1
+After extracting open the terminal in the folder and type:
+
+    chmod +x manage
+    chmod +x installation-files/catppuccinifier
+    chmod +x installation-files/catppuccinifier-gui
+
+To install it locally (recommended)
+
     ./manage install -l
     
-### Root
-    git clone https://github.com/lighttigerXIV/catppuccinifier.git
-    cd catppuccinifier
-    chmod +x ./manage
+To install it on your system
+
     ./manage install
+
+#### Option 2
+**BTW**, for Arch Linux users there's a AUR package for the cli and the gui.
+
+For the cli you can use:
+
+    paru catppuccinifier-cli-git
+
+For the gui you can use:
+
+    paru catppuccinifier-gui-git
     
-## Uninstall
-Go to the folder where you cloned the repo and type:
+### Windows
+On windows you can simply run install.exe as administrator.
 
-    ./manage uninstall
-    
-## How to use
+## How to use cli
+The cli version works by selecting the flavor, the noise level and the image to be generated.
 
-### Parameters
-Parameter | Abv. | Description |
-|-------|-----------|-----|
-| **latte** | **-l** | Creates a image with the latte lut |
-| **frappe** | **-f** | Creates a image with the frappe lut |
-| **macchiato** | **-ma** | Creates a image with the macchiato lut |
-| **mocha** | **-mo** | Creates a image with the mocha lut |
-| **oled** | **-o** | Creates a image with the oled lut |
-| **all** | **-a** | Creates multiple images with all lut |
-| **noise-1** | **-n1** | Sets the attenuate level to 1 |
-| **noise-2** | **-n2** | Sets the attenuate level to 2 |
-| **noise-3** | **-n3** | Sets the attenuate level to 3 |
-| **noise-4** | **-n4** | Sets the attenuate level to 4 |
-
-**Note:** Default noise level is 0
+|Short|Full|Possible Values|Description|
+------|----|---------------|-----------|
+|-f|--flavor|latte frappe macchiato mocha oled all| Selects the flavor to generate the image (multiple can be used) [Default: all]|
+|-n|--noise|0 1 2 3 4| Selects the noise level to generate the image. [Default: 4]|
+|-i|--image| * | Selects the image to generate from. [Field Required] |
 
 ### Examples
+```catppuccinifier -i fuji.jpg```
 
-```catppuccinifier mocha oled n2 your_image.png```
+```catppuccinifier -f mocha macchiato -n 3 -i fuji.jpg```
 
-```catppuccinifier all your_image.png```
-
-```catppuccinifier mocha noise-3 your_image.png```
-
-## Thanks
-- [lighttigerXIV](https://github.com/lighttigerXIV)
+## Other amazing people that worked on the project
+- [Isabel](https://github.com/isabelroses)
 - [Gingeh](https://github.com/Gingeh)
