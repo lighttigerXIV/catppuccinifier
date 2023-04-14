@@ -54,7 +54,7 @@ fn convert_image(
     println!("Generating {} image with noise level {}", flavor, noise_level);
 
     let command = format!(
-        r"magick convert '{}\{}' '{}\flavors\noise-{}\{}.png' -hald-clut '{}\{}-{}'",
+        r"magick convert '{}\{}' '{}\flavors\noise-{}\{}.png' -hald-clut '{}\{}-noise{}-{}'",
         current_folder_path,
         image,
         catppuccinifier_folder_path,
@@ -62,6 +62,7 @@ fn convert_image(
         flavor,
         current_folder_path,
         flavor,
+        noise_level,
         image
     );
 
