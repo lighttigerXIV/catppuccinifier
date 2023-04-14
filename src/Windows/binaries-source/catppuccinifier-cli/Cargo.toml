@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 substring = "1.4.5"
+clap = { version = "4.2.1", features = ["derive", "cargo"] }
