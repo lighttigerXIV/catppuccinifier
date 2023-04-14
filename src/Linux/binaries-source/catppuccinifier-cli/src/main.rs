@@ -53,8 +53,8 @@ fn convert_image(
     println!("Generating {} image with noise level {}", flavor, noise);
 
     let command = format!(
-        "convert '{}/{}' '{}/.local/share/catppuccinifier/flavors/noise-{}/{}.png' -hald-clut '{}-{}'",
-        exec_folder_path, image, home_folder_path, noise, flavor, flavor, image
+        "convert '{}/{}' '{}/.local/share/catppuccinifier/flavors/noise-{}/{}.png' -hald-clut '{}-noise{}-{}'",
+        exec_folder_path, image, home_folder_path, noise, flavor, flavor, noise, image
     );
 
     Command::new("/bin/sh")
@@ -93,47 +93,18 @@ fn main() {
                                 }
 
                                 if flavor == "all" {
-                                    println!("Generating images with all flavors with noise level {}", noise_level.unwrap());
 
-                                    convert_image(
-                                        "latte",
-                                        noise_level.unwrap(),
-                                        image.unwrap(),
-                                        home_folder_path,
-                                        exec_folder_path,
-                                    );
+                                    let possible_flavors = ["latte", "frappe", "macchiato", "mocha", "oled"];
 
-                                    convert_image(
-                                        "frappe",
-                                        noise_level.unwrap(),
-                                        image.unwrap(),
-                                        home_folder_path,
-                                        exec_folder_path,
-                                    );
-
-                                    convert_image(
-                                        "macchiato",
-                                        noise_level.unwrap(),
-                                        image.unwrap(),
-                                        home_folder_path,
-                                        exec_folder_path,
-                                    );
-
-                                    convert_image(
-                                        "mocha",
-                                        noise_level.unwrap(),
-                                        image.unwrap(),
-                                        home_folder_path,
-                                        exec_folder_path,
-                                    );
-
-                                    convert_image(
-                                        "oled",
-                                        noise_level.unwrap(),
-                                        image.unwrap(),
-                                        home_folder_path,
-                                        exec_folder_path,
-                                    );
+                                    for possible_flavor in possible_flavors{
+                                        convert_image(
+                                            possible_flavor,
+                                            noise_level.unwrap(),
+                                            image.unwrap(),
+                                            home_folder_path,
+                                            exec_folder_path,
+                                        );
+                                    }
                                 }
                             }
                         }
