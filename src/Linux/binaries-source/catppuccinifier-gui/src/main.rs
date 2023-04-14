@@ -56,10 +56,11 @@ async fn main() {
 
         let noise_scale_row = row();
         let noise_scale = Scale::with_range(Orientation::Horizontal, 0.0, 4.0, 1.0);
-        let noise_level_label = label("0");
+        let noise_level_label = label("4");
 
         noise_scale.set_digits(0);
         noise_scale.set_hexpand(true);
+        noise_scale.set_value(4.0);
 
         noise_scale_row.append(&noise_scale);
         noise_scale_row.append(&small_horizontal_spacer());
