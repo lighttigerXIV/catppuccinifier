@@ -13,7 +13,6 @@ use std::thread;
 use gtk4::{Align, Button, Image, Orientation, Scale, ScrolledWindow, STYLE_PROVIDER_PRIORITY_APPLICATION, FileChooserDialog, FileChooserAction, ResponseType, FileFilter, Grid, ProgressBar, GestureClick, MenuButton, Popover, Label, STYLE_PROVIDER_PRIORITY_USER};
 use crate::css::app_css;
 use crate::items::{accent_column, column, label, row, save_button, small_horizontal_spacer, small_vertical_spacer, title};
-use dirs::home_dir;
 
 #[tokio::main]
 async fn main() {
@@ -290,99 +289,90 @@ async fn main() {
             @weak popover =>
             move |gesture, _, _, _|{
 
-                match home_dir(){
-                    Some(path) => {
+                gesture.set_state(gtk4::EventSequenceState::Claimed);
 
-                        gesture.set_state(gtk4::EventSequenceState::Claimed);
-
-                        println!("Path: {}", path.display());
-
-                        popover.hide();
-                        popover.grab_focus();
+                popover.hide();
+                popover.grab_focus();
 
 
-                        let about_window_column = column();
-                        about_window_column.append(&HeaderBar::new());
+                let about_window_column = column();
+                about_window_column.append(&HeaderBar::new());
 
-                        let about_content_column = column();
-                        about_content_column.add_css_class("medium-padding");
-                        about_content_column.style_context().add_provider(&app_css(), STYLE_PROVIDER_PRIORITY_APPLICATION);
-                        about_content_column.set_halign(Align::Center);
-
-
-                        let icon_path = format!("{}/.local/share/icons/hicolor/512x512/apps/catppuccinifier.png", path.display());
-                        let app_image = Image::new();
-                        let pixbuf = Pixbuf::from_file_at_size(icon_path, 150, 150).unwrap();
-                        app_image.set_from_pixbuf(Some(&pixbuf));
-                        app_image.set_size_request(150, 150);
+                let about_content_column = column();
+                about_content_column.add_css_class("medium-padding");
+                about_content_column.style_context().add_provider(&app_css(), STYLE_PROVIDER_PRIORITY_APPLICATION);
+                about_content_column.set_halign(Align::Center);
 
 
-                        let catppuccinifier_title = title("Catppuccinifier");
-                        catppuccinifier_title.set_halign(Align::Center);
+                let app_image = Image::new();
+                let pixbuf = Pixbuf::from_file_at_size("/usr/share/pixmaps/catppuccinifier.png", 150, 150).unwrap();
+                app_image.set_from_pixbuf(Some(&pixbuf));
+                app_image.set_size_request(150, 150);
 
-                        let lighttigerxiv = label("@lighttigerXIV");
-                        lighttigerxiv.set_halign(Align::Center);
 
-                        let version = label("2.0");
-                        version.add_css_class("version");
-                        version.style_context().add_provider(&app_css() ,STYLE_PROVIDER_PRIORITY_APPLICATION);
-                        version.set_halign(Align::Center);
+                let catppuccinifier_title = title("Catppuccinifier");
+                catppuccinifier_title.set_halign(Align::Center);
 
-                        let source_code_column = row();
-                        source_code_column.add_css_class("about-item");
-                        source_code_column.style_context().add_provider(&app_css() ,STYLE_PROVIDER_PRIORITY_APPLICATION);
+                let lighttigerxiv = label("@lighttigerXIV");
+                lighttigerxiv.set_halign(Align::Center);
 
-                        let source_code = &label("Source Code");
-                        source_code.set_halign(Align::Start);
-                        source_code.set_hexpand(true);
+                let version = label("2.0");
+                version.add_css_class("version");
+                version.style_context().add_provider(&app_css() ,STYLE_PROVIDER_PRIORITY_APPLICATION);
+                version.set_halign(Align::Center);
 
-                        let open_icon = Image::builder().icon_name("web-browser-symbolic").build();
+                let source_code_column = row();
+                source_code_column.add_css_class("about-item");
+                source_code_column.style_context().add_provider(&app_css() ,STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-                        source_code_column.append(source_code);
-                        source_code_column.append(&open_icon);
+                let source_code = &label("Source Code");
+                source_code.set_halign(Align::Start);
+                source_code.set_hexpand(true);
+
+                let open_icon = Image::builder().icon_name("web-browser-symbolic").build();
+
+                source_code_column.append(source_code);
+                source_code_column.append(&open_icon);
 
 
 
-                        about_window_column.append(&about_content_column);
-                        about_content_column.append(&app_image);
-                        about_content_column.append(&small_vertical_spacer());
-                        about_content_column.append(&catppuccinifier_title);
-                        about_content_column.append(&lighttigerxiv);
-                        about_content_column.append(&small_vertical_spacer());
-                        about_content_column.append(&version);
-                        about_content_column.append(&small_vertical_spacer());
-                        about_content_column.append(&source_code_column);
+                about_window_column.append(&about_content_column);
+                about_content_column.append(&app_image);
+                about_content_column.append(&small_vertical_spacer());
+                about_content_column.append(&catppuccinifier_title);
+                about_content_column.append(&lighttigerxiv);
+                about_content_column.append(&small_vertical_spacer());
+                about_content_column.append(&version);
+                about_content_column.append(&small_vertical_spacer());
+                about_content_column.append(&source_code_column);
 
 
-                        let about_window = ApplicationWindow::builder()
-                            .application(&app)
-                            .title("About")
-                            .default_width(300)
-                            .default_height(-1)
-                            .resizable(false)
-                            .modal(true)
-                            .content(&about_window_column)
-                            .build();
+                let about_window = ApplicationWindow::builder()
+                    .application(&app)
+                    .title("About")
+                    .default_width(300)
+                    .default_height(-1)
+                    .resizable(false)
+                    .modal(true)
+                    .content(&about_window_column)
+                    .build();
 
 
-                        about_window.set_transient_for(Some(&app_window));
-                        about_window.show();
+                about_window.set_transient_for(Some(&app_window));
+                about_window.show();
 
 
-                        let source_code_click = GestureClick::new();
+                let source_code_click = GestureClick::new();
 
-                        source_code_click.connect_released(|gesture, _, _, _|{
-                            gesture.set_state(gtk4::EventSequenceState::Claimed);
+                source_code_click.connect_released(|gesture, _, _, _|{
+                    gesture.set_state(gtk4::EventSequenceState::Claimed);
 
-                            if webbrowser::open("https://github.com/lighttigerXIV/catppuccinifier").is_ok(){
-                                //Do Nothing
-                            }
-                        });
+                    if webbrowser::open("https://github.com/lighttigerXIV/catppuccinifier").is_ok(){
+                        //Do Nothing
+                    }
+                });
 
-                        source_code_column.add_controller(source_code_click);
-                    },
-                    None => {}
-                }
+                source_code_column.add_controller(source_code_click);
             }
         ));
 
