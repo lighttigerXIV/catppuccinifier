@@ -26,22 +26,18 @@ To install catppuccinifier in your system go to the [releases](https://github.co
 
 ### Linux
 #### Option 1
-After extracting open the terminal in the folder and type:
+Cloning the repo and install it:
 
-    chmod +x manage
+    git clone https://github.com/lighttigerXIV/catppuccinifier.git
+    cd catppuccinifier
+    chmod +x install
+    chmod +x uninstall
     chmod +x installation-files/catppuccinifier
     chmod +x installation-files/catppuccinifier-gui
-
-To install it locally (recommended)
-
-    ./manage install -l
-    
-To install it on your system
-
-    ./manage install
+    ./install
 
 #### Option 2
-**BTW**, for Arch Linux users there's a AUR package for the cli and the gui.
+**BTW**, if you are a Arch Linux user, there's a AUR package for the cli and the gui.
 
 For the cli you can use:
 
@@ -53,6 +49,11 @@ For the gui you can use:
     
 ### Windows
 On windows you can simply run install.exe as administrator.
+
+## Uninstall
+To uninstall, go to the cloned folder and run the uninstall script:
+
+    ./uninstall
 
 ## How to use cli
 The cli version works by selecting the flavor, the noise level and the image to be generated.
