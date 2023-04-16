@@ -2,4 +2,5 @@ src/Windows/binaries-source/installer/target
 src/Windows/binaries-source/catppuccinifier-cli/target
 src/Linux/binaries-source/catppuccinifier-cli/target
 src/Linux/binaries-source/catppuccinifier-gui/target
-src/Linux/binaries-source/manage-cli/target
+src/Linux/binaries-source/install-cli/target
+src/Linux/binaries-source/uninstall-cli/target
