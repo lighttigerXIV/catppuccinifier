@@ -46,7 +46,7 @@ sudo dnf install ImageMagick libadwaita
 ##### Windows
 In order to install catppuccinifier you need the **image magick** too. It can be download [here](https://imagemagick.org/script/download.php#windows)
 
-### Genral installation (recommended)
+### General installation (recommended)
 
 #### Download
 To install catppuccinifier in your system go to the [releases](https://github.com/lighttigerXIV/catppuccinifier/releases) page, download the correct zip for you OS and extract it.
