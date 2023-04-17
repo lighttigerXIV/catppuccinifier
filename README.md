@@ -64,7 +64,7 @@ chmod +x installation-files/catppuccinifier-gui
 ./install
 ```
 #### Windows
-On windows you can simply run install.exe as administrator.
+On windows you can simply run `install.exe` as administrator.
 
 ###### Uninstall
 To uninstall, go to the cloned folder and run the uninstall script:
