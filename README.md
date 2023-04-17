@@ -1,16 +1,13 @@
 <h1 align="center">Catppuccinifier</h1>
 
-## About
 This project gives you a cli and a gui for catppuccinifying your wallpapers.
 
 > **Note** <br>
-> The cli is avaliable for windows and linux
-> However the gui is only avaliable for linux
+> The cli is avaliable for windows and linux, however the gui is only avaliable for linux
 
 <img src="https://user-images.githubusercontent.com/35658492/229366244-aa61e131-06d1-4f1c-a507-65927cb4cc4a.png" width="600" >
 
 <img src="https://user-images.githubusercontent.com/35658492/232163107-7f8c5d30-1912-4e9d-9a35-1f21b9feef28.png" width="600">
-
 
 ## How to use cli
 The cli version works by selecting the flavor, the noise level and the image to be generated.
@@ -32,7 +29,7 @@ The cli version works by selecting the flavor, the noise level and the image to 
     paru catppuccinifier-cli-git
     paru catppuccinifier-gui-git
 
-#### Prerequisites
+### Prerequisites
 
 ##### Arch Linux
 ```bash
@@ -50,6 +47,7 @@ sudo dnf install ImageMagick libadwaita
 In order to install catppuccinifier you need the **image magick** too. It can be download [here](https://imagemagick.org/script/download.php#windows)
 
 ### Genral installation (recommended)
+
 #### Download
 To install catppuccinifier in your system go to the [releases](https://github.com/lighttigerXIV/catppuccinifier/releases) page, download the correct zip for you OS and extract it.
 
