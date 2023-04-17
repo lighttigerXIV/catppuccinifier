@@ -40,11 +40,11 @@ sudo pacman -S imagemagick libadwaita
 ```
 ##### Debian / Ubuntu
 ```bash
-    sudo apt install imagemagick libadwaita-1-0
+sudo apt install imagemagick libadwaita-1-0
 ```
 ##### Fedora
 ```bash
-    sudo dnf install ImageMagick libadwaita
+sudo dnf install ImageMagick libadwaita
 ```
 ##### Windows
 In order to install catppuccinifier you need the **image magick** too. It can be download [here](https://imagemagick.org/script/download.php#windows)
