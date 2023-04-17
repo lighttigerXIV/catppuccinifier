@@ -86,4 +86,3 @@ chmod +x install-cli # maynot be needed
 
 ## Other amazing people that worked on the project
 - [Isabel](https://github.com/isabelroses)
-- [Gingeh](https://github.com/Gingeh)
