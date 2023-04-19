@@ -4,9 +4,10 @@ This project gives you a cli and a gui for catppuccinifying your wallpapers.
 
 > **Note** <br>
 > The cli is avaliable for windows and linux, however the gui is only avaliable for linux
-<img src="https://user-images.githubusercontent.com/35658492/229366244-aa61e131-06d1-4f1c-a507-65927cb4cc4a.png" width="600" >
+<img src="https://user-images.githubusercontent.com/35658492/233171758-54e43920-543b-40a1-953e-dac6e82e97c5.png" width="600" >
 
-<img src="https://user-images.githubusercontent.com/35658492/232163107-7f8c5d30-1912-4e9d-9a35-1f21b9feef28.png" width="600">
+<img src="https://user-images.githubusercontent.com/35658492/233171775-ded264c9-6a76-48a2-bd3b-4913f077bd74.png" width="600">
+
 
 ## How to use cli
 The cli version works by selecting the flavor, the noise level and the image to be generated.
@@ -67,12 +68,12 @@ On windows you can simply run `install.exe` as administrator.
 
 ## Uninstall
 To uninstall, go to the cloned folder and run the uninstall script:
-###### Linux
+
+#### Linux
 ```bash
 ./uninstall
 ```
-
-###### Windows
+#### Windows
 On windows you can simply run `uninstall.exe` as administrator.
 
 ### Building from source
