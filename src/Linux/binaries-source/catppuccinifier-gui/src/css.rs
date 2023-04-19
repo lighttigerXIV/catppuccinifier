@@ -39,6 +39,7 @@ pub fn app_css() -> CssProvider{
         }
 
 
+
         .foreground{
             background: @insensitive_base_color;
         }

@@ -12,7 +12,7 @@ use std::process::Command;
 use std::thread;
 use gtk4::{Align, Button, Image, Orientation, Scale, ScrolledWindow, STYLE_PROVIDER_PRIORITY_APPLICATION, FileChooserDialog, FileChooserAction, ResponseType, FileFilter, Grid, ProgressBar, GestureClick, MenuButton, Popover, Label, STYLE_PROVIDER_PRIORITY_USER};
 use crate::css::app_css;
-use crate::items::{accent_column, column, label, row, save_button, small_horizontal_spacer, small_vertical_spacer, title};
+use crate::items::{accent_column, column, label, preview_button, row, save_button, small_horizontal_spacer, small_vertical_spacer, title};
 
 #[tokio::main]
 async fn main() {
@@ -118,9 +118,12 @@ async fn main() {
         latte_top_row.set_halign(Align::Center);
 
         let latte_save_button = save_button("Save Latte");
+        let latte_preview_button = preview_button();
 
         latte_column.append(&latte_top_row);
         latte_top_row.append(&latte_save_button);
+        latte_top_row.append(&small_horizontal_spacer());
+        latte_top_row.append(&latte_preview_button);
         latte_column.append(&small_vertical_spacer());
         latte_column.append(&latte_progressbar);
         latte_column.append(&latte_image);
@@ -144,9 +147,12 @@ async fn main() {
         frappe_top_row.set_halign(Align::Center);
 
         let frappe_save_button = save_button("Save Frappe");
+        let frappe_preview_button = preview_button();
 
         frappe_column.append(&frappe_top_row);
         frappe_top_row.append(&frappe_save_button);
+        frappe_top_row.append(&small_horizontal_spacer());
+        frappe_top_row.append(&frappe_preview_button);
         frappe_column.append(&small_vertical_spacer());
         frappe_column.append(&frappe_progressbar);
         frappe_column.append(&frappe_image);
@@ -170,9 +176,12 @@ async fn main() {
         macchiato_top_row.set_halign(Align::Center);
 
         let macchiato_save_button = save_button("Save Macchiato");
+        let macchiato_preview_button = preview_button();
 
         macchiato_column.append(&macchiato_top_row);
         macchiato_top_row.append(&macchiato_save_button);
+        macchiato_top_row.append(&small_horizontal_spacer());
+        macchiato_top_row.append(&macchiato_preview_button);
         macchiato_column.append(&small_vertical_spacer());
         macchiato_column.append(&macchiato_progressbar);
         macchiato_column.append(&macchiato_image);
@@ -195,9 +204,12 @@ async fn main() {
         mocha_top_row.set_halign(Align::Center);
 
         let mocha_save_button = save_button("Save Mocha");
+        let mocha_preview_button = preview_button();
 
         mocha_column.append(&mocha_top_row);
         mocha_top_row.append(&mocha_save_button);
+        mocha_top_row.append(&small_horizontal_spacer());
+        mocha_top_row.append(&mocha_preview_button);
         mocha_column.append(&small_vertical_spacer());
         mocha_column.append(&mocha_progressbar);
         mocha_column.append(&mocha_image);
@@ -221,9 +233,12 @@ async fn main() {
         oled_top_row.set_halign(Align::Center);
 
         let oled_save_button = save_button("Save Oled");
+        let oled_preview_button = preview_button();
 
         oled_column.append(&oled_top_row);
         oled_top_row.append(&oled_save_button);
+        oled_top_row.append(&small_horizontal_spacer());
+        oled_top_row.append(&oled_preview_button);
         oled_column.append(&small_vertical_spacer());
         oled_column.append(&oled_progressbar);
         oled_column.append(&oled_image);
@@ -450,6 +465,55 @@ async fn main() {
             save_image("oled");
         }));
 
+        let preview_image = clone!(
+            @weak app,
+            @weak app_window
+            => move |flavor: &str|{
+
+                let preview_column = column();
+                preview_column.append(&HeaderBar::new());
+
+                let image_pixbuf = Pixbuf::from_file(format!("/tmp/catppuccinifier/{}.png", flavor)).unwrap();
+                let image = Image::new();
+                image.set_from_pixbuf(Some(&image_pixbuf));
+                image.set_size_request(1000, 1000);
+
+                preview_column.append(&image);
+
+                let preview_window = ApplicationWindow::builder()
+                    .application(&app)
+                    .title(format!("{} image", &flavor))
+                    .resizable(false)
+                    .modal(true)
+                    .content(&preview_column)
+                    .build();
+
+
+                preview_window.set_transient_for(Some(&app_window));
+                preview_window.show();
+            }
+        );
+
+        latte_preview_button.connect_clicked(clone!(@strong preview_image => move |_|{
+            preview_image("latte");
+        }));
+
+        frappe_preview_button.connect_clicked(clone!(@strong preview_image => move |_|{
+            preview_image("frappe");
+        }));
+
+        macchiato_preview_button.connect_clicked(clone!(@strong preview_image => move |_|{
+            preview_image("macchiato");
+        }));
+
+        mocha_preview_button.connect_clicked(clone!(@strong preview_image => move |_|{
+            preview_image("mocha");
+        }));
+
+        oled_preview_button.connect_clicked(clone!(@strong preview_image => move |_|{
+            preview_image("oled");
+        }));
+
 
         generate_images_button.connect_clicked(clone!(
             @weak noise_scale,
@@ -459,22 +523,27 @@ async fn main() {
             @weak latte_column,
             @weak latte_image,
             @weak latte_save_button,
+            @weak latte_preview_button,
             @weak latte_progressbar,
             @weak frappe_column,
             @weak frappe_image,
             @weak frappe_save_button,
+            @weak frappe_preview_button,
             @weak frappe_progressbar,
             @weak macchiato_column,
             @weak macchiato_image,
             @weak macchiato_save_button,
+            @weak macchiato_preview_button,
             @weak macchiato_progressbar,
             @weak mocha_column,
             @weak mocha_image,
             @weak mocha_save_button,
+            @weak mocha_preview_button,
             @weak mocha_progressbar,
             @weak oled_column,
             @weak oled_image,
             @weak oled_save_button,
+            @weak oled_preview_button,
             @weak oled_progressbar=>
             move |_|{
 
@@ -659,19 +728,29 @@ async fn main() {
                 @weak select_image_button,
                 @weak generate_images_button,
                 @weak latte_save_button,
+                @weak latte_preview_button,
                 @weak frappe_save_button,
+                @weak frappe_preview_button,
                 @weak macchiato_save_button,
+                @weak macchiato_preview_button,
                 @weak mocha_save_button,
-                @weak oled_save_button=>
+                @weak mocha_preview_button,
+                @weak oled_save_button,
+                @weak oled_preview_button=>
                 @default-return Continue(false), move |block|{
 
                     select_image_button.set_sensitive(!block);
                     generate_images_button.set_sensitive(!block);
                     latte_save_button.set_sensitive(!block);
+                    latte_preview_button.set_sensitive(!block);
                     frappe_save_button.set_sensitive(!block);
+                    frappe_preview_button.set_sensitive(!block);
                     macchiato_save_button.set_sensitive(!block);
+                    macchiato_preview_button.set_sensitive(!block);
                     mocha_save_button.set_sensitive(!block);
+                    mocha_preview_button.set_sensitive(!block);
                     oled_save_button.set_sensitive(!block);
+                    oled_preview_button.set_sensitive(!block);
 
                     Continue(true)
             }),
