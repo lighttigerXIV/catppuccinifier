@@ -1,5 +1,4 @@
-use gdk_pixbuf::Pixbuf;
-use gtk4::{prelude::*, Box, Orientation, Label, STYLE_PROVIDER_PRIORITY_APPLICATION, Align, Button, Image, STYLE_PROVIDER_PRIORITY_USER, DrawingArea, IconTheme};
+use gtk4::{prelude::*, Box, Orientation, Label, STYLE_PROVIDER_PRIORITY_APPLICATION, Align, Button, Image, STYLE_PROVIDER_PRIORITY_USER};
 use crate::css::app_css;
 
 

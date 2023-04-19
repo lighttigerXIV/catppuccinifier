@@ -271,6 +271,7 @@ async fn main() {
         properties_column.append(&noise_scale_row);
         properties_column.append(&small_vertical_spacer());
         properties_column.append(&select_image_button);
+        properties_column.append(&small_vertical_spacer());
         properties_column.append(&selected_image);
         properties_column.append(&small_vertical_spacer());
         properties_column.append(&generate_images_button);
@@ -474,9 +475,11 @@ async fn main() {
                 preview_column.append(&HeaderBar::new());
 
                 let image_pixbuf = Pixbuf::from_file(format!("/tmp/catppuccinifier/{}.png", flavor)).unwrap();
+                
                 let image = Image::new();
                 image.set_from_pixbuf(Some(&image_pixbuf));
-                image.set_size_request(1000, 1000);
+                image.set_vexpand(true);
+
 
                 preview_column.append(&image);
 
@@ -484,6 +487,8 @@ async fn main() {
                     .application(&app)
                     .title(format!("{} image", &flavor))
                     .resizable(false)
+                    .default_height(700)
+                    .default_width(700)
                     .modal(true)
                     .content(&preview_column)
                     .build();
