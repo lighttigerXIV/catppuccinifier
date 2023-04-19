@@ -1,0 +1,1 @@
+Remove-Item "C:\Program Files\Catppuccinifier" -Force  -Recurse -ErrorAction SilentlyContinue

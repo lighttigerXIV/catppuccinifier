@@ -3,7 +3,7 @@
 version = 3
 
 [[package]]
-name = "installer"
+name = "install-cli"
 version = "0.1.0"
 dependencies = [
  "powershell_script",

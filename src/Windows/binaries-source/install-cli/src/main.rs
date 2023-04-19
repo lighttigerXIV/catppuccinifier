@@ -43,11 +43,10 @@ fn main() {
                 }
             }
 
-
             if install_successful {
                 println!("Catppuccinifier installed successfully");
             } else {
-                println!("ERROR: Couldn't install Catppuccinifier. Try running the installer as administrator");
+                println!("ERROR: Couldn't install Catppuccinifier. Make sure you run the script as administrator");
             }
 
 
