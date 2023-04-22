@@ -1,5 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use std::process::Command;
 use eframe::{egui};
 
 #[derive(serde::Deserialize, serde::Serialize)]
@@ -26,6 +27,31 @@ impl Catppuccinifier {
             return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
         }
         Default::default()
+    }
+}
+
+fn generate_image(
+    image_path: &String,
+    noise_level: &i8,
+    flavor: &str
+){
+
+    let command = format!(
+        r"magick convert '{}' 'C:\Program Files\Catppuccinifier\flavors\noise-{}\{}.png' -hald-clut 'C:\tmp\catppuccinifier\{}.png'",
+        image_path,
+        noise_level,
+        flavor,
+        flavor
+    );
+
+    let flavor_command = Command::new("powershell")
+        .arg("-Command")
+        .arg(&command)
+        .output()
+        .expect("ERROR: Couldn't convert image");
+
+    if !flavor_command.status.success() {
+        println!("An error occurred: {}", String::from_utf8_lossy(&flavor_command.stderr));
     }
 }
 
@@ -66,47 +92,26 @@ impl eframe::App for Catppuccinifier {
                     let image_path = picked_path.to_string();
                     
                     std::thread::spawn(move || {
-                        use std::process::Command;
 
                         Command::new("powershell")
                             .args(&["-Command", "mkdir -p C:\\tmp\\catppuccinifier\\"])
                             .output()
                             .expect("Error while converting images");
 
-                        let command = format!("convert '{}' $HOME\\.catppuccinifier\\flavors\\noise-{}\\latte.png -hald-clut C:\\tmp\\catppuccinifier\\latte.png", image_path, noise_level);
-
                         Command::new("powershell")
-                            .args(&["-Command", &command])
+                            .args(&["-Command", "mkdir -p C:\\tmp\\catppuccinifier\\"])
                             .output()
                             .expect("Error while converting images");
 
-                        let command = format!("convert '{}' $HOME\\.catppuccinifier\\flavors\\noise-{}\\frappe.png -hald-clut C:\\tmp\\catppuccinifier\\frappe.png", image_path, noise_level);
-                        
-                        Command::new("powershell")
-                            .args(&["-Command", &command])
-                            .output()
-                            .expect("Error while converting images");
 
-                        let command = format!("convert '{}' $HOME\\.catppuccinifier\\flavors\\noise-{}\\macchiato.png -hald-clut C:\\tmp\\catppuccinifier\\macchiato.png", image_path, noise_level);
-                        
-                        Command::new("powershell")
-                            .args(&["-Command", &command])
-                            .output()
-                            .expect("Error while converting images");
+                        for flavor in ["latte", "frappe", "macchiato", "mocha", "oled"]{
 
-                        let command = format!("convert '{}' $HOME\\.catppuccinifier\\flavors\\noise-{}\\mocha.png -hald-clut C:\\tmp\\catppuccinifier\\mocha.png", image_path, noise_level);
-                        
-                        Command::new("powershell")
-                            .args(&["-Command", &command])
-                            .output()
-                            .expect("Error while converting images");
-
-                        let command = format!("convert '{}' $HOME\\.catppuccinifier\\flavors\\noise-{}\\oled.png -hald-clut C:\\tmp\\catppuccinifier\\oled.png", image_path, noise_level);
-                        
-                        Command::new("powershell")
-                            .args(&["-Command", &command])
-                            .output()
-                            .expect("Error while converting images");
+                            generate_image(
+                                &image_path,
+                                &noise_level,
+                                flavor
+                            );
+                        }
                     });
                 }
             }
@@ -136,21 +141,21 @@ impl eframe::App for Catppuccinifier {
                     .on_hover_text("Select an image to use")
                     .clicked()
                 {
-                    copy_file("C:\\tmp\\catppuccinifier\\latte.png", "latte.png");
+                    save_image("latte");
                 }
                 if ui
                     .button("Save Frappe")
                     .on_hover_text("Select an image to use")
                     .clicked()
                 {
-                    copy_file("C:\\tmp\\catppuccinifier\\frappe.png", "frappe.png");
+                    save_image("frappe");
                 }
                 if ui
                     .button("Save Macchiato")
                     .on_hover_text("Select an image to use")
                     .clicked()
                 {
-                    copy_file("C:\\tmp\\catppuccinifier\\macchiato.png", "macchiato.png");
+                    save_image("macchiato");
 
                 }
                 if ui
@@ -158,14 +163,14 @@ impl eframe::App for Catppuccinifier {
                     .on_hover_text("Select an image to use")
                     .clicked()
                 {
-                    copy_file("C:\\tmp\\catppuccinifier\\mocha.png", "mocha.png");
+                    save_image("mocha");
                 }
                 if ui
                     .button("Save OLED")
                     .on_hover_text("Select an image to use")
                     .clicked()
                 {
-                    copy_file("C:\\tmp\\catppuccinifier\\oled.png", "oled.png");
+                    save_image("oled");
                 }
             });
         });
@@ -176,9 +181,24 @@ impl eframe::App for Catppuccinifier {
     }
 }
 
-fn copy_file(from: &str, to: &str) {
-    std::process::Command::new("powershell")
-        .args(&["-Command", &format!("cp {} $HOME\\Pictures\\{}", from, to)])
-        .output()
-        .expect("Error while copying file");
+fn save_image(flavor: &str) {
+
+    match dirs::home_dir() {
+        Some(home_folder)=>{
+
+            let home_folder_path = home_folder.to_str().unwrap();
+
+            let command = Command::new("powershell")
+                .args(&["-Command", &format!("cp C:\\tmp\\catppuccinifier\\{}.png {}\\Pictures\\{}.png", flavor, home_folder_path, flavor)])
+                .output()
+                .expect("Error while copying file");
+
+            if !command.status.success(){
+                println!("Error while copying file");
+            }
+        },
+        None =>{
+            println!("Error getting home folder");
+        }
+    }
 }
