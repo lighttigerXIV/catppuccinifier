@@ -3,7 +3,7 @@
 This project gives you a cli and a gui for catppuccinifying your wallpapers.
 
 > **Note** <br>
-> The cli is avaliable for windows and linux, however the gui is only avaliable for linux
+> The cli is available for windows and linux, however the gui is only available for linux
 <img src="https://user-images.githubusercontent.com/35658492/233171758-54e43920-543b-40a1-953e-dac6e82e97c5.png" width="600" >
 
 <img src="https://user-images.githubusercontent.com/35658492/233171775-ded264c9-6a76-48a2-bd3b-4913f077bd74.png" width="600">
@@ -49,7 +49,7 @@ In order to install catppuccinifier you need the **image magick** too. It can be
 ### General installation (recommended)
 
 #### Download
-To install catppuccinifier in your system go to the [releases](https://github.com/lighttigerXIV/catppuccinifier/releases) page, download the correct zip for you OS and extract it.
+To install catppuccinifier on your system go to the [releases](https://github.com/lighttigerXIV/catppuccinifier/releases) page, download the correct zip for you OS and extract it.
 
 #### Linux
 
