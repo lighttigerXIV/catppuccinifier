@@ -5,9 +5,11 @@ use std::path::Path;
 fn main() {
     match env::var("path") {
         Ok(path_variable) => {
+
             let add_path_script = include_str!("set-path.ps1");
             let create_folder_script = include_str!("create-folder.ps1");
             let copy_files_script = include_str!("copy-files.ps1");
+
             let mut install_successful = true;
 
             //Creates catppuccinifier folder
@@ -30,9 +32,9 @@ fn main() {
                                     }
                                 }
                             }
-                            Err(_) => {
+                            Err(error) => {
                                 install_successful = false;
-                                println!("ERROR: Couldn't copy files to catppuccinifier folder")
+                                println!("ERROR: Couldn't copy files to catppuccinifier folder. {}", error.to_string())
                             }
                         }
                     }
