@@ -247,5 +247,6 @@ namespace Catppuccinifier
         {
             OpenPreview("mocha");
         }
+
     }
 }
