@@ -25,7 +25,7 @@ namespace Catppuccinifier
         {
             PreviewImageForm previewForm = new PreviewImageForm
             {
-                imagePath = $"C:{tempPath}\\{flavor}.png"
+                imagePath = $"{tempPath}\\{flavor}.png"
             };
 
             previewForm.Show();

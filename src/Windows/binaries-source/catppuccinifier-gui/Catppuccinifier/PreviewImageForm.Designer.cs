@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PreviewImageForm));
             this.PreviewBox = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.PreviewBox)).BeginInit();
             this.SuspendLayout();
@@ -52,6 +53,7 @@
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(782, 753);
             this.Controls.Add(this.PreviewBox);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "PreviewImageForm";
             this.Text = "Preview";
             this.Load += new System.EventHandler(this.PreviewImageForm_Load);
