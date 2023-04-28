@@ -1,0 +1,425 @@
+<Window
+    x:Class="catppuccinifier.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:catppuccinifier"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+
+
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel
+            Grid.Row="0"
+            Grid.Column="0"
+            Orientation="Vertical" 
+            VerticalAlignment="Stretch"
+            Width="250" 
+            Background="#11111b"
+            Padding="8"
+            >
+            
+            <TextBlock FontSize="20">Properties</TextBlock>
+
+            <StackPanel Height="16"></StackPanel>
+
+            <TextBlock x:Name="NoiseLevelLabel" FontSize="14">Noise Level - 0</TextBlock>
+
+            <Slider
+                x:Name="NoiseLevelSlider"
+                Minimum="0" 
+                Maximum="4" 
+                TickFrequency="1" 
+                TickPlacement="None"
+                ValueChanged="NoiseLevelSlider_ValueChanged"
+                Value="4"
+            ></Slider>
+
+            <StackPanel Height="16"></StackPanel>
+
+            <Button
+                    x:Name="SelectImageButton"
+                    CornerRadius="14"
+                    HorizontalAlignment="Stretch"
+                    Background="#313244"
+                    Click="SelectImageButton_Click"
+                >
+                Select Image
+            </Button>
+
+            <StackPanel Height="16"></StackPanel>
+
+            <Image
+                    x:Name="SelectedImage"
+                    HorizontalAlignment="Stretch"
+                    MaxHeight="250"
+                ></Image>
+
+            <StackPanel Height="16"></StackPanel>
+
+            <Button
+                x:Name="GenerateImagesButton"
+                CornerRadius="14"
+                HorizontalAlignment="Stretch"
+                Background="#313244"
+                Click="GenerateImagesButton_Click"
+                >
+                Generate Images
+            </Button>
+
+        </StackPanel>
+
+        <ScrollViewer
+            Grid.Row="0"
+            Grid.Column="1"
+            HorizontalScrollBarVisibility="Auto"
+            VerticalScrollBarVisibility="Auto"
+            >
+
+            <StackPanel
+                HorizontalAlignment="Stretch"
+                Orientation="Horizontal"
+                Background="#1e1e2e"
+                Padding="8"
+                >
+
+                <StackPanel
+                    VerticalAlignment="Stretch"
+                    Width="250"
+                    >
+
+                    <StackPanel
+                        x:Name="LattePanel"
+                        Orientation="Vertical"
+                        Background="#11111b"
+                        Padding="16"
+                        CornerRadius="14"
+                        HorizontalAlignment="Stretch"
+                        >
+
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <Button
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                x:Name="SaveLatteButton"
+                                Background="#313244" 
+                                CornerRadius="14"
+                                HorizontalAlignment="Stretch"
+                                Click="SaveLatteButton_Click"
+                            >
+                                Save Latte
+                            </Button>
+
+                            <StackPanel
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Width="8">
+                            </StackPanel>
+
+                            <Button 
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                x:Name="PreviewLatteButton"
+                                Background="#313244" 
+                                CornerRadius="14"
+                                HorizontalAlignment="Stretch"
+                                Click="PreviewLatteButton_Click"
+                                >
+                                Preview
+                            </Button>
+                        </Grid>
+
+                        <StackPanel Height="16"></StackPanel>
+
+                        <ProgressBar x:Name="LatteProgressBar" IsIndeterminate="True"/>
+
+                        <Image 
+                            x:Name="GeneratedLatteImage"
+                            HorizontalAlignment="Stretch"
+                            ></Image>
+                        
+                    </StackPanel>
+
+                    <StackPanel Height="8"></StackPanel>
+
+                    <StackPanel
+                    x:Name="FrappePanel"
+                    Orientation="Vertical"
+                    Background="#11111b"
+                    Padding="16"
+                    CornerRadius="14"
+                    HorizontalAlignment="Stretch"
+                    >
+
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Button
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                x:Name="SaveFrappeButton"
+                                Background="#313244" 
+                                CornerRadius="14"
+                                HorizontalAlignment="Stretch"
+                                Click="SaveFrappeButton_Click"
+                                
+                            >
+                                Save Frappe
+                            </Button>
+
+                            <StackPanel
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Width="8">
+                            </StackPanel>
+
+                            <Button 
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                x:Name="PreviewFrappeButton"
+                                Background="#313244" 
+                                CornerRadius="14"
+                                HorizontalAlignment="Stretch"
+                                Click="PreviewFrappeButton_Click"
+                                >
+                                Preview
+                            </Button>
+                        </Grid>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+
+                        </StackPanel>
+
+                        <StackPanel Height="16"></StackPanel>
+
+                        <ProgressBar x:Name="FrappeProgressBar" IsIndeterminate="True"/>
+
+                        <Image 
+                        x:Name="GeneratedFrappeImage"
+                        HorizontalAlignment="Stretch"
+                        ></Image>
+                    </StackPanel>
+
+                </StackPanel>
+
+                <StackPanel Width="8"></StackPanel>
+
+                <StackPanel
+                VerticalAlignment="Stretch"
+                Width="250"
+                >
+
+                    <StackPanel
+                    x:Name="MacchiatoPanel"
+                    Orientation="Vertical"
+                    Background="#11111b"
+                    Padding="16"
+                    CornerRadius="14"
+                    HorizontalAlignment="Stretch"
+                    >
+
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Button
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                x:Name="SaveMacchiatoButton"
+                                Background="#313244" 
+                                CornerRadius="14"
+                                HorizontalAlignment="Stretch"
+                                Click="SaveMacchiatoButton_Click"
+                            >
+                                Save Macchiato
+                            </Button>
+
+                            <StackPanel
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Width="8">
+                            </StackPanel>
+
+                            <Button 
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                x:Name="PreviewMacchiatoButton"
+                                Background="#313244" 
+                                CornerRadius="14"
+                                HorizontalAlignment="Stretch"
+                                Click="PreviewMacchiatoButton_Click"
+                            >
+                                Preview
+                            </Button>
+                        </Grid>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+
+                        </StackPanel>
+
+                        <StackPanel Height="16"></StackPanel>
+
+                        <ProgressBar x:Name="MacchiatoProgressBar" IsIndeterminate="True"/>
+
+                        <Image 
+                        x:Name="GeneratedMacchiatoImage"
+                        HorizontalAlignment="Stretch"
+                        ></Image>
+                    </StackPanel>
+
+                    <StackPanel Height="8"></StackPanel>
+
+                    <StackPanel
+                    x:Name="MochaPanel"
+                    Orientation="Vertical"
+                    Background="#11111b"
+                    Padding="16"
+                    CornerRadius="14"
+                    HorizontalAlignment="Stretch"
+                    >
+
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Button
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                x:Name="SaveMochaButton"
+                                Background="#313244" 
+                                CornerRadius="14"
+                                HorizontalAlignment="Stretch"
+                                Click="SaveMochaButton_Click"
+                            >
+                                Save Mocha
+                            </Button>
+
+                            <StackPanel
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Width="8">
+                            </StackPanel>
+
+                            <Button 
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                x:Name="PreviewMochaButton"
+                                Background="#313244" 
+                                CornerRadius="14"
+                                HorizontalAlignment="Stretch"
+                                Click="PreviewMochaButton_Click"
+                                >
+                                Preview
+                            </Button>
+                        </Grid>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+
+                        </StackPanel>
+
+                        <StackPanel Height="16"></StackPanel>
+
+                        <ProgressBar x:Name="MochaProgressBar" IsIndeterminate="True"/>
+
+                        <Image 
+                        x:Name="GeneratedMochaImage"
+                        HorizontalAlignment="Stretch"
+                        ></Image>
+                    </StackPanel>
+
+                </StackPanel>
+
+                <StackPanel Width="8"></StackPanel>
+
+                <StackPanel
+                VerticalAlignment="Stretch"
+                Width="250"
+                >
+
+                    <StackPanel
+                    x:Name="OledPanel"
+                    Orientation="Vertical"
+                    Background="#11111b"
+                    Padding="16"
+                    CornerRadius="14"
+                    HorizontalAlignment="Stretch"
+                    >
+
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Button
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                x:Name="SaveOledButton"
+                                Background="#313244" 
+                                CornerRadius="14"
+                                HorizontalAlignment="Stretch"
+                                Click="SaveOledButton_Click"
+                            >
+                                Save Oled
+                            </Button>
+
+                            <StackPanel
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Width="8">
+                            </StackPanel>
+
+                            <Button 
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                x:Name="PreviewOledButton"
+                                Background="#313244" 
+                                CornerRadius="14"
+                                HorizontalAlignment="Stretch"
+                                Click="PreviewOledButton_Click"
+                                >
+                                Preview
+                            </Button>
+                        </Grid>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+
+                        </StackPanel>
+
+                        <StackPanel Height="16"></StackPanel>
+
+                        <ProgressBar x:Name="OledProgressBar" IsIndeterminate="True"/>
+
+                        <Image 
+                        x:Name="GeneratedOledImage"
+                        HorizontalAlignment="Stretch"
+                        ></Image>
+                    </StackPanel>
+
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+        
+    </Grid>
+</Window>

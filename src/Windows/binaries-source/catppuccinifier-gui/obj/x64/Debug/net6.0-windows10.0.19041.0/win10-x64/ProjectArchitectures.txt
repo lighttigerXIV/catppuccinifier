@@ -1,0 +1,1 @@
+C:\Users\lighttigerxiv\source\repos\catppuccinifier\catppuccinifier.csproj;x64
