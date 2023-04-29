@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "catppuccinifier (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "catppuccinifier (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
