@@ -24,10 +24,10 @@ The cli version works by selecting the flavor, the noise level and the image to 
     catppuccinifier -f mocha macchiato -n 3 -i fuji.jpg
 
 ## Installation
-To install catppuccinifier you can use steps presented in the [INSTALL.md](https://github.com/lighttigerXIV/catppuccinifier/blob/INSTALL.md)
+To install catppuccinifier you can use steps presented in the [INSTALL.md](https://github.com/lighttigerXIV/catppuccinifier/blob/master/INSTALL.md)
 
 ## Uninstall
-To uninstall catppuccinifier you can use steps presented in the [UNINSTALL.md](https://github.com/lighttigerXIV/catppuccinifier/blob/UNINSTALL.md)
+To uninstall catppuccinifier you can use steps presented in the [UNINSTALL.md](https://github.com/lighttigerXIV/catppuccinifier/blob/master/UNINSTALL.md)
 
 ## Other amazing people that worked on the project
 - [Isabel](https://github.com/isabelroses)
