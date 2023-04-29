@@ -48,7 +48,7 @@ Catppuccinfier is available for Linux and Windows
   
 </details/>
 
-<details open>
+<details>
   <summary>Windows</summary>
   
   ### Dependencies
