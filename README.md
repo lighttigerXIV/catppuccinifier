@@ -4,6 +4,8 @@ This project gives you a cli and a gui for catppuccinifying your wallpapers.
 
 <img src="https://user-images.githubusercontent.com/35658492/233171758-54e43920-543b-40a1-953e-dac6e82e97c5.png" width="600" >
 
+<img src="https://user-images.githubusercontent.com/35658492/235312983-a03edf6e-43f3-4452-bc1a-a883e095f12a.png" width="600">
+
 <img src="https://user-images.githubusercontent.com/35658492/233171775-ded264c9-6a76-48a2-bd3b-4913f077bd74.png" width="600">
 
 
