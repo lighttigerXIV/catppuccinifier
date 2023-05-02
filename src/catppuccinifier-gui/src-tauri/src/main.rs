@@ -1,11 +1,15 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+
 use std::{env, fs};
+use std::os::windows::process::CommandExt;
 use std::path::Path;
 use std::process::Command;
 use rand::{Rng, thread_rng};
 use rand::distributions::Alphanumeric;
+
+
 
 
 #[tauri::command(rename_all = "snake_case")]
@@ -45,6 +49,43 @@ async fn generate_image(
                     Err("Error converting image".into())
                 }
             }
+        },
+        "windows"=>{
+            return match env::var("TEMP") {
+                Ok(temp_path) => {
+                    let temp_catppuccinifier_path = format!("{}\\catppuccinifier", &temp_path);
+
+                    if !Path::new(&temp_catppuccinifier_path).exists() {
+                        fs::create_dir(&temp_catppuccinifier_path)
+                            .expect("");
+                    }
+
+                    match Path::new(&temp_catppuccinifier_path).exists() {
+                        true => {
+                            let command = format!("magick convert '{}' 'C:\\Program Files\\Catppuccinifier\\flavors\\noise-{}\\{}.png' -hald-clut '{}\\{}.{}'", image_path, noise_level, flavor, &temp_catppuccinifier_path, &random_name, &image_extension);
+
+                            let result = Command::new("powershell")
+                                .arg("-Command")
+                                .arg(&command)
+                                .creation_flags(0x08000000)
+                                .output()
+                                .expect("");
+
+                            return if result.status.success() {
+                                Ok(format!("{}\\{}.{}", temp_catppuccinifier_path, random_name, image_extension))
+                            } else {
+                                Err("Error converting image".into())
+                            }
+                        }
+                        false => {
+                            Err("Error converting image".into())
+                        }
+                    }
+                },
+                Err(_) => {
+                    Err("Error getting temp variable".into())
+                }
+            }
         }
         _ => { Err("OS not supported".into()) }
     }
@@ -59,6 +100,11 @@ async fn clear_temp_folder(){
                 fs::remove_dir_all("/tmp/catppuccinifier").expect("Error deleting temp folder");
             }
         },
+        "windows"=>{
+            if Path::new("C:\\Windows\\TEMP\\catppuccinifier").exists(){
+                fs::remove_dir_all("C:\\Windows\\TEMP\\catppuccinifier").expect("Error deleting temp folder");
+            }
+        }
         _ =>{}
     }
 }

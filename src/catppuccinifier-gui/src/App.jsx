@@ -73,6 +73,8 @@ function App() {
     await invoke("generate_image", { image_path: selectedImageRawPath, noise_level: noiseLevel.toString(), flavor: "latte" })
       .then(path => {
 
+        
+
         setGeneratedLatteRawPath(path);
         setGeneratedLattePath(convertFileSrc(path));
       })
