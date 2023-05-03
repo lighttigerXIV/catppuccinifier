@@ -55,7 +55,7 @@ async fn generate_image(
         },
         "windows"=>{
             #[cfg(target_os = "windows")]
-            return generate_image_in_windows(image_path, noise_level, flavor);
+            return generate_image_in_windows(image_path.to_string(), noise_level.to_string(), flavor.to_string(), random_name.to_string(), image_extension.to_string()).await;
 
             return Err("".into())
         }
@@ -67,7 +67,9 @@ async fn generate_image(
 async fn generate_image_in_windows(
     image_path: String,
     noise_level: String,
-    flavor: String
+    flavor: String,
+    random_name: String,
+    image_extension: String
 ) -> Result<String, String>{
 
     return match env::var("TEMP") {
