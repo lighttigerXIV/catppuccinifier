@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.MuiSlider-thumb{
+  color: #cba6f7;
+}
+.MuiSlider-rail{
+  color:#cba6f7;
+}
+.MuiSlider-track{
+  color: #cba6f7;
+}

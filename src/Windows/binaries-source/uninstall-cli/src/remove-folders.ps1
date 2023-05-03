@@ -1,2 +1,0 @@
-Remove-Item "C:\Program Files\Catppuccinifier" -Force  -Recurse -ErrorAction SilentlyContinue
-Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Catppuccinifier.lnk" -Force  -Recurse -ErrorAction SilentlyContinue

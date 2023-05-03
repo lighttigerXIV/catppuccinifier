@@ -1,12 +1,15 @@
 <h1 align="center">Catppuccinifier</h1>
 
-This project gives you a cli and a gui for catppuccinifying your wallpapers.
+## About
+This project gives you a cli and a gui for catppuccinifying your wallpapers. It's available for Linux and Windows.
 
-<img src="https://user-images.githubusercontent.com/35658492/233171758-54e43920-543b-40a1-953e-dac6e82e97c5.png" width="600" >
+## Screenshots
+<div align="center">
+<img src="https://user-images.githubusercontent.com/35658492/235938197-817fab2d-eb25-415d-89f4-00f19dc979c3.png" width="600">
+<img src="https://user-images.githubusercontent.com/35658492/235938647-79fa5eef-a5e4-4f32-ad1b-ab265d7011cb.png" width="600">
 
-<img src="https://user-images.githubusercontent.com/35658492/235312983-a03edf6e-43f3-4452-bc1a-a883e095f12a.png" width="600">
+</div>
 
-<img src="https://user-images.githubusercontent.com/35658492/233171775-ded264c9-6a76-48a2-bd3b-4913f077bd74.png" width="600">
 
 
 ## How to use cli
