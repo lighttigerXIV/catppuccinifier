@@ -3,7 +3,10 @@
 
 
 use std::{env, fs};
+
+#[cfg(target_os = "windows")]
 use std::os::windows::process::CommandExt;
+
 use std::path::Path;
 use std::process::Command;
 use rand::{Rng, thread_rng};
@@ -51,43 +54,58 @@ async fn generate_image(
             }
         },
         "windows"=>{
-            return match env::var("TEMP") {
-                Ok(temp_path) => {
-                    let temp_catppuccinifier_path = format!("{}\\catppuccinifier", &temp_path);
+            #[cfg(target_os = "windows")]
+            return generate_image_in_windows(image_path, noise_level, flavor);
 
-                    if !Path::new(&temp_catppuccinifier_path).exists() {
-                        fs::create_dir(&temp_catppuccinifier_path)
-                            .expect("");
-                    }
-
-                    match Path::new(&temp_catppuccinifier_path).exists() {
-                        true => {
-                            let command = format!("magick convert '{}' 'C:\\Program Files\\Catppuccinifier\\flavors\\noise-{}\\{}.png' -hald-clut '{}\\{}.{}'", image_path, noise_level, flavor, &temp_catppuccinifier_path, &random_name, &image_extension);
-
-                            let result = Command::new("powershell")
-                                .arg("-Command")
-                                .arg(&command)
-                                .creation_flags(0x08000000) //Flag to run with no window
-                                .output()
-                                .expect("");
-
-                            return if result.status.success() {
-                                Ok(format!("{}\\{}.{}", temp_catppuccinifier_path, random_name, image_extension))
-                            } else {
-                                Err("Error converting image".into())
-                            }
-                        }
-                        false => {
-                            Err("Error converting image".into())
-                        }
-                    }
-                },
-                Err(_) => {
-                    Err("Error getting temp variable".into())
-                }
-            }
+            return Err("".into())
         }
         _ => { Err("OS not supported".into()) }
+    }
+}
+
+#[cfg(target_os = "windows")]
+async fn generate_image_in_windows(
+    image_path: String,
+    noise_level: String,
+    flavor: String
+) -> Result<String, String>{
+
+    return match env::var("TEMP") {
+        Ok(temp_path) => {
+            let temp_catppuccinifier_path = format!("{}\\catppuccinifier", &temp_path);
+
+            if !Path::new(&temp_catppuccinifier_path).exists() {
+                fs::create_dir(&temp_catppuccinifier_path)
+                    .expect("");
+            }
+
+
+            match Path::new(&temp_catppuccinifier_path).exists() {
+                true => {
+                    let command = format!("magick convert '{}' 'C:\\Program Files\\Catppuccinifier\\flavors\\noise-{}\\{}.png' -hald-clut '{}\\{}.{}'", image_path, noise_level, flavor, &temp_catppuccinifier_path, &random_name, &image_extension);
+
+
+                    let result = Command::new("powershell")
+                        .arg("-Command")
+                        .arg(&command)
+                        .creation_flags(0x08000000) //Flag to run with no window
+                        .output()
+                        .expect("");
+
+                    return if result.status.success() {
+                        Ok(format!("{}\\{}.{}", temp_catppuccinifier_path, random_name, image_extension))
+                    } else {
+                        Err("Error converting image".into())
+                    }
+                }
+                false => {
+                    Err("Error converting image".into())
+                }
+            }
+        },
+        Err(_) => {
+            Err("Error getting temp variable".into())
+        }
     }
 }
 
