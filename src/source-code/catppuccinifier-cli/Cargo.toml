@@ -3,6 +3,8 @@ name = "catppuccinifier-cli"
 version = "0.1.0"
 edition = "2021"
 
+
 [dependencies]
+colored = "2.0.0"
 dirs = "5.0.0"
-clap = { version = "4.2.1", features = ["derive", "cargo"] }
+clap = { version = "4.2.7", features = ["derive", "cargo"] }
