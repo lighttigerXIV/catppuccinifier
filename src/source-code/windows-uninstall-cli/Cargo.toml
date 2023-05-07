@@ -1,7 +1,0 @@
-[package]
-name = "uninstall-cli"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-powershell_script = "1.0.4"
