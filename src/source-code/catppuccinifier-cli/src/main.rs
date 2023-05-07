@@ -1,5 +1,6 @@
 use clap::{command, Arg, ArgAction};
-use colored::Colorize;
+use substring::Substring;
+
 use std::env;
 use std::path::Path;
 
@@ -75,33 +76,78 @@ fn generate_image_linux(noise_level: &str, image: &str, flavor: &str) -> Result<
     };
 }
 
+#[cfg(target_os = "windows")]
+fn generate_image_windows(noise_level: &str, image: &str, flavor: &str) -> Result<(), ()> {
+    use std::process::Command;
+
+    let exec_dir = match env::current_dir() {
+        Ok(path) => path.to_str().unwrap().to_string(),
+        Err(_) => return Err(()),
+    };
+
+    let command = format!(
+        "magick convert '{}\\{}' 'C:\\Program Files\\Catppuccinifier\\flavors\\noise-{}\\{}.png' -hald-clut '{}-noise{}-{}'",
+        exec_dir,
+        image,
+        noise_level,
+        flavor,
+        flavor,
+        noise_level,
+        image
+    );
+
+    let flavor_command = Command::new("powershell")
+        .arg("-Command")
+        .arg(&command)
+        .output()
+        .expect("ERROR: Couldn't convert image");
+
+    if !flavor_command.status.success() {
+        println!(
+            "An error occurred: {}",
+            String::from_utf8_lossy(&flavor_command.stderr)
+        );
+    }
+    return Ok(());
+}
+
 fn main() {
     let matches = get_cli().get_matches();
     let flavors_reference = matches.get_many::<String>("flavor");
     let noise_level = matches.get_one::<String>("noise").unwrap();
-    let image = matches.get_one::<String>("image").unwrap();
+    let image_path = matches.get_one::<String>("image").unwrap();
 
-    let image_extension = Path::new(image).extension().unwrap().to_str().unwrap();
-    let image_exists = Path::new(image).exists();
+    let os = env::consts::OS;
+    let image_extension = match Path::new(image_path).extension() {
+        Some(extension) => extension.to_str().unwrap().to_string(),
+        None => "".to_string(),
+    };
+    let image_exists = Path::new(image_path).exists();
 
-    if !image_exists {
-        println!("{}", "Couldn't find image".red());
-        std::process::exit(1)
-    }
+    #[cfg(target_os = "linux")]
+    if os == "linux" {
+        if !image_exists {
+            println!("{}", "Couldn't find image".red());
+            std::process::exit(1)
+        }
 
-    if !["jpg", "jpeg", "png", "webp"].contains(&image_extension) {
-        println!("{}", "Possible image types are [jpg, jpeg, png, webp]".red());
-        std::process::exit(1)
-    }
+        if !["jpg", "jpeg", "png", "webp"].contains(&image_extension) {
+            println!(
+                "{}",
+                "Possible image types are [jpg, jpeg, png, webp]".red()
+            );
+            std::process::exit(1)
+        }
 
-    match env::consts::OS {
-        "linux" => match flavors_reference {
+        match flavors_reference {
             Some(flavors) => {
                 for flavor in flavors {
                     if flavor == "all" {
                         for possible_flavor in ["latte", "frappe", "macchiato", "mocha", "oled"] {
                             match generate_image_linux(noise_level, image, possible_flavor) {
                                 Ok(()) => {
+                                    use colored::Colorize;
+
                                     println!(
                                         "{}",
                                         format!("Successfully generated {} image", possible_flavor)
@@ -109,6 +155,8 @@ fn main() {
                                     )
                                 }
                                 Err(()) => {
+                                    use colored::Colorize;
+
                                     println!(
                                         "{}",
                                         format!("Error generating {} image", possible_flavor).red()
@@ -134,12 +182,59 @@ fn main() {
             None => {
                 println!("{}", "Error getting flavors".red())
             }
-        },
-        _ => {
-            println!(
-                "{}",
-                "OS not supported ;-; | Catppuccinfier only runs in Linux and Windows".red()
-            );
         }
+    }
+
+    #[cfg(target_os = "windows")]
+    if os == "windows" {
+        if !image_exists {
+            println!("Couldn't find image");
+            std::process::exit(1)
+        }
+
+        if !["jpg", "jpeg", "png", "webp"].contains(&image_extension.as_str()) {
+            println!("Possible image types are [jpg, jpeg, png, webp]");
+            std::process::exit(1)
+        }
+
+        match flavors_reference {
+            Some(flavors) => {
+                for flavor in flavors {
+
+                    let image = if image_path.contains(r".\") {
+                        image_path.substring(2, image_path.len())
+                    } else {
+                        image_path
+                    };
+
+                    if flavor == "all" {
+                        for possible_flavor in ["latte", "frappe", "macchiato", "mocha", "oled"] {
+                            match generate_image_windows(noise_level, image, possible_flavor) {
+                                Ok(()) => {
+                                    println!("Successfully generated {} image", possible_flavor)
+                                }
+                                Err(()) => {
+                                    println!("Error generating {} image", possible_flavor)
+                                }
+                            }
+                        }
+                    } else {
+                        match generate_image_windows(noise_level, image, &flavor) {
+                            Ok(()) => {
+                                println!("Successfully generated {} image", flavor)
+                            }
+                            Err(()) => {
+                                println!("Error generating {} image", flavor)
+                            }
+                        }
+                    }
+                }
+            }
+            None => {}
+        }
+    }
+
+    if !["linux", "windows"].contains(&os) {
+        println!("OS not supported ;-; | Catppuccinfier only runs in Linux and Windows");
     }
 }

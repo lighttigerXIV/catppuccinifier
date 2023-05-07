@@ -8,3 +8,4 @@ edition = "2021"
 colored = "2.0.0"
 dirs = "5.0.0"
 clap = { version = "4.2.7", features = ["derive", "cargo"] }
+substring = "1.4.5"

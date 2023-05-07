@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 dirs = "5.0.1"
 colored = "2.0.0"
+powershell_script = "1.0.4"

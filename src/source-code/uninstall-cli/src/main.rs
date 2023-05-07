@@ -1,28 +1,50 @@
-use colored::Colorize;
 use std::env;
+use std::path::Path;
 
 fn main() {
     match env::consts::OS {
-        "linux" => match uninstall_in_linux() {
-            Ok(()) => {
-                println!(
-                    "{}",
-                    "Catppuccinifier uninstalled successfully. Bye bye ;-;".green()
-                );
-                println!(
-                    r"
+        "linux" =>
+        {
+            #[cfg(target_os = "linux")]
+            match uninstall_in_linux() {
+                Ok(()) => {
+                    use colored::Colorize;
+
+                    println!(
+                        "{}",
+                        "Catppuccinifier uninstalled successfully. Bye bye ;-;".green()
+                    );
+                    println!(
+                        r"
     /\_/\           ___
    = o_o =_______    \ \  
     __^      __(  \.__) )
 (@)<_____>__(_____)____/
                 "
-                )
+                    )
+                }
+                Err(error) => {
+                    use colored::Colorize;
+
+                    println!("{}", "Error uninstalling catppuccinifier :d".red());
+                    println!("{}", error);
+                }
             }
-            Err(error) => {
-                println!("{}", "Error uninstalling catppuccinifier :d".red());
-                println!("{}", error);
+        }
+        "windows" =>
+        {
+            #[cfg(target_os = "windows")]
+            match uninstall_in_windows() {
+                Ok(()) => {
+                    println!("Catppuccinifier uninstalled successfully. Bye bye ;-;");
+                    enter_to_close();
+                }
+                Err(()) => {
+                    println!("Error uninstalling catppuccinifier :d");
+                    enter_to_close();
+                }
             }
-        },
+        }
         _ => {
             println!("OS not supported ;-; | Catppuccinfier only runs in Linux and Windows");
         }
@@ -31,7 +53,7 @@ fn main() {
 
 #[cfg(target_os = "linux")]
 fn uninstall_in_linux() -> Result<(), String> {
-    use std::path::Path;
+    
     use std::process::Command;
 
     let home_dir_path = match dirs::home_dir() {
@@ -96,4 +118,27 @@ fn uninstall_in_linux() -> Result<(), String> {
     }
 
     return Ok(());
+}
+
+#[cfg(target_os = "windows")]
+fn uninstall_in_windows() -> Result<(), ()> {
+
+    if Path::new("C:\\Program Files\\Catppuccinifier").exists(){
+        match powershell_script::run(include_str!("windows\\remove-folders.ps1")) {
+            Ok(_)=>{return Ok(())},  
+            Err(_)=>{return Err(())}
+        }
+    } else{
+        return Ok(());
+    }
+}
+
+
+#[cfg(target_os = "windows")]
+fn enter_to_close(){
+    use std::io::{self, BufRead};
+
+    println!("Press enter to close...");
+    let mut iterator = io::stdin().lock().lines();
+    iterator.next();
 }
