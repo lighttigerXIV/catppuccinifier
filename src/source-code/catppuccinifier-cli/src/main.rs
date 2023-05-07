@@ -1,6 +1,4 @@
 use clap::{command, Arg, ArgAction};
-use substring::Substring;
-
 use std::env;
 use std::path::Path;
 
@@ -79,6 +77,7 @@ fn generate_image_linux(noise_level: &str, image: &str, flavor: &str) -> Result<
 #[cfg(target_os = "windows")]
 fn generate_image_windows(noise_level: &str, image: &str, flavor: &str) -> Result<(), ()> {
     use std::process::Command;
+    use substring::Substring;
 
     let exec_dir = match env::current_dir() {
         Ok(path) => path.to_str().unwrap().to_string(),
@@ -126,12 +125,14 @@ fn main() {
 
     #[cfg(target_os = "linux")]
     if os == "linux" {
+        use colored::Colorize;
+    
         if !image_exists {
             println!("{}", "Couldn't find image".red());
             std::process::exit(1)
         }
 
-        if !["jpg", "jpeg", "png", "webp"].contains(&image_extension) {
+        if !["jpg", "jpeg", "png", "webp"].contains(&image_extension.as_str()) {
             println!(
                 "{}",
                 "Possible image types are [jpg, jpeg, png, webp]".red()
@@ -144,9 +145,8 @@ fn main() {
                 for flavor in flavors {
                     if flavor == "all" {
                         for possible_flavor in ["latte", "frappe", "macchiato", "mocha", "oled"] {
-                            match generate_image_linux(noise_level, image, possible_flavor) {
+                            match generate_image_linux(noise_level, &image_path, possible_flavor) {
                                 Ok(()) => {
-                                    use colored::Colorize;
 
                                     println!(
                                         "{}",
@@ -155,7 +155,6 @@ fn main() {
                                     )
                                 }
                                 Err(()) => {
-                                    use colored::Colorize;
 
                                     println!(
                                         "{}",
@@ -165,7 +164,7 @@ fn main() {
                             }
                         }
                     } else {
-                        match generate_image_linux(noise_level, image, &flavor) {
+                        match generate_image_linux(noise_level, &image_path, &flavor) {
                             Ok(()) => {
                                 println!(
                                     "{}",
