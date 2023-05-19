@@ -218,7 +218,7 @@ function App() {
 
         <div className="mt-4 bg-skin-mantle p-2 rounded-xl border border-skin-surface0">
           <button
-            className="bg-skin-crust p-2 rounded-xl border border-skin-surface0 hover:enabled:rounded-full disabled:bg-skin-mantle flex justify-center items-center w-full"
+            className="bg-skin-crust p-2 rounded-xl border border-skin-surface0 hover:enabled:rounded-full disabled:bg-skin-mantle disabled:border-skin-crust flex justify-center items-center w-full"
             onClick={() => { selectImage() }}
             disabled={generatingImages}
           >
@@ -234,7 +234,7 @@ function App() {
                 </div>
 
                 <button
-                  className="bg-skin-crust p-2 rounded-xl border border-skin-surface0 hover:enabled:rounded-full flex justify-center items-center w-full disabled:bg-skin-mantle"
+                  className="bg-skin-crust p-2 rounded-xl border border-skin-surface0 hover:enabled:rounded-full flex justify-center items-center w-full disabled:bg-skin-mantle disabled:border-skin-crust"
                   onClick={() => { generateImages() }}
                   disabled={generatingImages}
                 >

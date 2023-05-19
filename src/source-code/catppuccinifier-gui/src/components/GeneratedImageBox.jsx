@@ -100,7 +100,7 @@ export default function GeneratedImageBox(props) {
         <div className="p-4 bg-skin-crust border border-skin-surface0 rounded-3xl aspect-square flex flex-col">
             <div className="flex">
                 <button
-                    className="bg-skin-mantle border border-skin-surface0 p-2 rounded-xl h-10 flex-grow mr-2  capitalize truncate hover:enabled:rounded-full disabled:bg-surface1"
+                    className="bg-skin-mantle border border-skin-surface0 p-2 rounded-xl h-10 flex-grow mr-2 capitalize truncate hover:enabled:rounded-full disabled:bg-skin-crust disabled:border-skin-mantle"
                     onClick={() => { props.onSaveImage(); }}
                     disabled={props.disabled}
                 >
@@ -116,7 +116,7 @@ export default function GeneratedImageBox(props) {
                 </button>
 
                 <button
-                    className="bg-skin-mantle border border-skin-surface0 p-2 rounded-xl h-10 hover:enabled:rounded-full disabled:bg-surface1"
+                    className="bg-skin-mantle border border-skin-surface0 p-2 rounded-xl h-10 hover:enabled:rounded-full disabled:bg-skin-crust disabled:border-skin-mantle"
                     onClick={() => { props.onPreviewImage(); }}
                     disabled={props.disabled}
                 >

@@ -12,9 +12,6 @@ use std::process::Command;
 use rand::{Rng, thread_rng};
 use rand::distributions::Alphanumeric;
 
-
-
-
 #[tauri::command(rename_all = "snake_case")]
 async fn generate_image(
     image_path: String,
@@ -56,8 +53,6 @@ async fn generate_image(
         "windows"=>{
             #[cfg(target_os = "windows")]
             return generate_image_in_windows(image_path.to_string(), noise_level.to_string(), flavor.to_string(), random_name.to_string(), image_extension.to_string()).await;
-
-            return Err("".into())
         }
         _ => { Err("OS not supported".into()) }
     }
