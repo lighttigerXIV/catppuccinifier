@@ -281,7 +281,7 @@ function App() {
   return (
     <div className={" h-screen grid grid-cols-12 min-w-full w-full bg-skin-crust text-skin-text " + theme}>
 
-      <div className=" 2xl:col-span-3 xl:col-span-3 lg:col-span-5 md:col-span-6 2xl:flex xl:flex lg:flex md:flex hidden h-screen">
+      <div className=" 2xl:col-span-3 xl:col-span-3 lg:col-span-5 md:col-span-6 2xl:flex xl:flex lg:flex md:flex hidden h-screen max-h-screen overflow-auto">
         <GenerateImageSection />
       </div>
 
