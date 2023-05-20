@@ -6,13 +6,30 @@ export default {
   ],
   theme: {
     extend: {
-      colors:{
-        "base": "#1e1e2e",
-        "crust": "#11111b",
-        "text": "#cdd6f4",
-        "surface0": "#313244",
-        "surface1": "#45475a",
-        "mauve": "#cba6f7"
+      colors: { 
+        skin: {
+          base: "var(--base)",
+          mantle: "var(--mantle)",
+          crust: "var(--crust)",
+          text: "var(--text)",
+          surface0: "var(--surface0)",
+          surface1: "var(--surface1)",
+          rosewater: "var(--rosewater)",
+          flamingo: "var(--flamingo)",
+          pink: "var(--pink)",
+          mauve: "var(--mauve)",
+          red: "var(--red)",
+          maroon: "var(--maroon)",
+          peach: "var(--peach)",
+          yellow: "var(--yellow)",
+          green: "var(--green)",
+          teal: "var(--teal)",
+          sky: "var(--sky)",
+          sapphire: "var(--sapphire)",
+          blue: "var(--blue)",
+          lavender: "var(--lavender)",
+
+        }
       }
     },
   },
