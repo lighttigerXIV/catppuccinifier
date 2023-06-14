@@ -1,14 +1,9 @@
-import { useState, React } from "react";
+import { React } from "react";
 import "./App.css";
 
-//Tauri
-import { open, save } from "@tauri-apps/api/dialog"
 import { open as openLink } from '@tauri-apps/api/shell';
-import { convertFileSrc, invoke } from '@tauri-apps/api/tauri';
-import { WebviewWindow } from "@tauri-apps/api/window"
-
-//Components
 import GeneratedImageBox from "./components/GeneratedImageBox";
+import Switch from '@mui/material/Switch';
 
 //Resources
 import { ReactComponent as SettingsIcon } from "./assets/images/settings.svg"
@@ -19,173 +14,48 @@ import { ReactComponent as PineappleIcon } from "./assets/images/pineapple.svg"
 import { ReactComponent as LotusIcon } from "./assets/images/lotus.svg"
 import { ReactComponent as BranchIcon } from "./assets/images/branch.svg"
 import { ReactComponent as MenuIcon } from "./assets/images/menu.svg"
+import { AppViewModel } from "./AppVM";
+import { ConversionMethods } from "./Constants";
 
 
 function App() {
 
-  const [theme, setTheme] = useState(localStorage.getItem("theme") !== null ? localStorage.getItem("theme") : "theme-mocha")
-  const [accent, setAccent] = useState(localStorage.getItem("accent") !== null ? localStorage.getItem("accent") : "blue")
-  const [noiseLevel, setNoiseLevel] = useState(4);
-  const [selectedImageRawPath, setSelectedImageRawPath] = useState("");
-  const [selectedImagePath, setSelectedImagePath] = useState("");
-  const [showGeneratedGrids, setShowGeneratedGrids] = useState(false);
-  const [generatedLatteRawPath, setGeneratedLatteRawPath] = useState("");
-  const [generatedLattePath, setGeneratedLattePath] = useState("");
-  const [generatedFrappeRawPath, setGeneratedFrappeRawPath] = useState("");
-  const [generatedFrappePath, setGeneratedFrappePath] = useState("");
-  const [generatedMacchiatoRawPath, setGeneratedMacchiatoRawPath] = useState("");
-  const [generatedMacchiatoPath, setGeneratedMacchiatoPath] = useState("");
-  const [generatedMochaRawPath, setGeneratedMochaRawPath] = useState("");
-  const [generatedMochaPath, setGeneratedMochaPath] = useState("");
-  const [generatedOledRawPath, setGeneratedOledRawPath] = useState("");
-  const [generatedOledPath, setGeneratedOledPath] = useState("");
-  const [generatingImages, setGeneratingImages] = useState(false)
-  const [showSettings, setShowSettings] = useState(false);
-  const [showSideNav, setShowSideNav] = useState(false);
-
-
-  async function selectImage() {
-
-    const selected = await open({
-      multiple: false,
-      filters: [{
-        name: "Images",
-        extensions: ["png", "webp", "jpg", "jpeg"]
-      }]
-    });
-
-    if (selected !== null) {
-
-      setSelectedImageRawPath(selected);
-      setSelectedImagePath(convertFileSrc(selected));
-      setGeneratedLattePath("");
-      setGeneratedFrappePath("");
-      setGeneratedMacchiatoPath("");
-      setGeneratedMochaPath("");
-      setGeneratedOledPath("");
-      setShowGeneratedGrids(false);
-    }
-  }
-
-
-  async function generateImages() {
-
-    setGeneratedLattePath("");
-    setGeneratedFrappePath("");
-    setGeneratedMacchiatoPath("");
-    setGeneratedMochaPath("");
-    setGeneratedOledPath("");
-
-    setGeneratingImages(true);
-
-    setShowGeneratedGrids(true);
-
-    await invoke("clear_temp_folder");
-
-    await invoke("generate_image", { image_path: selectedImageRawPath, noise_level: noiseLevel.toString(), flavor: "latte" })
-      .then(path => {
-
-        setGeneratedLatteRawPath(path);
-        setGeneratedLattePath(convertFileSrc(path));
-      })
-      .catch((error) => { console.error(error) });
-
-    await invoke("generate_image", { image_path: selectedImageRawPath, noise_level: noiseLevel.toString(), flavor: "frappe" })
-      .then(path => {
-
-        setGeneratedFrappeRawPath(path);
-        setGeneratedFrappePath(convertFileSrc(path));
-      })
-      .catch((error) => { console.error(error) });
-
-    await invoke("generate_image", { image_path: selectedImageRawPath, noise_level: noiseLevel.toString(), flavor: "macchiato" })
-      .then(path => {
-
-        setGeneratedMacchiatoRawPath(path);
-        setGeneratedMacchiatoPath(convertFileSrc(path));
-      })
-      .catch((error) => { console.error(error) });
-
-    await invoke("generate_image", { image_path: selectedImageRawPath, noise_level: noiseLevel.toString(), flavor: "mocha" })
-      .then(path => {
-
-        setGeneratedMochaRawPath(path);
-        setGeneratedMochaPath(convertFileSrc(path));
-      })
-      .catch((error) => { console.error(error) });
-
-    await invoke("generate_image", { image_path: selectedImageRawPath, noise_level: noiseLevel.toString(), flavor: "oled" })
-      .then(path => {
-
-        setGeneratedOledRawPath(path);
-        setGeneratedOledPath(convertFileSrc(path));
-      })
-      .catch((error) => { console.error(error) });
-
-    setGeneratingImages(false);
-  }
-
-  function saveImage(flavor) {
-
-    var fileName = "";
-    invoke("get_os")
-      .then((os) => {
-
-        if (os === "windows") {
-          fileName = flavor + "-noise" + noiseLevel + "-" + selectedImageRawPath.split('\\').pop();
-        } else {
-          fileName = flavor + "-noise" + noiseLevel + "-" + selectedImageRawPath.split('/').pop();
-        }
-
-        save({
-          defaultPath: fileName,
-          filters: [
-            {
-              name: "Images (png, jpg, jpeg, webp)",
-              extensions: ["png", "webp", "jpg", "jpeg"]
-            }
-          ]
-        }).then((savedPath) => {
-
-          switch (flavor) {
-            case "latte": {
-              invoke("save_image", { image_path: generatedLatteRawPath, saved_path: savedPath })
-              break;
-            }
-            case "frappe": {
-              invoke("save_image", { image_path: generatedFrappeRawPath, saved_path: savedPath })
-              break;
-            }
-            case "macchiato": {
-              invoke("save_image", { image_path: generatedMacchiatoRawPath, saved_path: savedPath })
-              break;
-            }
-            case "mocha": {
-              invoke("save_image", { image_path: generatedMochaRawPath, saved_path: savedPath })
-              break;
-            }
-            case "oled": {
-              invoke("save_image", { image_path: generatedOledRawPath, saved_path: savedPath })
-              break;
-            }
-          }
-        })
-      })
-  }
-
-  function previewImage(flavor, path) {
-    const webview = new WebviewWindow('preview', {
-      url: 'preview.html?path=' + path,
-      title: flavor + " Preview",
-    })
-
-    webview.once('tauri://created', function () { })
-    webview.once('tauri://error', function (e) {
-      console.error(e);
-    })
-  }
-
-
+  const {
+    theme, setTheme,
+    accent, setAccent,
+    noiseLevel, setNoiseLevel,
+    conversionMethod, setConversionMethod,
+    showAdvancedConversion, setShowAdvancedConversion,
+    gaussianEuclide, setGaussianEuclide,
+    gaussianNearest, setGaussianNearest,
+    gaussianSamplingMean, setGaussianSamplingMean,
+    gaussianSamplingSTD, setGaussianSamplingSTD,
+    gaussianSamplingIterations, setGaussianSamplingIterations,
+    linearNearest, setLinearNearest,
+    sheppardPower, setSheppardPower,
+    sheppardNearest, setSheppardNearest,
+    selectedImageRawPath, setSelectedImageRawPath,
+    selectedImagePath, setSelectedImagePath,
+    showGeneratedGrids, setShowGeneratedGrids,
+    generatedLattePath, setGeneratedLattePath,
+    generatedLatteRawPath, setGeneratedLatteRawPath,
+    generatedFrappePath, setGeneratedFrappePath,
+    generatedFrappeRawPath, setGeneratedFrappeRawPath,
+    generatedMacchiatoPath, setGeneratedMacchiatoPath,
+    generatedMacchiatoRawPath, setGeneratedMacchiatoRawPath,
+    generatedMochaPath, setGeneratedMochaPath,
+    generatedMochaRawPath, setGeneratedMochaRawPath,
+    generatedOledPath, setGeneratedOledPath,
+    generatedOledRawPath, setGeneratedOledRawPath,
+    generatingImages, setGeneratingImages,
+    showSettings, setShowSettings,
+    showSideNav, setShowSideNav,
+    selectImage,
+    generateImages,
+    saveImage,
+    previewImage,
+    resetConversionValues
+  } = AppViewModel()
 
   function themesSettingClasses(setting) {
 
@@ -205,15 +75,246 @@ function App() {
     }
   }
 
-  //UI
+  function getRadioColor(){
+
+    return "checked:bg-skin-" + accent
+  }
 
   function GenerateImageSection() {
 
     return (
       <div className="flex flex-col flex-grow p-4">
         <div className="p-2 bg-skin-mantle rounded-xl border border-skin-surface0">
-          <div>Noise Level - {noiseLevel}</div>
-          <input className={"w-full slider slider-" + accent} value={noiseLevel} onChange={e => { setNoiseLevel(e.target.value) }} type="range" max={4} min={0} ></input>
+          <div>Hald Level - {noiseLevel}</div>
+          <input className={"w-full slider slider-" + accent} value={noiseLevel} onChange={e => { setNoiseLevel(parseInt(e.target.value)) }} type="range" max={8} min={2} />
+        </div>
+
+        <div className="mt-2 p-2 bg-skin-mantle rounded-xl border border-skin-surface0">
+
+          <div>Conversion Method</div>
+
+          <div className="flex">
+
+            <div className="flex-grow">Advanced</div>
+
+            <Switch
+              checked={showAdvancedConversion}
+              onChange={() => {
+                setShowAdvancedConversion(!showAdvancedConversion)
+                resetConversionValues()
+              }}
+              name=""
+            />
+          </div>
+
+          <div className="mt-2 p-2 border border-skin-surface0 rounded-xl">
+            <div
+              className="flex items-center cursor-pointer"
+              onClick={() => {
+                setConversionMethod(ConversionMethods.gaussian.codename);
+              }}
+            >
+
+              <div className="flex-grow font-semibold">{ConversionMethods.gaussian.name}</div>
+
+              <input
+                checked={conversionMethod === ConversionMethods.gaussian.codename}
+                type="radio"
+                className={" rounded-full bg-skin-base border border-skin-surface0 " + getRadioColor()}
+              />
+            </div>
+
+            {
+              conversionMethod === ConversionMethods.gaussian.codename && showAdvancedConversion ?
+                <div>
+
+                  <div>Euclide - {gaussianEuclide}</div>
+                  <input
+                    className={" mt-2 w-full slider slider-" + accent}
+                    value={gaussianEuclide}
+                    onChange={e => { setGaussianEuclide(parseInt(e.target.value)) }}
+                    type="range"
+                    max={ConversionMethods.gaussian.properties.euclide.max}
+                    min={ConversionMethods.gaussian.properties.euclide.min}
+                  />
+
+                  <div>Nearest - {gaussianNearest}</div>
+                  <input
+                    className={" mt-2 w-full slider slider-" + accent}
+                    value={gaussianNearest}
+                    onChange={e => { setGaussianNearest(parseInt(e.target.value)) }}
+                    type="range"
+                    max={ConversionMethods.gaussian.properties.nearest.max}
+                    min={ConversionMethods.gaussian.properties.nearest.min}
+                  />
+                </div>
+                :
+                null
+            }
+          </div>
+
+          <div className="mt-2 p-2 border border-skin-surface0 rounded-xl">
+            <div
+              className="flex items-center cursor-pointer"
+              onClick={() => {
+                setConversionMethod(ConversionMethods.gaussian_sampling.codename);
+              }}
+            >
+
+              <div className="flex-grow font-semibold">{ConversionMethods.gaussian_sampling.name}</div>
+
+              <input
+                checked={conversionMethod === ConversionMethods.gaussian_sampling.codename}
+                type="radio"
+                className={" rounded-full bg-skin-base border border-skin-surface0 " + getRadioColor()}
+              />
+            </div>
+
+            {
+              conversionMethod === ConversionMethods.gaussian_sampling.codename && showAdvancedConversion ?
+                <div>
+
+                  <div>Mean - {gaussianSamplingMean}</div>
+
+                  <input
+                    className={" mt-2 w-full slider slider-" + accent}
+                    value={gaussianSamplingMean}
+                    onChange={e => { setGaussianSamplingMean(parseInt(e.target.value)) }}
+                    type="range"
+                    max={ConversionMethods.gaussian_sampling.properties.mean.max}
+                    min={ConversionMethods.gaussian_sampling.properties.mean.min}
+                  />
+
+                  <div>STD - {gaussianSamplingSTD}</div>
+
+                  <input
+                    className={" mt-2 w-full slider slider-" + accent}
+                    value={gaussianSamplingSTD}
+                    onChange={e => { setGaussianSamplingSTD(parseInt(e.target.value)) }}
+                    type="range"
+                    max={ConversionMethods.gaussian_sampling.properties.std.max}
+                    min={ConversionMethods.gaussian_sampling.properties.std.min}
+                  />
+
+                  <div>Iterations - {gaussianSamplingIterations}</div>
+
+                  <input
+                    className={" mt-2 w-full slider slider-" + accent}
+                    value={gaussianSamplingIterations}
+                    onChange={e => { setGaussianSamplingIterations(parseInt(e.target.value)) }}
+                    type="range"
+                    max={ConversionMethods.gaussian_sampling.properties.iterations.max}
+                    min={ConversionMethods.gaussian_sampling.properties.iterations.min}
+                  />
+                </div>
+                :
+                null
+            }
+          </div>
+
+          <div className="mt-2 p-2 border border-skin-surface0 rounded-xl">
+            <div
+              className="flex items-center cursor-pointer"
+              onClick={() => {
+                setConversionMethod(ConversionMethods.linear.codename);
+              }}
+            >
+
+              <div className="flex-grow font-semibold">{ConversionMethods.linear.name}</div>
+
+              <input
+                checked={conversionMethod === ConversionMethods.linear.codename}
+                type="radio"
+                className={" rounded-full bg-skin-base border border-skin-surface0 " + getRadioColor()}
+              />
+            </div>
+
+            {
+              conversionMethod === ConversionMethods.linear.codename && showAdvancedConversion ?
+                <div>
+
+                  <div>Nearest - {linearNearest}</div>
+
+                  <input
+                    className={" mt-2 w-full slider slider-" + accent}
+                    value={linearNearest}
+                    onChange={e => { setLinearNearest(parseInt(e.target.value)) }}
+                    type="range"
+                    max={ConversionMethods.linear.properties.nearest.max}
+                    min={ConversionMethods.linear.properties.nearest.min}
+                  />
+                </div>
+                :
+                null
+            }
+          </div>
+
+          <div className="mt-2 p-2 border border-skin-surface0 rounded-xl">
+            <div
+              className="flex items-center cursor-pointer"
+              onClick={() => {
+                setConversionMethod(ConversionMethods.sheppard.codename);
+              }}
+            >
+
+              <div className="flex-grow font-semibold">{ConversionMethods.sheppard.name}</div>
+
+              <input
+                checked={conversionMethod === ConversionMethods.sheppard.codename}
+                type="radio"
+                className={" rounded-full bg-skin-base border border-skin-surface0 " + getRadioColor()}
+              />
+            </div>
+
+            {
+              conversionMethod === ConversionMethods.sheppard.codename && showAdvancedConversion ?
+                <div>
+
+                  <div>Power - {sheppardPower}</div>
+
+                  <input
+                    className={" mt-2 w-full slider slider-" + accent}
+                    value={sheppardPower}
+                    onChange={e => { setSheppardPower(parseInt(e.target.value)) }}
+                    type="range"
+                    max={ConversionMethods.sheppard.properties.power.max}
+                    min={ConversionMethods.sheppard.properties.power.min}
+                  />
+
+                  <div>Nearest - {sheppardNearest}</div>
+
+                  <input
+                    className={" mt-2 w-full slider slider-" + accent}
+                    value={sheppardNearest}
+                    onChange={e => { setSheppardNearest(parseInt(e.target.value)) }}
+                    type="range"
+                    max={ConversionMethods.sheppard.properties.nearest.max}
+                    min={ConversionMethods.sheppard.properties.nearest.min}
+                  />
+                </div>
+
+                :
+                null
+            }
+          </div>
+
+          <div className="mt-2 p-2 border border-skin-surface0 rounded-xl">
+            <div
+              className="flex items-center cursor-pointer"
+              onClick={() => {
+                setConversionMethod(ConversionMethods.nearest_neighbor.codename);
+              }}
+            >
+
+              <div className="flex-grow font-semibold">{ConversionMethods.nearest_neighbor.name}</div>
+
+              <input
+                checked={conversionMethod === ConversionMethods.nearest_neighbor.codename}
+                type="radio"
+                className={" rounded-full bg-skin-base border border-skin-surface0 " + getRadioColor()}
+              />
+            </div>
+          </div>
         </div>
 
         <div className="mt-4 bg-skin-mantle p-2 rounded-xl border border-skin-surface0">
@@ -244,6 +345,7 @@ function App() {
               : null
           }
         </div>
+
 
         <div className="flex-grow"></div>
 
@@ -288,7 +390,7 @@ function App() {
 
       <div className=" 2xl:hidden xl:hidden lg:hidden md:hidden md-w-60 flex p-4">
         <button className=" hover:bg-skin-surface0 p-1 rounded-full" onClick={() => { setShowSideNav(true) }}>
-          <MenuIcon className="w-5 h-5 fill-skin-text"/>
+          <MenuIcon className="w-5 h-5 fill-skin-text" />
         </button>
       </div>
 

@@ -1,66 +1,183 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-
 use std::{env, fs};
 
 #[cfg(target_os = "windows")]
 use std::os::windows::process::CommandExt;
 
-use std::path::Path;
-use std::process::Command;
-use rand::{Rng, thread_rng};
 use rand::distributions::Alphanumeric;
+use rand::{thread_rng, Rng};
+use std::path::Path;
+
+const SEED: u64 = u64::from_be_bytes(*b"42080085");
 
 #[tauri::command(rename_all = "snake_case")]
 async fn generate_image(
     image_path: String,
-    noise_level: String,
+    hald_level: u8,
     flavor: String,
+    conversion_method: String,
+    gaussian_euclide: f64,
+    gaussian_nearest: usize,
+    gaussian_sampling_mean: f64,
+    gaussian_sampling_std: f64,
+    gaussian_sampling_iterations: usize,
+    linear_nearest: usize,
+    sheppard_power: f64,
+    sheppard_nearest: usize
 ) -> Result<String, String> {
-    let image_extension = Path::new(&image_path).extension().unwrap().to_str().unwrap();
-    let random_name: String = thread_rng().sample_iter(&Alphanumeric).take(14).map(char::from).collect();
+    let image_extension = Path::new(&image_path)
+        .extension()
+        .unwrap()
+        .to_str()
+        .unwrap();
+    let random_name: String = thread_rng()
+        .sample_iter(&Alphanumeric)
+        .take(14)
+        .map(char::from)
+        .collect();
 
 
     match env::consts::OS {
         "linux" => {
             if !Path::new("/tmp/catppuccinifier").exists() {
-                fs::create_dir("/tmp/catppuccinifier")
-                    .expect("");
+                fs::create_dir("/tmp/catppuccinifier").expect("");
             }
 
             return match Path::new("/tmp/catppuccinifier").exists() {
                 true => {
-                    let command = format!("convert '{}' $HOME/.local/share/catppuccinifier/flavors/noise-{}/{}.png -hald-clut /tmp/catppuccinifier/{}.{}", image_path, noise_level, flavor, random_name, &image_extension);
-
-                    let result = Command::new("/bin/sh")
-                        .arg("-c")
-                        .arg(&command)
-                        .output()
-                        .expect("");
-
-                    if result.status.success() {
-                        Ok(format!("/tmp/catppuccinifier/{}.{}", random_name, image_extension))
-                    } else {
-                        Err("Error converting image".into())
-                    }
+                    match generate_image_in_linux(
+                        image_path.to_string(),
+                        hald_level,
+                        flavor.to_string(),
+                        random_name.to_string(),
+                        image_extension.to_string(),
+                        conversion_method,
+                        gaussian_euclide,
+                        gaussian_nearest,
+                        gaussian_sampling_mean,
+                        gaussian_sampling_std,
+                        gaussian_sampling_iterations,
+                        linear_nearest,
+                        sheppard_power,
+                        sheppard_nearest,
+                    )
+                    .await
+                    {
+                        Ok(image) => return Ok(image),
+                        Err(error) => return Err(error.into()),
+                    };
                 }
-                false => {
-                    Err("Error converting image".into())
-                }
-            }
-        },
-        "windows"=>{
-
+                false => Err("Error converting image".into()),
+            };
+        }
+        "windows" => {
             #[cfg(target_os = "windows")]
-            match generate_image_in_windows(image_path.to_string(), noise_level.to_string(), flavor.to_string(), random_name.to_string(), image_extension.to_string()).await {
-                Ok(image)=>{return Ok(image)},
-                Err(error)=>{return Err(error.into())}
-            } ;
+            match generate_image_in_windows(
+                image_path.to_string(),
+                hald_level.to_string(),
+                flavor.to_string(),
+                random_name.to_string(),
+                image_extension.to_string(),
+            )
+            .await
+            {
+                Ok(image) => return Ok(image),
+                Err(error) => return Err(error.into()),
+            };
 
             return Err("".into());
         }
-        _ => { Err("OS not supported".into()) }
+        _ => Err("OS not supported".into()),
+    }
+}
+
+#[cfg(target_os = "linux")]
+async fn generate_image_in_linux(
+    image_path: String,
+    hald_level: u8,
+    flavor: String,
+    random_name: String,
+    image_extension: String,
+    conversion_method: String,
+    gaussian_euclide: f64,
+    gaussian_nearest: usize,
+    gaussian_sampling_mean: f64,
+    gaussian_sampling_std: f64,
+    gaussian_sampling_iterations: usize,
+    linear_nearest: usize,
+    sheppard_power: f64,
+    sheppard_nearest: usize
+) -> Result<String, String> {
+    use exoquant::SimpleColorSpace;
+    use image::open;
+    use lutgen::identity::correct_image;
+    use lutgen::interpolation::{
+        GaussianRemapper, GaussianSamplingRemapper, LinearRemapper, NearestNeighborRemapper,
+        ShepardRemapper,
+    };
+    use lutgen::{GenerateLut, Palette};
+
+    let palette = match flavor.as_str() {
+        "mocha" => Palette::CatppuccinMocha.get(),
+        "macchiato" => Palette::CatppuccinMacchiato.get(),
+        "frappe" => Palette::CatppuccinFrappe.get(),
+        "latte" => Palette::CatppuccinLatte.get(),
+        _ => Palette::CatppuccinOled.get(),
+    };
+
+    let hald_clut = match conversion_method.as_str() {
+        "gaussian" => GaussianRemapper::new(
+            &palette,
+            gaussian_euclide,
+            gaussian_nearest,
+            SimpleColorSpace::default(),
+        )
+        .generate_lut(hald_level),
+
+        "gaussian_sampling" => GaussianSamplingRemapper::new(
+            &palette,
+            gaussian_sampling_mean,
+            gaussian_sampling_std,
+            gaussian_sampling_iterations,
+            SEED,
+            SimpleColorSpace::default(),
+        )
+        .generate_lut(hald_level),
+
+        "linear" => LinearRemapper::new(&palette, linear_nearest, SimpleColorSpace::default())
+            .generate_lut(hald_level),
+
+        "sheppard" => ShepardRemapper::new(
+            &palette,
+            sheppard_power,
+            sheppard_nearest,
+            SimpleColorSpace::default(),
+        )
+        .generate_lut(hald_level),
+
+        _ => NearestNeighborRemapper::new(&palette, SimpleColorSpace::default())
+            .generate_lut(hald_level),
+    };
+
+    let lut_was_generated = match hald_clut.save("/tmp/catppuccinifier/lut.png") {
+        Err(_) => false,
+        Ok(_) => true,
+    };
+
+    if lut_was_generated {
+        let mut new_image = open(image_path).unwrap().to_rgb8();
+        correct_image(&mut new_image, &hald_clut);
+
+        let save_path = format!("/tmp/catppuccinifier/{}.{}", &random_name, &image_extension);
+
+        match new_image.save(&save_path) {
+            Ok(_) => return Ok(save_path.into()),
+            Err(_) => return Err("Error converting image".into()),
+        };
+    } else {
+        return Err("".into());
     }
 }
 
@@ -70,23 +187,19 @@ async fn generate_image_in_windows(
     noise_level: String,
     flavor: String,
     random_name: String,
-    image_extension: String
-) -> Result<String, String>{
-
+    image_extension: String,
+) -> Result<String, String> {
     return match env::var("TEMP") {
         Ok(temp_path) => {
             let temp_catppuccinifier_path = format!("{}\\catppuccinifier", &temp_path);
 
             if !Path::new(&temp_catppuccinifier_path).exists() {
-                fs::create_dir(&temp_catppuccinifier_path)
-                    .expect("");
+                fs::create_dir(&temp_catppuccinifier_path).expect("");
             }
-
 
             match Path::new(&temp_catppuccinifier_path).exists() {
                 true => {
                     let command = format!("magick convert '{}' 'C:\\Program Files\\Catppuccinifier\\flavors\\noise-{}\\{}.png' -hald-clut '{}\\{}.{}'", image_path, noise_level, flavor, &temp_catppuccinifier_path, &random_name, &image_extension);
-
 
                     let result = Command::new("powershell")
                         .arg("-Command")
@@ -96,65 +209,61 @@ async fn generate_image_in_windows(
                         .expect("");
 
                     return if result.status.success() {
-                        Ok(format!("{}\\{}.{}", temp_catppuccinifier_path, random_name, image_extension))
+                        Ok(format!(
+                            "{}\\{}.{}",
+                            temp_catppuccinifier_path, random_name, image_extension
+                        ))
                     } else {
                         Err("Error converting image".into())
-                    }
+                    };
                 }
-                false => {
-                    Err("Error converting image".into())
-                }
+                false => Err("Error converting image".into()),
             }
-        },
-        Err(_) => {
-            Err("Error getting temp variable".into())
         }
-    }
+        Err(_) => Err("Error getting temp variable".into()),
+    };
 }
 
 #[tauri::command]
-async fn get_os() -> String{
+async fn get_os() -> String {
     let os = env::consts::OS;
-    return os.to_string()
+    return os.to_string();
 }
 
 #[tauri::command]
-async fn clear_temp_folder(){
-
+async fn clear_temp_folder() {
     match env::consts::OS {
-        "linux"=>{
-            if Path::new("/tmp/catppuccinifier/").exists(){
+        "linux" => {
+            if Path::new("/tmp/catppuccinifier/").exists() {
                 fs::remove_dir_all("/tmp/catppuccinifier").expect("Error deleting temp folder");
             }
-        },
-        "windows"=>{
-            if Path::new("C:\\Windows\\TEMP\\catppuccinifier").exists(){
-                fs::remove_dir_all("C:\\Windows\\TEMP\\catppuccinifier").expect("Error deleting temp folder");
+        }
+        "windows" => {
+            if Path::new("C:\\Windows\\TEMP\\catppuccinifier").exists() {
+                fs::remove_dir_all("C:\\Windows\\TEMP\\catppuccinifier")
+                    .expect("Error deleting temp folder");
             }
         }
-        _ =>{}
+        _ => {}
     }
 }
 
 #[tauri::command(rename_all = "snake_case")]
-async fn save_image(
-    image_path: String,
-    saved_path: String
-)-> Result<String, String>{
-
+async fn save_image(image_path: String, saved_path: String) -> Result<String, String> {
     return match fs::copy(&image_path, &saved_path) {
-        Ok(_) => {
-            Ok("Image saved successfully".into())
-        },
-        Err(_) => {
-            Err("Error saving image".into())
-        }
-    }
+        Ok(_) => Ok("Image saved successfully".into()),
+        Err(_) => Err("Error saving image".into()),
+    };
 }
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![generate_image, clear_temp_folder, save_image, get_os])
+        .invoke_handler(tauri::generate_handler![
+            generate_image,
+            clear_temp_folder,
+            save_image,
+            get_os
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
