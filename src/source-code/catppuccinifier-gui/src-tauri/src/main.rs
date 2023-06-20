@@ -43,15 +43,15 @@ async fn generate_image(
         .collect();
 
     match env::consts::OS {
-        #[cfg(target_os = "linux")]
         "linux" => {
             if !Path::new("/tmp/catppuccinifier").exists() {
                 fs::create_dir("/tmp/catppuccinifier").expect("");
             }
 
-            return match Path::new("/tmp/catppuccinifier").exists() {
+            return match Path::new("/tmp/catppuccinifier/").exists() {
                 true => {
-                    match generate_image_in_linux(
+                    match generate(
+                        "/tmp/catppuccinifier".to_string(),
                         image_path.to_string(),
                         hald_level,
                         flavor.to_string(),
@@ -76,7 +76,6 @@ async fn generate_image(
                 false => Err("Error converting image".into()),
             };
         }
-        #[cfg(target_os = "windows")]
         "windows" =>{
 
             if !Path::new("C:\\Windows\\Temp\\catppuccinifier").exists() {
@@ -85,7 +84,8 @@ async fn generate_image(
 
             return match Path::new("C:\\Windows\\Temp\\catppuccinifier").exists() {
                 true => {
-                    match generate_image_in_windows(
+                    match generate(
+                        "C:\\Windows\\Temp\\catppuccinifier\\".to_string(),
                         image_path.to_string(),
                         hald_level,
                         flavor.to_string(),
@@ -114,8 +114,8 @@ async fn generate_image(
     }
 }
 
-#[cfg(target_os = "linux")]
-async fn generate_image_in_linux(
+async fn generate(
+    temp_path: String,
     image_path: String,
     hald_level: u8,
     flavor: String,
@@ -130,8 +130,8 @@ async fn generate_image_in_linux(
     linear_nearest: usize,
     sheppard_power: f64,
     sheppard_nearest: usize,
-) -> Result<String, String> {
-
+) -> Result<String, String>{
+    
     let palette = match flavor.as_str() {
         "mocha" => Palette::CatppuccinMocha.get(),
         "macchiato" => Palette::CatppuccinMacchiato.get(),
@@ -174,7 +174,7 @@ async fn generate_image_in_linux(
             .generate_lut(hald_level),
     };
 
-    let lut_was_generated = match hald_clut.save("/tmp/catppuccinifier/lut.png") {
+    let lut_was_generated = match hald_clut.save( format!("{}lut.png", temp_path)) {
         Err(_) => false,
         Ok(_) => true,
     };
@@ -183,7 +183,7 @@ async fn generate_image_in_linux(
         let mut new_image = open(image_path).unwrap().to_rgb8();
         correct_image(&mut new_image, &hald_clut);
 
-        let save_path = format!("/tmp/catppuccinifier/{}.{}", &random_name, &image_extension);
+        let save_path = format!("{}{}.{}", &temp_path, &random_name, &image_extension);
 
         match new_image.save(&save_path) {
             Ok(_) => return Ok(save_path.into()),
@@ -194,84 +194,6 @@ async fn generate_image_in_linux(
     }
 }
 
-#[cfg(target_os = "windows")]
-async fn generate_image_in_windows(
-    image_path: String,
-    hald_level: u8,
-    flavor: String,
-    random_name: String,
-    image_extension: String,
-    conversion_method: String,
-    gaussian_euclide: f64,
-    gaussian_nearest: usize,
-    gaussian_sampling_mean: f64,
-    gaussian_sampling_std: f64,
-    gaussian_sampling_iterations: usize,
-    linear_nearest: usize,
-    sheppard_power: f64,
-    sheppard_nearest: usize,
-) -> Result<String, String> {
-    let palette = match flavor.as_str() {
-        "mocha" => Palette::CatppuccinMocha.get(),
-        "macchiato" => Palette::CatppuccinMacchiato.get(),
-        "frappe" => Palette::CatppuccinFrappe.get(),
-        "latte" => Palette::CatppuccinLatte.get(),
-        _ => Palette::CatppuccinOled.get(),
-    };
-
-    let hald_clut = match conversion_method.as_str() {
-        "gaussian" => GaussianRemapper::new(
-            &palette,
-            gaussian_euclide,
-            gaussian_nearest,
-            SimpleColorSpace::default(),
-        )
-        .generate_lut(hald_level),
-
-        "gaussian_sampling" => GaussianSamplingRemapper::new(
-            &palette,
-            gaussian_sampling_mean,
-            gaussian_sampling_std,
-            gaussian_sampling_iterations,
-            SEED,
-            SimpleColorSpace::default(),
-        )
-        .generate_lut(hald_level),
-
-        "linear" => LinearRemapper::new(&palette, linear_nearest, SimpleColorSpace::default())
-            .generate_lut(hald_level),
-
-        "sheppard" => ShepardRemapper::new(
-            &palette,
-            sheppard_power,
-            sheppard_nearest,
-            SimpleColorSpace::default(),
-        )
-        .generate_lut(hald_level),
-
-        _ => NearestNeighborRemapper::new(&palette, SimpleColorSpace::default())
-            .generate_lut(hald_level),
-    };
-
-    let lut_was_generated = match hald_clut.save("C:\\Windows\\TEMP\\catppuccinifier\\lut.png") {
-        Err(error) => { println!("{}", error); false} ,
-        Ok(_) => true,
-    };
-
-    if lut_was_generated {
-        let mut new_image = open(image_path).unwrap().to_rgb8();
-        correct_image(&mut new_image, &hald_clut);
-
-        let save_path = format!("C:\\Windows\\TEMP\\catppuccinifier\\{}.{}", &random_name, &image_extension);
-
-        match new_image.save(&save_path) {
-            Ok(_) => return Ok(save_path.into()),
-            Err(error) => return Err(error.to_string().into()),
-        };
-    } else {
-        return Err("Lut wasnt generated".into());
-    }
-}
 
 #[tauri::command]
 async fn get_os() -> String {

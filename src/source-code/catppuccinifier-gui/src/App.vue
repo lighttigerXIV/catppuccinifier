@@ -251,9 +251,9 @@ export default defineComponent({
         .then((os) => {
 
           if (os === "windows") {
-            fileName = flavor + "-noise" + haldLevel.value + "-" + selectedImageRawPath.value.split('\\').pop();
+            fileName = flavor + "-hald" + haldLevel.value + "-" + selectedImageRawPath.value.split('\\').pop();
           } else {
-            fileName = flavor + "-noise" + haldLevel.value + "-" + selectedImageRawPath.value.split('/').pop();
+            fileName = flavor + "-hald" + haldLevel.value + "-" + selectedImageRawPath.value.split('/').pop();
           }
 
           save({
