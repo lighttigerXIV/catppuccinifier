@@ -1,14 +1,18 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::{env, fs};
-
-#[cfg(target_os = "windows")]
-use std::os::windows::process::CommandExt;
-
+use exoquant::SimpleColorSpace;
+use image::open;
+use lutgen::identity::correct_image;
+use lutgen::interpolation::{
+    GaussianRemapper, GaussianSamplingRemapper, LinearRemapper, NearestNeighborRemapper,
+    ShepardRemapper,
+};
+use lutgen::{GenerateLut, Palette};
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
 use std::path::Path;
+use std::{env, fs};
 
 const SEED: u64 = u64::from_be_bytes(*b"42080085");
 
@@ -25,7 +29,7 @@ async fn generate_image(
     gaussian_sampling_iterations: usize,
     linear_nearest: usize,
     sheppard_power: f64,
-    sheppard_nearest: usize
+    sheppard_nearest: usize,
 ) -> Result<String, String> {
     let image_extension = Path::new(&image_path)
         .extension()
@@ -38,8 +42,8 @@ async fn generate_image(
         .map(char::from)
         .collect();
 
-
     match env::consts::OS {
+        #[cfg(target_os = "linux")]
         "linux" => {
             if !Path::new("/tmp/catppuccinifier").exists() {
                 fs::create_dir("/tmp/catppuccinifier").expect("");
@@ -72,23 +76,40 @@ async fn generate_image(
                 false => Err("Error converting image".into()),
             };
         }
-        "windows" => {
-            #[cfg(target_os = "windows")]
-            match generate_image_in_windows(
-                image_path.to_string(),
-                hald_level.to_string(),
-                flavor.to_string(),
-                random_name.to_string(),
-                image_extension.to_string(),
-            )
-            .await
-            {
-                Ok(image) => return Ok(image),
-                Err(error) => return Err(error.into()),
-            };
+        #[cfg(target_os = "windows")]
+        "windows" =>{
 
-            return Err("".into());
-        }
+            if !Path::new("C:\\Windows\\Temp\\catppuccinifier").exists() {
+                fs::create_dir("C:\\Windows\\Temp\\catppuccinifier").expect("");
+            }
+
+            return match Path::new("C:\\Windows\\Temp\\catppuccinifier").exists() {
+                true => {
+                    match generate_image_in_windows(
+                        image_path.to_string(),
+                        hald_level,
+                        flavor.to_string(),
+                        random_name.to_string(),
+                        image_extension.to_string(),
+                        conversion_method,
+                        gaussian_euclide,
+                        gaussian_nearest,
+                        gaussian_sampling_mean,
+                        gaussian_sampling_std,
+                        gaussian_sampling_iterations,
+                        linear_nearest,
+                        sheppard_power,
+                        sheppard_nearest,
+                    )
+                    .await
+                    {
+                        Ok(image) => return Ok(image),
+                        Err(error) => return Err(error.into()),
+                    };
+                }
+                false => Err("Error converting image".into()),
+            };
+        },
         _ => Err("OS not supported".into()),
     }
 }
@@ -108,16 +129,8 @@ async fn generate_image_in_linux(
     gaussian_sampling_iterations: usize,
     linear_nearest: usize,
     sheppard_power: f64,
-    sheppard_nearest: usize
+    sheppard_nearest: usize,
 ) -> Result<String, String> {
-    use exoquant::SimpleColorSpace;
-    use image::open;
-    use lutgen::identity::correct_image;
-    use lutgen::interpolation::{
-        GaussianRemapper, GaussianSamplingRemapper, LinearRemapper, NearestNeighborRemapper,
-        ShepardRemapper,
-    };
-    use lutgen::{GenerateLut, Palette};
 
     let palette = match flavor.as_str() {
         "mocha" => Palette::CatppuccinMocha.get(),
@@ -184,44 +197,80 @@ async fn generate_image_in_linux(
 #[cfg(target_os = "windows")]
 async fn generate_image_in_windows(
     image_path: String,
-    noise_level: String,
+    hald_level: u8,
     flavor: String,
     random_name: String,
     image_extension: String,
+    conversion_method: String,
+    gaussian_euclide: f64,
+    gaussian_nearest: usize,
+    gaussian_sampling_mean: f64,
+    gaussian_sampling_std: f64,
+    gaussian_sampling_iterations: usize,
+    linear_nearest: usize,
+    sheppard_power: f64,
+    sheppard_nearest: usize,
 ) -> Result<String, String> {
-    return match env::var("TEMP") {
-        Ok(temp_path) => {
-            let temp_catppuccinifier_path = format!("{}\\catppuccinifier", &temp_path);
-
-            if !Path::new(&temp_catppuccinifier_path).exists() {
-                fs::create_dir(&temp_catppuccinifier_path).expect("");
-            }
-
-            match Path::new(&temp_catppuccinifier_path).exists() {
-                true => {
-                    let command = format!("magick convert '{}' 'C:\\Program Files\\Catppuccinifier\\flavors\\noise-{}\\{}.png' -hald-clut '{}\\{}.{}'", image_path, noise_level, flavor, &temp_catppuccinifier_path, &random_name, &image_extension);
-
-                    let result = Command::new("powershell")
-                        .arg("-Command")
-                        .arg(&command)
-                        .creation_flags(0x08000000) //Flag to run with no window
-                        .output()
-                        .expect("");
-
-                    return if result.status.success() {
-                        Ok(format!(
-                            "{}\\{}.{}",
-                            temp_catppuccinifier_path, random_name, image_extension
-                        ))
-                    } else {
-                        Err("Error converting image".into())
-                    };
-                }
-                false => Err("Error converting image".into()),
-            }
-        }
-        Err(_) => Err("Error getting temp variable".into()),
+    let palette = match flavor.as_str() {
+        "mocha" => Palette::CatppuccinMocha.get(),
+        "macchiato" => Palette::CatppuccinMacchiato.get(),
+        "frappe" => Palette::CatppuccinFrappe.get(),
+        "latte" => Palette::CatppuccinLatte.get(),
+        _ => Palette::CatppuccinOled.get(),
     };
+
+    let hald_clut = match conversion_method.as_str() {
+        "gaussian" => GaussianRemapper::new(
+            &palette,
+            gaussian_euclide,
+            gaussian_nearest,
+            SimpleColorSpace::default(),
+        )
+        .generate_lut(hald_level),
+
+        "gaussian_sampling" => GaussianSamplingRemapper::new(
+            &palette,
+            gaussian_sampling_mean,
+            gaussian_sampling_std,
+            gaussian_sampling_iterations,
+            SEED,
+            SimpleColorSpace::default(),
+        )
+        .generate_lut(hald_level),
+
+        "linear" => LinearRemapper::new(&palette, linear_nearest, SimpleColorSpace::default())
+            .generate_lut(hald_level),
+
+        "sheppard" => ShepardRemapper::new(
+            &palette,
+            sheppard_power,
+            sheppard_nearest,
+            SimpleColorSpace::default(),
+        )
+        .generate_lut(hald_level),
+
+        _ => NearestNeighborRemapper::new(&palette, SimpleColorSpace::default())
+            .generate_lut(hald_level),
+    };
+
+    let lut_was_generated = match hald_clut.save("C:\\Windows\\TEMP\\catppuccinifier\\lut.png") {
+        Err(error) => { println!("{}", error); false} ,
+        Ok(_) => true,
+    };
+
+    if lut_was_generated {
+        let mut new_image = open(image_path).unwrap().to_rgb8();
+        correct_image(&mut new_image, &hald_clut);
+
+        let save_path = format!("C:\\Windows\\TEMP\\catppuccinifier\\{}.{}", &random_name, &image_extension);
+
+        match new_image.save(&save_path) {
+            Ok(_) => return Ok(save_path.into()),
+            Err(error) => return Err(error.to_string().into()),
+        };
+    } else {
+        return Err("Lut wasnt generated".into());
+    }
 }
 
 #[tauri::command]
