@@ -69,3 +69,27 @@ export const ConversionMethods = {
         name: "Nearest Neighbour"
     }
 }
+
+export const Themes = {
+    latte: "Latte",
+    frappe: "Frappe",
+    macchiato: "Macchiato",
+    mocha: "Mocha"
+}
+
+export const Accents = {
+    rosewater: "Rosewater",
+    flamingo: "Flamingo",
+    pink: "Pink",
+    mauve: "Mauve",
+    red: "Red",
+    maroon: "Maroon",
+    peach: "Peach",
+    yellow: "Yellow",
+    green: "Green",
+    teal: "Teal",
+    sky: "Sky",
+    sapphire: "Sapphire",
+    blue: "Blue",
+    lavender: "Lavender"
+}
