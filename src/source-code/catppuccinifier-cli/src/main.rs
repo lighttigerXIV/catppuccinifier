@@ -1,239 +1,262 @@
-use clap::{command, Arg, ArgAction};
-use std::env;
-use std::path::Path;
+use clap::{command, Parser, ValueEnum};
+use exoquant::SimpleColorSpace;
+use image::open;
+use lutgen::identity::correct_image;
+use lutgen::interpolation::{
+    GaussianRemapper, GaussianSamplingRemapper, LinearRemapper, NearestNeighborRemapper,
+    ShepardRemapper,
+};
+use lutgen::{GenerateLut, Palette};
+use std::path::{Path, PathBuf};
+use std::{env, fs};
+use substring::Substring;
 
-fn get_cli() -> clap::Command {
-    command!()
-        .version("3.0")
-        .name("Catppuccinifier")
-        .about("A cli tool to catppuccinify your wallpapers")
-        .author("lighttigerXIV")
-        .arg(
-            Arg::new("flavor")
-                .short('f')
-                .long("flavor")
-                .action(ArgAction::Set)
-                .value_name("FLAVOR")
-                .num_args(1..6)
-                .help("Selects the flavor to apply to the image")
-                .value_delimiter(' ')
-                .value_parser(["latte", "frappe", "macchiato", "mocha", "oled", "all"])
-                .default_value("all"),
-        )
-        .arg(
-            Arg::new("noise")
-                .short('n')
-                .long("noise")
-                .action(ArgAction::Set)
-                .value_name("NOISE")
-                .num_args(1)
-                .help("Selects the noise level to apply to the image")
-                .value_parser(["0", "1", "2", "3", "4"])
-                .default_value("4"),
-        )
-        .arg(
-            Arg::new("image")
-                .short('i')
-                .long("image")
-                .action(ArgAction::Set)
-                .value_name("IMAGE")
-                .help("Selects the image to apply the flavor")
-                .required(true),
-        )
+#[derive(Parser)]
+#[command(author, version, about, long_about = None)]
+struct Cli {
+    #[arg(short, long, num_args(0..=5), default_value = "all")]
+    flavor: Vec<Flavor>,
+
+    #[arg(short, long, required = true)]
+    image: PathBuf,
+
+    #[arg(long, default_value_t = 8, value_parser = clap::value_parser!(u8).range(2..=16))]
+    hald: u8,
+
+    #[arg(short, long, default_value = "gaussian-rbf")]
+    algorithm: Algorithm,
+
+    #[arg(long, default_value_t = 32.0)]
+    euclide: f64,
+
+    #[arg(long, default_value_t = 26)]
+    nearest: usize,
+
+    #[arg(long, default_value_t = 0.0)]
+    mean: f64,
+
+    #[arg(long, default_value_t = 20.0)]
+    std: f64,
+
+    #[arg(long, default_value_t = 512)]
+    iterations: usize,
+
+    #[arg(long, default_value_t = 4.0)]
+    power: f64,
 }
 
-#[cfg(target_os = "linux")]
-fn generate_image_linux(noise_level: &str, image: &str, flavor: &str) -> Result<(), ()> {
-    use std::process::Command;
+#[derive(Default, Clone, Debug, ValueEnum)]
+enum Algorithm {
+    ShepardsMethod,
+    #[default]
+    GaussianRBF,
+    LinearRBF,
+    GaussianSampling,
+    NearestNeighbor,
+}
 
-    let exec_dir = match env::current_dir() {
-        Ok(path) => path.to_str().unwrap().to_string(),
-        Err(_) => return Err(()),
+#[derive(Clone, Debug, ValueEnum)]
+enum Flavor {
+    Latte,
+    Frappe,
+    Macchiato,
+    Mocha,
+    Oled,
+    All,
+}
+
+fn generate(
+    temp_path: String,
+    image_path: String,
+    image_folder: String,
+    image_name: String,
+    hald_level: u8,
+    flavor: Flavor,
+    image_extension: String,
+    algorithm: Algorithm,
+    euclide: f64,
+    nearest: usize,
+    mean: f64,
+    std: f64,
+    iterations: usize,
+    power: f64,
+) -> Result<String, String> {
+
+    println!("Generating {:?}", &flavor);
+
+    const SEED: u64 = u64::from_be_bytes(*b"42080085");
+
+    let palette = match flavor {
+        Flavor::Latte => Palette::CatppuccinLatte.get(),
+        Flavor::Frappe => Palette::CatppuccinFrappe.get(),
+        Flavor::Macchiato => Palette::CatppuccinMacchiato.get(),
+        Flavor::Mocha => Palette::CatppuccinMocha.get(),
+        _ => Palette::CatppuccinOled.get(),
     };
 
-    let home_dir = match dirs::home_dir() {
-        Some(path) => path.to_str().unwrap().to_string(),
-        None => return Err(()),
+    let hald_clut = match algorithm {
+        Algorithm::GaussianRBF => {
+            GaussianRemapper::new(&palette, euclide, nearest, SimpleColorSpace::default())
+                .generate_lut(hald_level)
+        }
+
+        Algorithm::GaussianSampling => GaussianSamplingRemapper::new(
+            &palette,
+            mean,
+            std,
+            iterations,
+            SEED,
+            SimpleColorSpace::default(),
+        )
+        .generate_lut(hald_level),
+
+        Algorithm::LinearRBF => LinearRemapper::new(&palette, nearest, SimpleColorSpace::default())
+            .generate_lut(hald_level),
+
+        Algorithm::ShepardsMethod => {
+            ShepardRemapper::new(&palette, power, nearest, SimpleColorSpace::default())
+                .generate_lut(hald_level)
+        }
+
+        _ => NearestNeighborRemapper::new(&palette, SimpleColorSpace::default())
+            .generate_lut(hald_level),
     };
 
-    let command = format!(
-            "convert '{}/{}' '{}/.local/share/catppuccinifier/flavors/noise-{}/{}.png' -hald-clut '{}-noise{}-{}'",
-            exec_dir, image, home_dir, noise_level, flavor, flavor, noise_level, image
-        );
+    let lut_was_generated = match hald_clut.save(format!("{}lut.png", temp_path)) {
+        Err(_) => false,
+        Ok(_) => true,
+    };
 
-    let convert_image = Command::new("/bin/sh")
-        .arg("-c")
-        .arg(&command)
-        .output()
-        .expect("");
+    if lut_was_generated {
+        let mut new_image = open(image_path).unwrap().to_rgb8();
+        correct_image(&mut new_image, &hald_clut);
 
-    return if convert_image.status.success() {
-        Ok(())
+        let save_path = match env::consts::OS {
+            "linux" => format!("{}/{}-hald{}-{:?}.{}", image_folder, image_name, &hald_level, &flavor ,&image_extension),
+            "windows" => format!("{}\\{}-hald{}-{:?}.{}", image_folder, image_name, &hald_level, &flavor ,&image_extension),
+            _ => "".to_string(),
+        };
+
+        match new_image.save(&save_path) {
+            Ok(_) => return Ok(save_path.into()),
+            Err(error) => return Err(error.to_string()),
+        };
     } else {
-        Err(())
-    };
-}
-
-#[cfg(target_os = "windows")]
-fn generate_image_windows(noise_level: &str, image: &str, flavor: &str) -> Result<(), ()> {
-    use std::process::Command;
-    use substring::Substring;
-
-    let exec_dir = match env::current_dir() {
-        Ok(path) => path.to_str().unwrap().to_string(),
-        Err(_) => return Err(()),
-    };
-
-    let command = format!(
-        "magick convert '{}\\{}' 'C:\\Program Files\\Catppuccinifier\\flavors\\noise-{}\\{}.png' -hald-clut '{}-noise{}-{}'",
-        exec_dir,
-        image,
-        noise_level,
-        flavor,
-        flavor,
-        noise_level,
-        image
-    );
-
-    let flavor_command = Command::new("powershell")
-        .arg("-Command")
-        .arg(&command)
-        .output()
-        .expect("ERROR: Couldn't convert image");
-
-    if !flavor_command.status.success() {
-        println!(
-            "An error occurred: {}",
-            String::from_utf8_lossy(&flavor_command.stderr)
-        );
+        return Err("Couldn't generate LUT".into());
     }
-    return Ok(());
 }
 
 fn main() {
-    let matches = get_cli().get_matches();
-    let flavors_reference = matches.get_many::<String>("flavor");
-    let noise_level = matches.get_one::<String>("noise").unwrap();
-    let image_path = matches.get_one::<String>("image").unwrap();
+    let cli = Cli::parse();
+    let image_path = cli.image.to_str().unwrap();
+    let image_folder = cli.image.parent().unwrap();
+    let flavors = cli.flavor;
+    let hald_level = cli.hald;
+    let algorithm = cli.algorithm;
+    let euclide = cli.euclide;
+    let nearest = cli.nearest;
+    let mean = cli.mean;
+    let std = cli.std;
+    let iterations = cli.iterations;
+    let power = cli.power;
 
-    let os = env::consts::OS;
-    let image_extension = match Path::new(image_path).extension() {
+    let temp_path = match env::consts::OS {
+        "linux" => "/tmp/catppuccinifier/".to_string(),
+        "windows" => "C:\\Windows\\TEMP\\catppuccinifier\\".to_string(),
+        _ => "".to_string(),
+    };
+
+    if !Path::new(&temp_path).exists() {
+        fs::create_dir(&temp_path).expect("");
+    }
+
+    if !Path::new(&image_path).exists() {
+        println!("Error. Couldn't find image");
+        std::process::exit(1);
+    }
+
+    let image_extension = match Path::new(&image_path).extension() {
         Some(extension) => extension.to_str().unwrap().to_string(),
         None => "".to_string(),
     };
-    let image_exists = Path::new(image_path).exists();
 
-    #[cfg(target_os = "linux")]
-    if os == "linux" {
-        use colored::Colorize;
-    
-        if !image_exists {
-            println!("{}", "Couldn't find image".red());
-            std::process::exit(1)
-        }
+    let image_name = cli.image.file_name().unwrap().to_str().unwrap().to_string().replace( format!(".{}", &image_extension).as_str(), "");
 
-        if !["jpg", "jpeg", "png", "webp"].contains(&image_extension.as_str()) {
-            println!(
-                "{}",
-                "Possible image types are [jpg, jpeg, png, webp]".red()
-            );
-            std::process::exit(1)
-        }
-
-        match flavors_reference {
-            Some(flavors) => {
-                for flavor in flavors {
-                    if flavor == "all" {
-                        for possible_flavor in ["latte", "frappe", "macchiato", "mocha", "oled"] {
-                            match generate_image_linux(noise_level, &image_path, possible_flavor) {
-                                Ok(()) => {
-
-                                    println!(
-                                        "{}",
-                                        format!("Successfully generated {} image", possible_flavor)
-                                            .green()
-                                    )
-                                }
-                                Err(()) => {
-
-                                    println!(
-                                        "{}",
-                                        format!("Error generating {} image", possible_flavor).red()
-                                    )
-                                }
-                            }
-                        }
-                    } else {
-                        match generate_image_linux(noise_level, &image_path, &flavor) {
-                            Ok(()) => {
-                                println!(
-                                    "{}",
-                                    format!("Successfully generated {} image", flavor).green()
-                                )
-                            }
-                            Err(()) => {
-                                println!("{}", format!("Error generating {} image", flavor).red())
-                            }
-                        }
-                    }
-                }
-            }
-            None => {
-                println!("{}", "Error getting flavors".red())
-            }
-        }
+    if !["jpg", "jpeg", "png", "webp"].contains(&image_extension.as_str()) {
+        println!("Error. File not supported");
+        std::process::exit(1);
     }
 
-    #[cfg(target_os = "windows")]
-    if os == "windows" {
-        if !image_exists {
-            println!("Couldn't find image");
-            std::process::exit(1)
-        }
+    let image = if image_path.contains(r".\") {
+        image_path.substring(2, image_path.len())
+    } else {
+        image_path
+    };
 
-        if !["jpg", "jpeg", "png", "webp"].contains(&image_extension.as_str()) {
-            println!("Possible image types are [jpg, jpeg, png, webp]");
-            std::process::exit(1)
-        }
+    for flavor in flavors {
+        match flavor {
+            Flavor::All => {
+                let possible_flavors = [
+                    Flavor::Latte,
+                    Flavor::Frappe,
+                    Flavor::Macchiato,
+                    Flavor::Mocha,
+                    Flavor::Oled
+                ];
 
-        match flavors_reference {
-            Some(flavors) => {
-                for flavor in flavors {
+                for possible_flavor in possible_flavors {
 
-                    let image = if image_path.contains(r".\") {
-                        image_path.substring(2, image_path.len())
-                    } else {
-                        image_path
+                    match generate(
+                        temp_path.clone(),
+                        image.to_string(),
+                        image_folder.to_str().unwrap().to_string(),
+                        image_name.clone(),
+                        hald_level,
+                        possible_flavor.clone(),
+                        image_extension.clone(),
+                        algorithm.clone(),
+                        euclide,
+                        nearest,
+                        mean,
+                        std,
+                        iterations,
+                        power,
+                    ) {
+                        Ok(path) => {
+                            println!("Successfully generated image: {}", &path);
+                        }
+                        Err(error) => {
+                            println!("Error generating image: {}", error);
+                        }
                     };
-
-                    if flavor == "all" {
-                        for possible_flavor in ["latte", "frappe", "macchiato", "mocha", "oled"] {
-                            match generate_image_windows(noise_level, image, possible_flavor) {
-                                Ok(()) => {
-                                    println!("Successfully generated {} image", possible_flavor)
-                                }
-                                Err(()) => {
-                                    println!("Error generating {} image", possible_flavor)
-                                }
-                            }
-                        }
-                    } else {
-                        match generate_image_windows(noise_level, image, &flavor) {
-                            Ok(()) => {
-                                println!("Successfully generated {} image", flavor)
-                            }
-                            Err(()) => {
-                                println!("Error generating {} image", flavor)
-                            }
-                        }
-                    }
                 }
             }
-            None => {}
-        }
-    }
+            _ => {
 
-    if !["linux", "windows"].contains(&os) {
-        println!("OS not supported ;-; | Catppuccinfier only runs in Linux and Windows");
+                match generate(
+                    temp_path.clone(),
+                    image.to_string(),
+                    image_folder.to_str().unwrap().to_string(),
+                    image_name.clone(),
+                    hald_level,
+                    flavor.clone(),
+                    image_extension.clone(),
+                    algorithm.clone(),
+                    euclide,
+                    nearest,
+                    mean,
+                    std,
+                    iterations,
+                    power,
+                ) {
+                    Ok(path) => {
+                        println!("Successfully generated image: {}", &path);
+                    }
+                    Err(error) => {
+                        println!("Error generating image: {}", error);
+                    }
+                };
+            }
+        }
     }
 }
