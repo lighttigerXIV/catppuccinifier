@@ -77,26 +77,6 @@ fn install_linux_version() -> Result<(), String> {
         return Err("Couldn't copy binaries to /usr/bin/".into());
     }
 
-    if !Path::new(format!("{}/.local/share/catppuccinifier", home_dir_path).as_str()).is_dir() {
-        match fs::create_dir(format!("{}/.local/share/catppuccinifier", home_dir_path).as_str()) {
-            Ok(()) => {}
-            Err(_) => return Err("Error creating catppuccinifier directory".into()),
-        }
-    }
-
-    let copy_flavors = Command::new("/bin/sh")
-        .arg("-c")
-        .arg(format!(
-            "cp -p -r '{}/installation-files/flavors/' '{}/.local/share/catppuccinifier/flavors/'",
-            exec_dir_path, home_dir_path
-        ))
-        .output()
-        .expect("");
-
-    if !copy_flavors.status.success() {
-        return Err("Couldn't copy flavors to catppuccinifier directory".into());
-    }
-
     let copy_icon = Command::new("/bin/sh")
         .arg("-c")
         .arg(format!(
