@@ -100,6 +100,9 @@ fn install_linux_version() -> Result<(), String> {
 
 #[cfg(target_os = "windows")]
 fn install_windows_version() -> Result<(), String> {
+
+    use std::path::Path;
+
     //Creates catppuccinifier folder
     if !Path::new(r"C:\Program Files\Catppuccinifier").exists() {
         match powershell_script::run(include_str!("windows\\create-folder.ps1")) {

@@ -7,7 +7,6 @@ import { open, save } from "@tauri-apps/api/dialog"
 import { convertFileSrc, invoke } from '@tauri-apps/api/tauri';
 import { WebviewWindow } from "@tauri-apps/api/window"
 import MenuSVG from "./assets/images/menu.svg"
-import { appLocalDataDir } from '@tauri-apps/api/path';
 
 export default defineComponent({
   name: "App",
@@ -17,7 +16,7 @@ export default defineComponent({
   },
   setup() {
 
-    const theme = ref(localStorage.getItem("theme") ?? Themes.mocha);
+    const theme = ref( localStorage.getItem("theme") ?? Themes.mocha);
     const accent = ref(localStorage.getItem("accent") ?? Accents.blue);
     const tailwindTheme = ref("Theme-" + theme.value);
     const itemsAccent = ref(theme.value.toLowerCase() + "-" + accent.value.toLowerCase());
@@ -48,7 +47,6 @@ export default defineComponent({
     const generatingImages = ref(false)
     const showSettings = ref(false);
     const showSideNav = ref(false);
-    const dir = ref("");
 
     function updateHaldLevel(v: number) { haldLevel.value = v }
     function updateConversionMethod(v: string) { conversionMethod.value = v }
@@ -306,11 +304,7 @@ export default defineComponent({
       })
 
     }
-
-    async function getAppDir(){
-      dir.value = await appLocalDataDir();
-    }
-
+    
     return {
       theme, accent, tailwindTheme, itemsAccent, haldLevel, conversionMethod, showAdvancedConversion, gaussianEuclide, gaussianNearest, gaussianSamplingMean, gaussianSamplingSTD,
       gaussianSamplingIterations, linearNearest, sheppardPower, sheppardNearest, selectedImageRawPath, selectedImagePath, showGeneratedGrids,
@@ -318,7 +312,7 @@ export default defineComponent({
       generatedMochaRawPath, generatedMochaPath, generatedOledRawPath, generatedOledPath, generatingImages, showSettings, showSideNav,
       getThemesSettingClasses, getAccentSettingClasses, getRadioColor, updateHaldLevel, updateConversionMethod, updateShowAdvancedConversion, updateGaussianEuclide,
       updateGaussianNearest, updateGaussianSamplingMean, updateGaussianSamplingSTD, updateGaussianSamplingIterations, updateLinearNearest,
-      updateSheppardNearest, updateSheppardPower, selectImage, generateImages, updateShowSideNav, saveImage, previewImage, getAppDir, dir
+      updateSheppardNearest, updateSheppardPower, selectImage, generateImages, updateShowSideNav, saveImage, previewImage
     }
   }
 });
@@ -327,9 +321,6 @@ export default defineComponent({
 <template>
   <div class='h-screen grid grid-cols-12 min-w-full w-full bg-skin-crust text-skin-text'
     :class="tailwindTheme">
-
-    <div>{{ dir }}</div>
-    <div class="hidden">{{ getAppDir() }}</div>
 
     <div
       class=" 2xl:col-span-3 xl:col-span-3 lg:col-span-5 md:col-span-6 2xl:flex xl:flex lg:flex md:flex  hidden h-screen max-h-screen overflow-auto">
