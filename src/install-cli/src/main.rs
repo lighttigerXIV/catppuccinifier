@@ -1,5 +1,5 @@
 use std::env;
-use std::path::Path;
+
 
 fn main() {
     match env::consts::OS {
@@ -45,11 +45,6 @@ fn install_linux_version() -> Result<(), String> {
     use std::os::unix::prelude::PermissionsExt;
     use std::process::Command;
 
-    let home_dir_path = match dirs::home_dir() {
-        Some(path) => path.to_str().unwrap().to_string(),
-        None => return Err("Couldn't get home path".into()),
-    };
-
     let exec_dir_path = match env::current_dir() {
         Ok(path) => path.to_str().unwrap().to_string(),
         Err(_) => return Err("Couldn't get current folder".into()),
@@ -67,7 +62,7 @@ fn install_linux_version() -> Result<(), String> {
     )
     .unwrap();
 
-    let copy_binaries = Command::new("/bin/sh")
+    let copy_binaries = Command::new("sh")
         .arg("-c")
         .arg(format!("sudo cp '{}/installation-files/catppuccinifier' '{}/installation-files/catppuccinifier-gui' /usr/bin/", exec_dir_path, exec_dir_path))
         .output()
@@ -77,7 +72,7 @@ fn install_linux_version() -> Result<(), String> {
         return Err("Couldn't copy binaries to /usr/bin/".into());
     }
 
-    let copy_icon = Command::new("/bin/sh")
+    let copy_icon = Command::new("sh")
         .arg("-c")
         .arg(format!(
             "sudo cp '{}/installation-files/catppuccinifier.png' /usr/share/pixmaps/",
@@ -90,7 +85,7 @@ fn install_linux_version() -> Result<(), String> {
         return Err("Couldn't copy icon".into());
     }
 
-    let copy_desktop = Command::new("/bin/sh")
+    let copy_desktop = Command::new("sh")
         .arg("-c")
         .arg(format!("sudo desktop-file-install -m 644 --dir /usr/share/applications/ {}/installation-files/Catppuccinifier.desktop", exec_dir_path))
         .output()
