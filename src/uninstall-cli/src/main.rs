@@ -67,7 +67,7 @@ fn uninstall_in_linux() -> Result<(), String> {
     if Path::new("/usr/bin/catppuccinifier").exists()
         && Path::new("/usr/bin/catppuccinifier-gui").exists()
     {
-        let remove_binaries = Command::new("/bin/sh")
+        let remove_binaries = Command::new("sh")
             .arg("-c")
             .arg("sudo rm /usr/bin/catppuccinifier /usr/bin/catppuccinifier-gui")
             .output()
@@ -80,7 +80,7 @@ fn uninstall_in_linux() -> Result<(), String> {
 
     //Removes local folder
     if Path::new(catppuccinifier_dir.as_str()).is_dir() {
-        let remove_catppuccinifier_dir = Command::new("/bin/sh")
+        let remove_catppuccinifier_dir = Command::new("sh")
             .arg("-c")
             .arg(format!("rm -r {}", catppuccinifier_dir))
             .output()
@@ -93,7 +93,7 @@ fn uninstall_in_linux() -> Result<(), String> {
 
     //Removes icon
     if Path::new("/usr/share/pixmaps/catppuccinifier.png").is_file() {
-        let remove_icon = Command::new("/bin/sh")
+        let remove_icon = Command::new("sh")
             .arg("-c")
             .arg("sudo rm /usr/share/pixmaps/catppuccinifier.png")
             .output()
@@ -106,7 +106,7 @@ fn uninstall_in_linux() -> Result<(), String> {
 
     //Removes desktop file
     if Path::new("/usr/share/applications/Catppuccinifier.desktop").is_file() {
-        let remove_desktop = Command::new("/bin/sh")
+        let remove_desktop = Command::new("sh")
             .arg("-c")
             .arg("sudo rm /usr/share/applications/Catppuccinifier.desktop")
             .output()
