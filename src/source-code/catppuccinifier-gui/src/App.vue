@@ -7,7 +7,7 @@ import { open, save } from "@tauri-apps/api/dialog"
 import { convertFileSrc, invoke } from '@tauri-apps/api/tauri';
 import { WebviewWindow } from "@tauri-apps/api/window"
 import MenuSVG from "./assets/images/menu.svg"
-import { appDataDir } from '@tauri-apps/api/path';
+import { appLocalDataDir } from '@tauri-apps/api/path';
 
 export default defineComponent({
   name: "App",
@@ -308,7 +308,7 @@ export default defineComponent({
     }
 
     async function getAppDir(){
-      dir.value = await appDataDir();
+      dir.value = await appLocalDataDir();
     }
 
     return {
