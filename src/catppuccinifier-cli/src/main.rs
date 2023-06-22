@@ -29,8 +29,8 @@ struct Cli {
     #[arg(long, default_value_t = 32.0)]
     euclide: f64,
 
-    #[arg(long, default_value_t = 26)]
-    nearest: usize,
+    #[arg(long)]
+    nearest: Option<usize>,
 
     #[arg(long, default_value_t = 0.0)]
     mean: f64,
@@ -154,7 +154,12 @@ fn main() {
     let hald_level = cli.hald;
     let algorithm = cli.algorithm;
     let euclide = cli.euclide;
-    let nearest = cli.nearest;
+    let nearest = cli.nearest.unwrap_or(
+        match &algorithm {
+            Algorithm::LinearRBF => 5,
+            _=> 26
+        }
+    );
     let mean = cli.mean;
     let std = cli.std;
     let iterations = cli.iterations;
