@@ -1,4 +1,3 @@
 target
 .idea
-src/Windows/binaries-source/catppuccinifier-gui/Catppuccinifier/bin
-src/releases/
+releases
