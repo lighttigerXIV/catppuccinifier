@@ -4,12 +4,11 @@ version = "7.0.0"
 edition = "2021"
 description = "A cli tool to catppuccinify your wallpapers"
 
-
 [dependencies]
 colored = "2.0.0"
 dirs = "5.0.0"
 clap = { version = "4.2.7", features = ["derive", "cargo"] }
 substring = "1.4.5"
-lutgen = "0.5.0"
+lutgen = "0.6"
 exoquant = "0.2.0"
 image = "0.24.6"

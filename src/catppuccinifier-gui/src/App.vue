@@ -23,7 +23,7 @@ export default defineComponent({
     const haldLevel = ref(8);
     const conversionMethod = ref(ConversionMethods.gaussian.codename);
     const showAdvancedConversion = ref(false);
-    const gaussianEuclide = ref(ConversionMethods.gaussian.properties.euclide.default);
+    const gaussianShape = ref(ConversionMethods.gaussian.properties.shape.default);
     const gaussianNearest = ref(ConversionMethods.gaussian.properties.nearest.default);
     const gaussianSamplingMean = ref(ConversionMethods.gaussian_sampling.properties.mean.default);
     const gaussianSamplingSTD = ref(ConversionMethods.gaussian_sampling.properties.std.default);
@@ -51,7 +51,7 @@ export default defineComponent({
     function updateHaldLevel(v: number) { haldLevel.value = v }
     function updateConversionMethod(v: string) { conversionMethod.value = v }
     function updateShowAdvancedConversion(v: boolean) { showAdvancedConversion.value = v }
-    function updateGaussianEuclide(v: number) { gaussianEuclide.value = v }
+    function updateGaussianShape(v: number) { gaussianShape.value = v }
     function updateGaussianNearest(v: number) { gaussianNearest.value = v }
     function updateGaussianSamplingMean(v: number) { gaussianSamplingMean.value = v }
     function updateGaussianSamplingSTD(v: number) { gaussianSamplingSTD.value = v }
@@ -88,7 +88,7 @@ export default defineComponent({
     watch(showAdvancedConversion, () => {
       if (!showAdvancedConversion.value) {
         //Resets Advanced Values
-        gaussianEuclide.value = ConversionMethods.gaussian.properties.euclide.default;
+        gaussianShape.value = ConversionMethods.gaussian.properties.shape.default;
         gaussianNearest.value = ConversionMethods.gaussian.properties.nearest.default;
         gaussianSamplingMean.value = ConversionMethods.gaussian_sampling.properties.mean.default;
         gaussianSamplingSTD.value = ConversionMethods.gaussian_sampling.properties.std.default;
@@ -141,7 +141,7 @@ export default defineComponent({
         hald_level: +haldLevel.value,
         flavor: "latte",
         conversion_method: conversionMethod.value,
-        gaussian_euclide: +gaussianEuclide.value,
+        gaussian_shape: +gaussianShape.value,
         gaussian_nearest: +gaussianNearest.value,
         gaussian_sampling_mean: +gaussianSamplingMean.value,
         gaussian_sampling_std: +gaussianSamplingSTD.value,
@@ -162,7 +162,7 @@ export default defineComponent({
         hald_level: +haldLevel.value,
         flavor: "frappe",
         conversion_method: conversionMethod.value,
-        gaussian_euclide: +gaussianEuclide.value,
+        gaussian_shape: +gaussianShape.value,
         gaussian_nearest: +gaussianNearest.value,
         gaussian_sampling_mean: +gaussianSamplingMean.value,
         gaussian_sampling_std: +gaussianSamplingSTD.value,
@@ -183,7 +183,7 @@ export default defineComponent({
         hald_level: +haldLevel.value,
         flavor: "macchiato",
         conversion_method: conversionMethod.value,
-        gaussian_euclide: +gaussianEuclide.value,
+        gaussian_shape: +gaussianShape.value,
         gaussian_nearest: +gaussianNearest.value,
         gaussian_sampling_mean: +gaussianSamplingMean.value,
         gaussian_sampling_std: +gaussianSamplingSTD.value,
@@ -204,7 +204,7 @@ export default defineComponent({
         hald_level: +haldLevel.value,
         flavor: "mocha",
         conversion_method: conversionMethod.value,
-        gaussian_euclide: +gaussianEuclide.value,
+        gaussian_shape: +gaussianShape.value,
         gaussian_nearest: +gaussianNearest.value,
         gaussian_sampling_mean: +gaussianSamplingMean.value,
         gaussian_sampling_std: +gaussianSamplingSTD.value,
@@ -225,7 +225,7 @@ export default defineComponent({
         hald_level: +haldLevel.value,
         flavor: "oled",
         conversion_method: conversionMethod.value,
-        gaussian_euclide: +gaussianEuclide.value,
+        gaussian_shape: +gaussianShape.value,
         gaussian_nearest: +gaussianNearest.value,
         gaussian_sampling_mean: +gaussianSamplingMean.value,
         gaussian_sampling_std: +gaussianSamplingSTD.value,
@@ -306,11 +306,11 @@ export default defineComponent({
     }
     
     return {
-      theme, accent, tailwindTheme, itemsAccent, haldLevel, conversionMethod, showAdvancedConversion, gaussianEuclide, gaussianNearest, gaussianSamplingMean, gaussianSamplingSTD,
+      theme, accent, tailwindTheme, itemsAccent, haldLevel, conversionMethod, showAdvancedConversion, gaussianShape, gaussianNearest, gaussianSamplingMean, gaussianSamplingSTD,
       gaussianSamplingIterations, linearNearest, sheppardPower, sheppardNearest, selectedImageRawPath, selectedImagePath, showGeneratedGrids,
       generatedLatteRawPath, generatedLattePath, generatedFrappeRawPath, generatedFrappePath, generatedMacchiatoRawPath, generatedMacchiatoPath,
       generatedMochaRawPath, generatedMochaPath, generatedOledRawPath, generatedOledPath, generatingImages, showSettings, showSideNav,
-      getThemesSettingClasses, getAccentSettingClasses, getRadioColor, updateHaldLevel, updateConversionMethod, updateShowAdvancedConversion, updateGaussianEuclide,
+      getThemesSettingClasses, getAccentSettingClasses, getRadioColor, updateHaldLevel, updateConversionMethod, updateShowAdvancedConversion, updateGaussianShape,
       updateGaussianNearest, updateGaussianSamplingMean, updateGaussianSamplingSTD, updateGaussianSamplingIterations, updateLinearNearest,
       updateSheppardNearest, updateSheppardPower, selectImage, generateImages, updateShowSideNav, saveImage, previewImage
     }
@@ -328,8 +328,8 @@ export default defineComponent({
       <GenerateImageSection :items-accent="itemsAccent" v-model:hald-level="haldLevel" @update:haldLevel="updateHaldLevel"
         v-model:conversion-method="conversionMethod" @update:conversion-method="updateConversionMethod"
         v-model:show-advanced-conversion="showAdvancedConversion"
-        @update:show-advanced-conversion="updateShowAdvancedConversion" v-model:gaussian-euclide="gaussianEuclide"
-        @update:gaussian-euclide="updateGaussianEuclide" v-model:gaussian-nearest="gaussianNearest"
+        @update:show-advanced-conversion="updateShowAdvancedConversion" v-model:gaussian-shape="gaussianShape"
+        @update:gaussian-shape="updateGaussianShape" v-model:gaussian-nearest="gaussianNearest"
         @update:gaussian-nearest="updateGaussianNearest" v-model:gaussian-sampling-mean="gaussianSamplingMean"
         @update:gaussian-sampling-mean="updateGaussianSamplingMean" v-model:gaussian-sampling-s-t-d="gaussianSamplingSTD"
         @update:gaussian-sampling-s-t-d="updateGaussianSamplingSTD"

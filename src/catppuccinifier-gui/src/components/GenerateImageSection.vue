@@ -9,7 +9,7 @@ defineEmits([
     "update:haldLevel",
     "update:conversionMethod",
     "update:showAdvancedConversion",
-    "update:gaussianEuclide",
+    "update:gaussianShape",
     "update:gaussianNearest",
     "update:gaussianSamplingMean",
     "update:gaussianSamplingSTD",
@@ -38,7 +38,7 @@ defineProps({
         required: true,
         type: Boolean
     },
-    gaussianEuclide: {
+    gaussianShape: {
         required: true,
         type: Number
     },
@@ -130,12 +130,12 @@ defineProps({
                 <div v-if="conversionMethod == ConversionMethods.gaussian.codename && showAdvancedConversion">
                     <div class="p-2">
 
-                        <div>Euclide - {{ gaussianEuclide }}</div>
+                        <div>Shape - {{ gaussianShape }}</div>
 
                         <input class="range range-sm range-primary" type="range" :data-theme="itemsAccent" step="1"
-                            :value="gaussianEuclide" :max="ConversionMethods.gaussian.properties.euclide.max"
-                            :min="ConversionMethods.gaussian.properties.euclide.min"
-                            @input="$emit('update:gaussianEuclide', ($event.target as HTMLInputElement).value)">
+                            :value="gaussianShape" :max="ConversionMethods.gaussian.properties.shape.max"
+                            :min="ConversionMethods.gaussian.properties.shape.min"
+                            @input="$emit('update:gaussianShape', ($event.target as HTMLInputElement).value)">
 
                         <div>Nearest - {{ gaussianNearest }}</div>
 
