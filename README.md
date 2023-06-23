@@ -40,3 +40,4 @@ To uninstall catppuccinifier you can use steps presented in the [UNINSTALL.md](h
 
 ## Other amazing people that worked on the project
 - [Isabel](https://github.com/isabelroses)
+- [Ozwaldorf](https://github.com/ozwaldorf/lutgen-rs)
