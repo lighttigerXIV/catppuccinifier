@@ -26,7 +26,7 @@ struct Cli {
     #[arg(short, long, default_value = "gaussian-rbf")]
     algorithm: Algorithm,
 
-    #[arg(long, default_value_t = 32.0)]
+    #[arg(long, default_value_t = 96.0)]
     shape: f64,
 
     #[arg(long)]

@@ -5,7 +5,7 @@ export const ConversionMethods = {
         name: "Gaussian RBF (Recommended)",
         properties: {
             shape: {
-                default: 32,
+                default: 96,
                 min: 0,
                 max: 512
             },
