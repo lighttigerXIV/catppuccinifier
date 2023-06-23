@@ -22,7 +22,7 @@ async fn generate_image(
     hald_level: u8,
     flavor: String,
     conversion_method: String,
-    gaussian_euclide: f64,
+    gaussian_shape: f64,
     gaussian_nearest: usize,
     gaussian_sampling_mean: f64,
     gaussian_sampling_std: f64,
@@ -58,7 +58,7 @@ async fn generate_image(
                         random_name.to_string(),
                         image_extension.to_string(),
                         conversion_method,
-                        gaussian_euclide,
+                        gaussian_shape,
                         gaussian_nearest,
                         gaussian_sampling_mean,
                         gaussian_sampling_std,
@@ -76,8 +76,7 @@ async fn generate_image(
                 false => Err("Error converting image".into()),
             };
         }
-        "windows" =>{
-
+        "windows" => {
             if !Path::new("C:\\Windows\\Temp\\catppuccinifier").exists() {
                 fs::create_dir("C:\\Windows\\Temp\\catppuccinifier").expect("");
             }
@@ -92,7 +91,7 @@ async fn generate_image(
                         random_name.to_string(),
                         image_extension.to_string(),
                         conversion_method,
-                        gaussian_euclide,
+                        gaussian_shape,
                         gaussian_nearest,
                         gaussian_sampling_mean,
                         gaussian_sampling_std,
@@ -109,7 +108,7 @@ async fn generate_image(
                 }
                 false => Err("Error converting image".into()),
             };
-        },
+        }
         _ => Err("OS not supported".into()),
     }
 }
@@ -122,7 +121,7 @@ async fn generate(
     random_name: String,
     image_extension: String,
     conversion_method: String,
-    gaussian_euclide: f64,
+    gaussian_shape: f64,
     gaussian_nearest: usize,
     gaussian_sampling_mean: f64,
     gaussian_sampling_std: f64,
@@ -130,8 +129,7 @@ async fn generate(
     linear_nearest: usize,
     sheppard_power: f64,
     sheppard_nearest: usize,
-) -> Result<String, String>{
-    
+) -> Result<String, String> {
     let palette = match flavor.as_str() {
         "mocha" => Palette::CatppuccinMocha.get(),
         "macchiato" => Palette::CatppuccinMacchiato.get(),
@@ -141,13 +139,8 @@ async fn generate(
     };
 
     let hald_clut = match conversion_method.as_str() {
-        "gaussian" => GaussianRemapper::new(
-            &palette,
-            gaussian_euclide,
-            gaussian_nearest,
-            SimpleColorSpace::default(),
-        )
-        .generate_lut(hald_level),
+        "gaussian" => GaussianRemapper::new(&palette, gaussian_shape, gaussian_nearest)
+            .generate_lut(hald_level),
 
         "gaussian_sampling" => GaussianSamplingRemapper::new(
             &palette,
@@ -159,22 +152,16 @@ async fn generate(
         )
         .generate_lut(hald_level),
 
-        "linear" => LinearRemapper::new(&palette, linear_nearest, SimpleColorSpace::default())
-            .generate_lut(hald_level),
+        "linear" => LinearRemapper::new(&palette, linear_nearest).generate_lut(hald_level),
 
-        "sheppard" => ShepardRemapper::new(
-            &palette,
-            sheppard_power,
-            sheppard_nearest,
-            SimpleColorSpace::default(),
-        )
-        .generate_lut(hald_level),
+        "sheppard" => ShepardRemapper::new(&palette, sheppard_power, sheppard_nearest)
+            .generate_lut(hald_level),
 
         _ => NearestNeighborRemapper::new(&palette, SimpleColorSpace::default())
             .generate_lut(hald_level),
     };
 
-    let lut_was_generated = match hald_clut.save( format!("{}lut.png", temp_path)) {
+    let lut_was_generated = match hald_clut.save(format!("{}lut.png", temp_path)) {
         Err(_) => false,
         Ok(_) => true,
     };
@@ -193,7 +180,6 @@ async fn generate(
         return Err("".into());
     }
 }
-
 
 #[tauri::command]
 async fn get_os() -> String {

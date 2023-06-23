@@ -27,7 +27,7 @@ struct Cli {
     algorithm: Algorithm,
 
     #[arg(long, default_value_t = 32.0)]
-    euclide: f64,
+    shape: f64,
 
     #[arg(long)]
     nearest: Option<usize>,
@@ -74,14 +74,13 @@ fn generate(
     flavor: Flavor,
     image_extension: String,
     algorithm: Algorithm,
-    euclide: f64,
+    shape: f64,
     nearest: usize,
     mean: f64,
     std: f64,
     iterations: usize,
     power: f64,
 ) -> Result<String, String> {
-
     println!("Generating {:?}", &flavor);
 
     const SEED: u64 = u64::from_be_bytes(*b"42080085");
@@ -96,8 +95,7 @@ fn generate(
 
     let hald_clut = match algorithm {
         Algorithm::GaussianRBF => {
-            GaussianRemapper::new(&palette, euclide, nearest, SimpleColorSpace::default())
-                .generate_lut(hald_level)
+            GaussianRemapper::new(&palette, shape, nearest).generate_lut(hald_level)
         }
 
         Algorithm::GaussianSampling => GaussianSamplingRemapper::new(
@@ -110,12 +108,10 @@ fn generate(
         )
         .generate_lut(hald_level),
 
-        Algorithm::LinearRBF => LinearRemapper::new(&palette, nearest, SimpleColorSpace::default())
-            .generate_lut(hald_level),
+        Algorithm::LinearRBF => LinearRemapper::new(&palette, nearest).generate_lut(hald_level),
 
         Algorithm::ShepardsMethod => {
-            ShepardRemapper::new(&palette, power, nearest, SimpleColorSpace::default())
-                .generate_lut(hald_level)
+            ShepardRemapper::new(&palette, power, nearest).generate_lut(hald_level)
         }
 
         _ => NearestNeighborRemapper::new(&palette, SimpleColorSpace::default())
@@ -132,8 +128,14 @@ fn generate(
         correct_image(&mut new_image, &hald_clut);
 
         let save_path = match env::consts::OS {
-            "linux" => format!("{}/{}-hald{}-{:?}.{}", image_folder, image_name, &hald_level, &flavor ,&image_extension),
-            "windows" => format!("{}\\{}-hald{}-{:?}.{}", image_folder, image_name, &hald_level, &flavor ,&image_extension),
+            "linux" => format!(
+                "{}/{}-hald{}-{:?}.{}",
+                image_folder, image_name, &hald_level, &flavor, &image_extension
+            ),
+            "windows" => format!(
+                "{}\\{}-hald{}-{:?}.{}",
+                image_folder, image_name, &hald_level, &flavor, &image_extension
+            ),
             _ => "".to_string(),
         };
 
@@ -153,13 +155,11 @@ fn main() {
     let flavors = cli.flavor;
     let hald_level = cli.hald;
     let algorithm = cli.algorithm;
-    let euclide = cli.euclide;
-    let nearest = cli.nearest.unwrap_or(
-        match &algorithm {
-            Algorithm::LinearRBF => 5,
-            _=> 26
-        }
-    );
+    let shape = cli.shape;
+    let nearest = cli.nearest.unwrap_or(match &algorithm {
+        Algorithm::LinearRBF => 5,
+        _ => 26,
+    });
     let mean = cli.mean;
     let std = cli.std;
     let iterations = cli.iterations;
@@ -185,7 +185,14 @@ fn main() {
         None => "".to_string(),
     };
 
-    let image_name = cli.image.file_name().unwrap().to_str().unwrap().to_string().replace( format!(".{}", &image_extension).as_str(), "");
+    let image_name = cli
+        .image
+        .file_name()
+        .unwrap()
+        .to_str()
+        .unwrap()
+        .to_string()
+        .replace(format!(".{}", &image_extension).as_str(), "");
 
     if !["jpg", "jpeg", "png", "webp"].contains(&image_extension.as_str()) {
         println!("Error. File not supported");
@@ -206,11 +213,10 @@ fn main() {
                     Flavor::Frappe,
                     Flavor::Macchiato,
                     Flavor::Mocha,
-                    Flavor::Oled
+                    Flavor::Oled,
                 ];
 
                 for possible_flavor in possible_flavors {
-
                     match generate(
                         temp_path.clone(),
                         image.to_string(),
@@ -220,7 +226,7 @@ fn main() {
                         possible_flavor.clone(),
                         image_extension.clone(),
                         algorithm.clone(),
-                        euclide,
+                        shape,
                         nearest,
                         mean,
                         std,
@@ -237,7 +243,6 @@ fn main() {
                 }
             }
             _ => {
-
                 match generate(
                     temp_path.clone(),
                     image.to_string(),
@@ -247,7 +252,7 @@ fn main() {
                     flavor.clone(),
                     image_extension.clone(),
                     algorithm.clone(),
-                    euclide,
+                    shape,
                     nearest,
                     mean,
                     std,

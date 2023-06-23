@@ -4,7 +4,7 @@ export const ConversionMethods = {
         codename: "gaussian",
         name: "Gaussian RBF (Recommended)",
         properties: {
-            euclide: {
+            shape: {
                 default: 32,
                 min: 0,
                 max: 512
