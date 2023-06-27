@@ -15,8 +15,8 @@ defineEmits([
     "update:gaussianSamplingSTD",
     "update:gaussianSamplingIterations",
     "update:linearNearest",
-    "update:sheppardPower",
-    "update:sheppardNearest",
+    "update:shepardPower",
+    "update:shepardNearest",
     "function:selectImage",
     "function:generateImages"
 ])
@@ -62,11 +62,11 @@ defineProps({
         required: true,
         type: Number
     },
-    sheppardPower: {
+    shepardPower: {
         required: true,
         type: Number
     },
-    sheppardNearest: {
+    shepardNearest: {
         required: true,
         type: Number
 
@@ -219,33 +219,33 @@ defineProps({
             <div class="mt-2 border border-skin-surface0 rounded-xl">
 
                 <div class="flex items-center cursor-pointer p-2"
-                    @click="$emit('update:conversionMethod', ConversionMethods.sheppard.codename)">
+                    @click="$emit('update:conversionMethod', ConversionMethods.shepard.codename)">
 
                     <div class="flex-grow font-semibold">
-                        {{ ConversionMethods.sheppard.name }}
+                        {{ ConversionMethods.shepard.name }}
                     </div>
 
-                    <input :checked="conversionMethod === ConversionMethods.sheppard.codename" type="radio"
+                    <input :checked="conversionMethod === ConversionMethods.shepard.codename" type="radio"
                         class="radio radio-sm radio-primary" :data-theme="itemsAccent">
                 </div>
 
 
-                <div v-if="conversionMethod == ConversionMethods.sheppard.codename && showAdvancedConversion">
+                <div v-if="conversionMethod == ConversionMethods.shepard.codename && showAdvancedConversion">
                     <div class="p-2">
 
-                        <div>Power - {{ sheppardPower }}</div>
+                        <div>Power - {{ shepardPower }}</div>
 
                         <input class="range range-sm range-primary" type="range" :data-theme="itemsAccent" step="1"
-                            :value="sheppardPower" :max="ConversionMethods.sheppard.properties.power.max"
-                            :min="ConversionMethods.sheppard.properties.power.min"
-                            @input="$emit('update:sheppardPower', ($event.target as HTMLInputElement).value)">
+                            :value="shepardPower" :max="ConversionMethods.shepard.properties.power.max"
+                            :min="ConversionMethods.shepard.properties.power.min"
+                            @input="$emit('update:shepardPower', ($event.target as HTMLInputElement).value)">
 
-                        <div>Nearest - {{ sheppardNearest }}</div>
+                        <div>Nearest - {{ shepardNearest }}</div>
 
                         <input class="range range-sm range-primary" type="range" :data-theme="itemsAccent" step="1"
-                            :value="sheppardNearest" :max="ConversionMethods.sheppard.properties.nearest.max"
-                            :min="ConversionMethods.sheppard.properties.nearest.min"
-                            @input="$emit('update:sheppardNearest', ($event.target as HTMLInputElement).value)">
+                            :value="shepardNearest" :max="ConversionMethods.shepard.properties.nearest.max"
+                            :min="ConversionMethods.shepard.properties.nearest.min"
+                            @input="$emit('update:shepardNearest', ($event.target as HTMLInputElement).value)">
                     </div>
                 </div>
             </div>
