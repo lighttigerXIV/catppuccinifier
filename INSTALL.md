@@ -18,6 +18,45 @@ Catppuccinfier is available for Linux and Windows
   
     paru catppuccinifier-cli-git
     paru catppuccinifier-gui-git
+
+  ## NixOS
+  Nix users have the option to install the CLI via a flake input.
+
+  ### Flakes-Enabled Nix
+  For a flakes-enabled system, add this repo as a flake input:
+  ```nix
+  inputs = {
+    nixpkgs.url = "nixpkgs/nixos-unstable";
+
+    catppuccinifier = {
+      url = "github:lighttigerXIV/catppuccinifier";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+  ```
+
+  If you're using `home-manager`, be sure to add `catppuccinifier` to your `extraSpecialArgs`:
+  ```nix
+  outputs = { self, nixpkgs, home-manager, catppuccinifier, ... }@attrs:
+    # ...
+      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+        # ...
+        modules = [ 
+          ./config/configuration.nix
+          home-manager.nixosModules.home-manager
+          ({config, ...}:{
+            # ...
+            home-manager.extraSpecialArgs = {
+              inherit (attrs) nixpkgs catppuccinifier;
+            # ...
+            };
+          })
+          # ...
+      };
+    };
+  ```
+
+  And then add it to your packages with `catppuccinifier.packages.${pkgs.system}.cli`.
     
   ## General Install
   ### Dependencies
