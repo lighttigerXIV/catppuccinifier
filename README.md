@@ -35,6 +35,9 @@ The cli version works by selecting the flavor, the noise level and the image to 
 ## Installation
 To install catppuccinifier you can use steps presented in the [INSTALL.md](https://github.com/lighttigerXIV/catppuccinifier/blob/master/INSTALL.md)
 
+> **note** <br>
+> Nix users can use https://isabelroses.cachix.org to access prebuilt binaries
+
 ## Uninstall
 To uninstall catppuccinifier you can use steps presented in the [UNINSTALL.md](https://github.com/lighttigerXIV/catppuccinifier/blob/master/UNINSTALL.md)
 
