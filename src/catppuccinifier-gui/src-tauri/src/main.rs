@@ -28,8 +28,8 @@ async fn generate_image(
     gaussian_sampling_std: f64,
     gaussian_sampling_iterations: usize,
     linear_nearest: usize,
-    sheppard_power: f64,
-    sheppard_nearest: usize,
+    shepard_power: f64,
+    shepard_nearest: usize,
 ) -> Result<String, String> {
     let image_extension = Path::new(&image_path)
         .extension()
@@ -64,8 +64,8 @@ async fn generate_image(
                         gaussian_sampling_std,
                         gaussian_sampling_iterations,
                         linear_nearest,
-                        sheppard_power,
-                        sheppard_nearest,
+                        shepard_power,
+                        shepard_nearest,
                     )
                     .await
                     {
@@ -97,8 +97,8 @@ async fn generate_image(
                         gaussian_sampling_std,
                         gaussian_sampling_iterations,
                         linear_nearest,
-                        sheppard_power,
-                        sheppard_nearest,
+                        shepard_power,
+                        shepard_nearest,
                     )
                     .await
                     {
@@ -127,8 +127,8 @@ async fn generate(
     gaussian_sampling_std: f64,
     gaussian_sampling_iterations: usize,
     linear_nearest: usize,
-    sheppard_power: f64,
-    sheppard_nearest: usize,
+    shepard_power: f64,
+    shepard_nearest: usize,
 ) -> Result<String, String> {
     let palette = match flavor.as_str() {
         "mocha" => Palette::CatppuccinMocha.get(),
@@ -154,8 +154,9 @@ async fn generate(
 
         "linear" => LinearRemapper::new(&palette, linear_nearest).generate_lut(hald_level),
 
-        "sheppard" => ShepardRemapper::new(&palette, sheppard_power, sheppard_nearest)
-            .generate_lut(hald_level),
+        "shepard" => {
+            ShepardRemapper::new(&palette, shepard_power, shepard_nearest).generate_lut(hald_level)
+        }
 
         _ => NearestNeighborRemapper::new(&palette, SimpleColorSpace::default())
             .generate_lut(hald_level),

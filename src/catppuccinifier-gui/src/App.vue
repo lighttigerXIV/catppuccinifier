@@ -22,8 +22,8 @@ const gaussianSamplingMean = ref(ConversionMethods.gaussian_sampling.properties.
 const gaussianSamplingSTD = ref(ConversionMethods.gaussian_sampling.properties.std.default);
 const gaussianSamplingIterations = ref(ConversionMethods.gaussian_sampling.properties.iterations.default);
 const linearNearest = ref(ConversionMethods.linear.properties.nearest.default);
-const sheppardPower = ref(ConversionMethods.sheppard.properties.power.default);
-const sheppardNearest = ref(ConversionMethods.sheppard.properties.nearest.default);
+const shepardPower = ref(ConversionMethods.shepard.properties.power.default);
+const shepardNearest = ref(ConversionMethods.shepard.properties.nearest.default);
 const selectedImageRawPath = ref("");
 const selectedImagePath = ref("");
 const showGeneratedGrids = ref(false);
@@ -49,8 +49,8 @@ function updateGaussianSamplingMean(v: number) { gaussianSamplingMean.value = v 
 function updateGaussianSamplingSTD(v: number) { gaussianSamplingSTD.value = v }
 function updateGaussianSamplingIterations(v: number) { gaussianSamplingIterations.value = v }
 function updateLinearNearest(v: number) { linearNearest.value = v }
-function updateSheppardPower(v: number) { sheppardPower.value = v }
-function updateSheppardNearest(v: number) { sheppardNearest.value = v }
+function updateShepardPower(v: number) { shepardPower.value = v }
+function updateShepardNearest(v: number) { shepardNearest.value = v }
 function updateShowSideNav(v: boolean) { showSideNav.value = v }
 
 watch(showAdvancedConversion, () => {
@@ -62,8 +62,8 @@ watch(showAdvancedConversion, () => {
     gaussianSamplingSTD.value = ConversionMethods.gaussian_sampling.properties.std.default;
     gaussianSamplingIterations.value = ConversionMethods.gaussian_sampling.properties.iterations.default;
     linearNearest.value = ConversionMethods.linear.properties.nearest.default;
-    sheppardPower.value = ConversionMethods.sheppard.properties.power.default;
-    sheppardNearest.value = ConversionMethods.sheppard.properties.nearest.default;
+    shepardPower.value = ConversionMethods.shepard.properties.power.default;
+    shepardNearest.value = ConversionMethods.shepard.properties.nearest.default;
   }
 })
 
@@ -115,8 +115,8 @@ async function generateImages() {
     gaussian_sampling_std: +gaussianSamplingSTD.value,
     gaussian_sampling_iterations: +gaussianSamplingIterations.value,
     linear_nearest: +linearNearest.value,
-    sheppard_power: +sheppardPower.value,
-    sheppard_nearest: +sheppardNearest.value
+    shepard_power: +shepardPower.value,
+    shepard_nearest: +shepardNearest.value
   })
     .then(path => {
 
@@ -136,8 +136,8 @@ async function generateImages() {
     gaussian_sampling_std: +gaussianSamplingSTD.value,
     gaussian_sampling_iterations: +gaussianSamplingIterations.value,
     linear_nearest: +linearNearest.value,
-    sheppard_power: +sheppardPower.value,
-    sheppard_nearest: +sheppardNearest.value
+    shepard_power: +shepardPower.value,
+    shepard_nearest: +shepardNearest.value
   })
     .then(path => {
 
@@ -157,8 +157,8 @@ async function generateImages() {
     gaussian_sampling_std: +gaussianSamplingSTD.value,
     gaussian_sampling_iterations: +gaussianSamplingIterations.value,
     linear_nearest: +linearNearest.value,
-    sheppard_power: +sheppardPower.value,
-    sheppard_nearest: +sheppardNearest.value
+    shepard_power: +shepardPower.value,
+    shepard_nearest: +shepardNearest.value
   })
     .then(path => {
 
@@ -178,8 +178,8 @@ async function generateImages() {
     gaussian_sampling_std: +gaussianSamplingSTD.value,
     gaussian_sampling_iterations: +gaussianSamplingIterations.value,
     linear_nearest: +linearNearest.value,
-    sheppard_power: +sheppardPower.value,
-    sheppard_nearest: +sheppardNearest.value
+    shepard_power: +shepardPower.value,
+    shepard_nearest: +shepardNearest.value
   })
     .then(path => {
 
@@ -199,8 +199,8 @@ async function generateImages() {
     gaussian_sampling_std: +gaussianSamplingSTD.value,
     gaussian_sampling_iterations: +gaussianSamplingIterations.value,
     linear_nearest: +linearNearest.value,
-    sheppard_power: +sheppardPower.value,
-    sheppard_nearest: +sheppardNearest.value
+    shepard_power: +shepardPower.value,
+    shepard_nearest: +shepardNearest.value
   })
     .then(path => {
 
@@ -291,9 +291,9 @@ function previewImage(flavor: string, path: string) {
         @update:gaussian-sampling-s-t-d="updateGaussianSamplingSTD"
         v-model:gaussian-sampling-iterations="gaussianSamplingIterations"
         @update:gaussian-sampling-iterations="updateGaussianSamplingIterations" v-model:linear-nearest="linearNearest"
-        @update:linear-nearest="updateLinearNearest" v-model:sheppard-power="sheppardPower"
-        @update:sheppard-power="updateSheppardPower" v-model:sheppard-nearest="sheppardNearest"
-        @update:sheppard-nearest="updateSheppardNearest" :accent="accent" :generating-images="generatingImages"
+        @update:linear-nearest="updateLinearNearest" v-model:shepard-power="shepardPower"
+        @update:shepard-power="updateShepardPower" v-model:shepard-nearest="shepardNearest"
+        @update:shepard-nearest="updateShepardNearest" :accent="accent" :generating-images="generatingImages"
         @function:select-image="selectImage" :selected-image-path="selectedImagePath"
         @function:generate-images="generateImages" />
     </div>
