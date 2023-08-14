@@ -1,15 +1,7 @@
+use catppuccinifier_rs::generate::{generate_image, GenerateProperties};
 use clap::{command, Parser, ValueEnum};
-use exoquant::SimpleColorSpace;
-use image::open;
-use lutgen::identity::correct_image;
-use lutgen::interpolation::{
-    GaussianRemapper, GaussianSamplingRemapper, LinearRemapper, NearestNeighborRemapper,
-    ShepardRemapper,
-};
-use lutgen::{GenerateLut, Palette};
 use std::path::{Path, PathBuf};
 use std::{env, fs};
-use substring::Substring;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -22,6 +14,9 @@ struct Cli {
 
     #[arg(long, default_value_t = 8, value_parser = clap::value_parser!(u8).range(2..=16))]
     hald: u8,
+
+    #[arg(short, long, default_value_t = 1.0, value_parser = clap::value_parser!(f64))]
+    luminosity: f64,
 
     #[arg(short, long, default_value = "gaussian-rbf")]
     algorithm: Algorithm,
@@ -55,7 +50,7 @@ enum Algorithm {
     NearestNeighbor,
 }
 
-#[derive(Clone, Debug, ValueEnum)]
+#[derive(Clone, Debug, ValueEnum, PartialEq)]
 enum Flavor {
     Latte,
     Frappe,
@@ -65,95 +60,12 @@ enum Flavor {
     All,
 }
 
-fn generate(
-    temp_path: String,
-    image_path: String,
-    image_folder: String,
-    image_name: String,
-    hald_level: u8,
-    flavor: Flavor,
-    image_extension: String,
-    algorithm: Algorithm,
-    shape: f64,
-    nearest: usize,
-    mean: f64,
-    std: f64,
-    iterations: usize,
-    power: f64,
-) -> Result<String, String> {
-    println!("Generating {:?}", &flavor);
-
-    const SEED: u64 = u64::from_be_bytes(*b"42080085");
-
-    let palette = match flavor {
-        Flavor::Latte => Palette::CatppuccinLatte.get(),
-        Flavor::Frappe => Palette::CatppuccinFrappe.get(),
-        Flavor::Macchiato => Palette::CatppuccinMacchiato.get(),
-        Flavor::Mocha => Palette::CatppuccinMocha.get(),
-        _ => Palette::CatppuccinOled.get(),
-    };
-
-    let hald_clut = match algorithm {
-        Algorithm::GaussianRBF => {
-            GaussianRemapper::new(&palette, shape, nearest).generate_lut(hald_level)
-        }
-
-        Algorithm::GaussianSampling => GaussianSamplingRemapper::new(
-            &palette,
-            mean,
-            std,
-            iterations,
-            SEED,
-            SimpleColorSpace::default(),
-        )
-        .generate_lut(hald_level),
-
-        Algorithm::LinearRBF => LinearRemapper::new(&palette, nearest).generate_lut(hald_level),
-
-        Algorithm::ShepardsMethod => {
-            ShepardRemapper::new(&palette, power, nearest).generate_lut(hald_level)
-        }
-
-        _ => NearestNeighborRemapper::new(&palette, SimpleColorSpace::default())
-            .generate_lut(hald_level),
-    };
-
-    let lut_was_generated = match hald_clut.save(format!("{}lut.png", temp_path)) {
-        Err(_) => false,
-        Ok(_) => true,
-    };
-
-    if lut_was_generated {
-        let mut new_image = open(image_path).unwrap().to_rgb8();
-        correct_image(&mut new_image, &hald_clut);
-
-        let save_path = match env::consts::OS {
-            "linux" => format!(
-                "{}/{}-hald{}-{:?}.{}",
-                image_folder, image_name, &hald_level, &flavor, &image_extension
-            ),
-            "windows" => format!(
-                "{}\\{}-hald{}-{:?}.{}",
-                image_folder, image_name, &hald_level, &flavor, &image_extension
-            ),
-            _ => "".to_string(),
-        };
-
-        match new_image.save(&save_path) {
-            Ok(_) => return Ok(save_path.into()),
-            Err(error) => return Err(error.to_string()),
-        };
-    } else {
-        return Err("Couldn't generate LUT".into());
-    }
-}
-
 fn main() {
     let cli = Cli::parse();
-    let image_path = cli.image.to_str().unwrap();
-    let image_folder = cli.image.parent().unwrap();
+    let image_path = cli.image;
     let flavors = cli.flavor;
     let hald_level = cli.hald;
+    let luminosity = cli.luminosity;
     let algorithm = cli.algorithm;
     let shape = cli.shape;
     let nearest = cli.nearest.unwrap_or(match &algorithm {
@@ -175,35 +87,32 @@ fn main() {
         fs::create_dir(&temp_path).expect("");
     }
 
-    if !Path::new(&image_path).exists() {
+    if !Path::new(&image_path.to_owned()).exists() {
         println!("Error. Couldn't find image");
         std::process::exit(1);
     }
 
-    let image_extension = match Path::new(&image_path).extension() {
+    let image_extension = match Path::new(&image_path.to_owned()).extension() {
         Some(extension) => extension.to_str().unwrap().to_string(),
         None => "".to_string(),
     };
 
-    let image_name = cli
-        .image
-        .file_name()
-        .unwrap()
-        .to_str()
-        .unwrap()
-        .to_string()
-        .replace(format!(".{}", &image_extension).as_str(), "");
+    let image_name = format!(
+        "{}.{}",
+        image_path
+            .to_owned()
+            .file_name()
+            .unwrap()
+            .to_os_string()
+            .into_string()
+            .unwrap(),
+        image_extension.to_owned()
+    );
 
     if !["jpg", "jpeg", "png", "webp"].contains(&image_extension.as_str()) {
         println!("Error. File not supported");
         std::process::exit(1);
     }
-
-    let image = if image_path.contains(r".\") {
-        image_path.substring(2, image_path.len())
-    } else {
-        image_path
-    };
 
     for flavor in flavors {
         match flavor {
@@ -217,55 +126,119 @@ fn main() {
                 ];
 
                 for possible_flavor in possible_flavors {
-                    match generate(
-                        temp_path.clone(),
-                        image.to_string(),
-                        image_folder.to_str().unwrap().to_string(),
-                        image_name.clone(),
-                        hald_level,
-                        possible_flavor.clone(),
-                        image_extension.clone(),
-                        algorithm.clone(),
-                        shape,
-                        nearest,
-                        mean,
-                        std,
-                        iterations,
-                        power,
-                    ) {
-                        Ok(path) => {
-                            println!("Successfully generated image: {}", &path);
+                    let algorithm = match algorithm.clone() {
+                        Algorithm::ShepardsMethod => {
+                            catppuccinifier_rs::generate::Algorithm::ShepardsMethod
                         }
-                        Err(error) => {
-                            println!("Error generating image: {}", error);
+                        Algorithm::GaussianRBF => {
+                            catppuccinifier_rs::generate::Algorithm::GaussianRBF
+                        }
+                        Algorithm::LinearRBF => catppuccinifier_rs::generate::Algorithm::LinearRBF,
+                        Algorithm::GaussianSampling => {
+                            catppuccinifier_rs::generate::Algorithm::GaussianSampling
+                        }
+                        Algorithm::NearestNeighbor => {
+                            catppuccinifier_rs::generate::Algorithm::NearestNeighbor
                         }
                     };
+
+                    let flavor = if possible_flavor.to_owned() == Flavor::Latte {
+                        catppuccinifier_rs::generate::Flavor::Latte
+                    } else if possible_flavor.to_owned() == Flavor::Frappe {
+                        catppuccinifier_rs::generate::Flavor::Frappe
+                    } else if possible_flavor.to_owned() == Flavor::Macchiato {
+                        catppuccinifier_rs::generate::Flavor::Macchiato
+                    } else if possible_flavor.to_owned() == Flavor::Mocha {
+                        catppuccinifier_rs::generate::Flavor::Mocha
+                    } else {
+                        catppuccinifier_rs::generate::Flavor::Oled
+                    };
+
+                    let mut save_path = image_path.parent().unwrap().to_owned();
+                    save_path.push(format!(
+                        "{}-{}-{}",
+                        format!("{:?}", flavor),
+                        hald_level.to_owned(),
+                        image_name
+                    ));
+
+                    match generate_image(
+                        GenerateProperties {
+                            hald_level,
+                            luminosity,
+                            algorithm,
+                            shape,
+                            nearest,
+                            mean,
+                            std,
+                            iterations,
+                            power,
+                        },
+                        flavor,
+                        image_path,
+                        save_path,
+                    ){
+                        Ok(())=> {println!("Image Generated Successfully")},
+                        Err(e)=> {println!("{}", e)}
+                    }
                 }
             }
             _ => {
-                match generate(
-                    temp_path.clone(),
-                    image.to_string(),
-                    image_folder.to_str().unwrap().to_string(),
-                    image_name.clone(),
-                    hald_level,
-                    flavor.clone(),
-                    image_extension.clone(),
-                    algorithm.clone(),
-                    shape,
-                    nearest,
-                    mean,
-                    std,
-                    iterations,
-                    power,
-                ) {
-                    Ok(path) => {
-                        println!("Successfully generated image: {}", &path);
+                let algorithm = match algorithm.clone() {
+                        Algorithm::ShepardsMethod => {
+                            catppuccinifier_rs::generate::Algorithm::ShepardsMethod
+                        }
+                        Algorithm::GaussianRBF => {
+                            catppuccinifier_rs::generate::Algorithm::GaussianRBF
+                        }
+                        Algorithm::LinearRBF => catppuccinifier_rs::generate::Algorithm::LinearRBF,
+                        Algorithm::GaussianSampling => {
+                            catppuccinifier_rs::generate::Algorithm::GaussianSampling
+                        }
+                        Algorithm::NearestNeighbor => {
+                            catppuccinifier_rs::generate::Algorithm::NearestNeighbor
+                        }
+                    };
+
+                    let mut image_flavor = if flavor.to_owned() == Flavor::Latte {
+                        catppuccinifier_rs::generate::Flavor::Latte
+                    } else if flavor.to_owned() == Flavor::Frappe {
+                        catppuccinifier_rs::generate::Flavor::Frappe
+                    } else if flavor.to_owned() == Flavor::Macchiato {
+                        catppuccinifier_rs::generate::Flavor::Macchiato
+                    } else if flavor.to_owned() == Flavor::Mocha {
+                        catppuccinifier_rs::generate::Flavor::Mocha
+                    } else {
+                        catppuccinifier_rs::generate::Flavor::Oled
+                    };
+
+                    let mut save_path = image_path.parent().unwrap().to_owned();
+                    save_path.push(format!(
+                        "{}-{}-{}",
+                        format!("{:?}", flavor),
+                        hald_level.to_owned(),
+                        image_name
+                    ));
+
+                    match generate_image(
+                        GenerateProperties {
+                            hald_level,
+                            luminosity,
+                            algorithm,
+                            shape,
+                            nearest,
+                            mean,
+                            std,
+                            iterations,
+                            power,
+                        },
+                        image_flavor,
+                        image_path,
+                        save_path,
+                    ){
+                        Ok(())=> {println!("Image Generated Successfully")},
+                        Err(e)=> {println!("{}", e)}
                     }
-                    Err(error) => {
-                        println!("Error generating image: {}", error);
-                    }
-                };
             }
         }
     }

@@ -9,6 +9,4 @@ colored = "2.0.0"
 dirs = "5.0.0"
 clap = { version = "4.2.7", features = ["derive", "cargo"] }
 substring = "1.4.5"
-lutgen = "0.6"
-exoquant = "0.2.0"
-image = "0.24.6"
+catppuccinifier-rs ={ git = "https://github.com/lighttigerXIV/catppuccinifier-rs"}
