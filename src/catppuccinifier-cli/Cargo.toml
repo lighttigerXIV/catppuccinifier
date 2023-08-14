@@ -1,6 +1,6 @@
 [package]
 name = "catppuccinifier-cli"
-version = "7.0.0"
+version = "7.1.0"
 edition = "2021"
 description = "A cli tool to catppuccinify your wallpapers"
 
@@ -10,3 +10,6 @@ dirs = "5.0.0"
 clap = { version = "4.2.7", features = ["derive", "cargo"] }
 substring = "1.4.5"
 catppuccinifier-rs ={ git = "https://github.com/lighttigerXIV/catppuccinifier-rs"}
+
+#This is for debugging purposes
+#catppuccinifier-rs = {path = "/home/lighttigerxiv/Development/Crates/catppuccinifier-rs"}

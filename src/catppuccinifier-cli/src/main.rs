@@ -1,4 +1,4 @@
-use catppuccinifier_rs::generate::{generate_image, GenerateProperties};
+use catppuccinifier_rs::generate::{self, generate_image, GenerateProperties};
 use clap::{command, Parser, ValueEnum};
 use std::path::{Path, PathBuf};
 use std::{env, fs};
@@ -58,6 +58,16 @@ enum Flavor {
     Mocha,
     Oled,
     All,
+}
+
+fn get_flavor_name(flavor: generate::Flavor) -> String {
+    return match flavor {
+        catppuccinifier_rs::generate::Flavor::Latte => "latte".to_owned(),
+        catppuccinifier_rs::generate::Flavor::Frappe => "frappe".to_owned(),
+        catppuccinifier_rs::generate::Flavor::Macchiato => "macchiato".to_owned(),
+        catppuccinifier_rs::generate::Flavor::Mocha => "mocha".to_owned(),
+        catppuccinifier_rs::generate::Flavor::Oled => "oled".to_owned(),
+    };
 }
 
 fn main() {
@@ -154,10 +164,10 @@ fn main() {
                         catppuccinifier_rs::generate::Flavor::Oled
                     };
 
-                    let mut save_path = image_path.parent().unwrap().to_owned();
+                    let mut save_path = image_path.to_owned().parent().unwrap().to_owned();
                     save_path.push(format!(
-                        "{}-{}-{}",
-                        format!("{:?}", flavor),
+                        "{}-hald{}-{}",
+                        get_flavor_name(flavor.to_owned()),
                         hald_level.to_owned(),
                         image_name
                     ));
@@ -174,71 +184,77 @@ fn main() {
                             iterations,
                             power,
                         },
-                        flavor,
-                        image_path,
+                        flavor.to_owned(),
+                        image_path.to_owned(),
                         save_path,
-                    ){
-                        Ok(())=> {println!("Image Generated Successfully")},
-                        Err(e)=> {println!("{}", e)}
+                    ) {
+                        Ok(()) => {
+                            println!("{} generated successfully", get_flavor_name(flavor.to_owned()))
+                        }
+                        Err(e) => {
+                            println!("{}", e)
+                        }
                     }
                 }
             }
             _ => {
                 let algorithm = match algorithm.clone() {
-                        Algorithm::ShepardsMethod => {
-                            catppuccinifier_rs::generate::Algorithm::ShepardsMethod
-                        }
-                        Algorithm::GaussianRBF => {
-                            catppuccinifier_rs::generate::Algorithm::GaussianRBF
-                        }
-                        Algorithm::LinearRBF => catppuccinifier_rs::generate::Algorithm::LinearRBF,
-                        Algorithm::GaussianSampling => {
-                            catppuccinifier_rs::generate::Algorithm::GaussianSampling
-                        }
-                        Algorithm::NearestNeighbor => {
-                            catppuccinifier_rs::generate::Algorithm::NearestNeighbor
-                        }
-                    };
-
-                    let mut image_flavor = if flavor.to_owned() == Flavor::Latte {
-                        catppuccinifier_rs::generate::Flavor::Latte
-                    } else if flavor.to_owned() == Flavor::Frappe {
-                        catppuccinifier_rs::generate::Flavor::Frappe
-                    } else if flavor.to_owned() == Flavor::Macchiato {
-                        catppuccinifier_rs::generate::Flavor::Macchiato
-                    } else if flavor.to_owned() == Flavor::Mocha {
-                        catppuccinifier_rs::generate::Flavor::Mocha
-                    } else {
-                        catppuccinifier_rs::generate::Flavor::Oled
-                    };
-
-                    let mut save_path = image_path.parent().unwrap().to_owned();
-                    save_path.push(format!(
-                        "{}-{}-{}",
-                        format!("{:?}", flavor),
-                        hald_level.to_owned(),
-                        image_name
-                    ));
-
-                    match generate_image(
-                        GenerateProperties {
-                            hald_level,
-                            luminosity,
-                            algorithm,
-                            shape,
-                            nearest,
-                            mean,
-                            std,
-                            iterations,
-                            power,
-                        },
-                        image_flavor,
-                        image_path,
-                        save_path,
-                    ){
-                        Ok(())=> {println!("Image Generated Successfully")},
-                        Err(e)=> {println!("{}", e)}
+                    Algorithm::ShepardsMethod => {
+                        catppuccinifier_rs::generate::Algorithm::ShepardsMethod
                     }
+                    Algorithm::GaussianRBF => catppuccinifier_rs::generate::Algorithm::GaussianRBF,
+                    Algorithm::LinearRBF => catppuccinifier_rs::generate::Algorithm::LinearRBF,
+                    Algorithm::GaussianSampling => {
+                        catppuccinifier_rs::generate::Algorithm::GaussianSampling
+                    }
+                    Algorithm::NearestNeighbor => {
+                        catppuccinifier_rs::generate::Algorithm::NearestNeighbor
+                    }
+                };
+
+                let image_flavor = if flavor.to_owned() == Flavor::Latte {
+                    catppuccinifier_rs::generate::Flavor::Latte
+                } else if flavor.to_owned() == Flavor::Frappe {
+                    catppuccinifier_rs::generate::Flavor::Frappe
+                } else if flavor.to_owned() == Flavor::Macchiato {
+                    catppuccinifier_rs::generate::Flavor::Macchiato
+                } else if flavor.to_owned() == Flavor::Mocha {
+                    catppuccinifier_rs::generate::Flavor::Mocha
+                } else {
+                    catppuccinifier_rs::generate::Flavor::Oled
+                };
+
+                let mut save_path = image_path.to_owned().parent().unwrap().to_owned();
+                save_path.push(format!(
+                    "{}-hald{}-{}",
+                    format!("{:?}", flavor),
+                    hald_level.to_owned(),
+                    image_name
+                ));
+
+                match generate_image(
+                    GenerateProperties {
+                        hald_level,
+                        luminosity,
+                        algorithm,
+                        shape,
+                        nearest,
+                        mean,
+                        std,
+                        iterations,
+                        power,
+                    },
+                    image_flavor.to_owned(),
+                    image_path.to_owned(),
+                    save_path,
+                ) {
+                    Ok(()) => {
+                        println!("{} generated successfully", get_flavor_name(image_flavor.to_owned()))
+                    }
+                    Err(e) => {
+                        println!("{}", e)
+                    }
+                }
             }
         }
     }

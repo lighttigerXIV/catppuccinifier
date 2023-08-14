@@ -167,7 +167,7 @@ checksum = "14c189c53d098945499cdfa7ecc63567cf3886b3332b312a5b4585d8d3a6a610"
 
 [[package]]
 name = "catppuccinifier-cli"
-version = "7.0.0"
+version = "7.1.0"
 dependencies = [
  "catppuccinifier-rs",
  "clap",
@@ -179,7 +179,7 @@ dependencies = [
 [[package]]
 name = "catppuccinifier-rs"
 version = "0.1.0"
-source = "git+https://github.com/lighttigerXIV/catppuccinifier-rs#da5faa5d838df98ff9f44b46d56ab145e78c2869"
+source = "git+https://github.com/lighttigerXIV/catppuccinifier-rs#0e0406963832f2dee77210517104bc40604710d9"
 dependencies = [
  "image",
  "lutgen",
