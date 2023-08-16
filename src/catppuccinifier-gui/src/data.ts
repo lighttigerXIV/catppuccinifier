@@ -1,5 +1,5 @@
 
-export const ConversionMethods = {
+export const Algorithms = {
     gaussian: {
         codename: "gaussian",
         name: "Gaussian RBF (Recommended)",
@@ -92,4 +92,58 @@ export const Accents = {
     sapphire: "Sapphire",
     blue: "Blue",
     lavender: "Lavender"
+}
+
+export interface GenerationData {
+    image_path: string,
+    hald: number,
+    luminosity: number,
+    algorithm: string,
+    shape: number,
+    nearest: number,
+    mean: number,
+    std: number,
+    iterations: number,
+    power: number,
+    flavor: string
+}
+
+export interface GenerateImagesData {
+    imagePath: string,
+    hald: number,
+    luminosity: number,
+    algorithm: string,
+    shape: number,
+    nearest: number,
+    mean: number,
+    std: number,
+    iterations: number,
+    power: number,
+}
+
+export interface ImagePaths{
+    selected:{
+        local: string,
+        raw: string
+    },
+    latte:{
+        local: string,
+        raw: string
+    },
+    frappe:{
+        local: string,
+        raw: string
+    },
+    macchiato:{
+        local: string,
+        raw: string
+    },
+    mocha:{
+        local: string,
+        raw: string
+    },
+    oled:{
+        local: string,
+        raw: string
+    }
 }

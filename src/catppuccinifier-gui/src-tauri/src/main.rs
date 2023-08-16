@@ -1,216 +1,134 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use exoquant::SimpleColorSpace;
-use image::open;
-use lutgen::identity::correct_image;
-use lutgen::interpolation::{
-    GaussianRemapper, GaussianSamplingRemapper, LinearRemapper, NearestNeighborRemapper,
-    ShepardRemapper,
-};
-use lutgen::{GenerateLut, Palette};
-use rand::distributions::Alphanumeric;
-use rand::{thread_rng, Rng};
-use std::path::Path;
+use catppuccinifier_rs::generate::GenerateProperties;
+use settings::Settings;
+use std::fs::File;
+use std::io::Write;
+use std::path::{Path, PathBuf};
 use std::{env, fs};
+use structs::GenerationData;
+use tauri::{AppHandle, Manager};
 
-const SEED: u64 = u64::from_be_bytes(*b"42080085");
+pub mod settings;
+pub mod structs;
+use crate::settings::{get_setting, update_setting};
 
-#[tauri::command(rename_all = "snake_case")]
-async fn generate_image(
-    image_path: String,
-    hald_level: u8,
-    flavor: String,
-    conversion_method: String,
-    gaussian_shape: f64,
-    gaussian_nearest: usize,
-    gaussian_sampling_mean: f64,
-    gaussian_sampling_std: f64,
-    gaussian_sampling_iterations: usize,
-    linear_nearest: usize,
-    sheppard_power: f64,
-    sheppard_nearest: usize,
-) -> Result<String, String> {
-    let image_extension = Path::new(&image_path)
-        .extension()
-        .unwrap()
-        .to_str()
-        .unwrap();
-    let random_name: String = thread_rng()
-        .sample_iter(&Alphanumeric)
-        .take(14)
-        .map(char::from)
-        .collect();
+#[tauri::command()]
+async fn generate_image(data: GenerationData) -> Result<String, String> {
 
-    match env::consts::OS {
-        "linux" => {
-            if !Path::new("/tmp/catppuccinifier").exists() {
-                fs::create_dir("/tmp/catppuccinifier").expect("");
-            }
+    let image_name = match Path::new(&data.image_path).file_name() {
+        Some(name) => name.to_str().unwrap(),
+        None => return Err("Error getting image name".to_owned()),
+    };
 
-            return match Path::new("/tmp/catppuccinifier/").exists() {
-                true => {
-                    match generate(
-                        "/tmp/catppuccinifier".to_string(),
-                        image_path.to_string(),
-                        hald_level,
-                        flavor.to_string(),
-                        random_name.to_string(),
-                        image_extension.to_string(),
-                        conversion_method,
-                        gaussian_shape,
-                        gaussian_nearest,
-                        gaussian_sampling_mean,
-                        gaussian_sampling_std,
-                        gaussian_sampling_iterations,
-                        linear_nearest,
-                        sheppard_power,
-                        sheppard_nearest,
-                    )
-                    .await
-                    {
-                        Ok(image) => return Ok(image),
-                        Err(error) => return Err(error.into()),
-                    };
-                }
-                false => Err("Error converting image".into()),
-            };
+
+    let mut save_path = get_temp_dir();
+    save_path.push(format!(
+        "{}-hald{}-{}",
+        data.flavor, data.hald, image_name
+    ));
+
+    if !get_temp_dir().exists() {
+        let create_dir = fs::create_dir_all(&get_temp_dir());
+        if create_dir.is_err() {
+            return Err("Error creating temp folder".to_owned());
         }
-        "windows" => {
-            if !Path::new("C:\\Windows\\Temp\\catppuccinifier").exists() {
-                fs::create_dir("C:\\Windows\\Temp\\catppuccinifier").expect("");
-            }
-
-            return match Path::new("C:\\Windows\\Temp\\catppuccinifier").exists() {
-                true => {
-                    match generate(
-                        "C:\\Windows\\Temp\\catppuccinifier\\".to_string(),
-                        image_path.to_string(),
-                        hald_level,
-                        flavor.to_string(),
-                        random_name.to_string(),
-                        image_extension.to_string(),
-                        conversion_method,
-                        gaussian_shape,
-                        gaussian_nearest,
-                        gaussian_sampling_mean,
-                        gaussian_sampling_std,
-                        gaussian_sampling_iterations,
-                        linear_nearest,
-                        sheppard_power,
-                        sheppard_nearest,
-                    )
-                    .await
-                    {
-                        Ok(image) => return Ok(image),
-                        Err(error) => return Err(error.into()),
-                    };
-                }
-                false => Err("Error converting image".into()),
-            };
-        }
-        _ => Err("OS not supported".into()),
     }
-}
 
-async fn generate(
-    temp_path: String,
-    image_path: String,
-    hald_level: u8,
-    flavor: String,
-    random_name: String,
-    image_extension: String,
-    conversion_method: String,
-    gaussian_shape: f64,
-    gaussian_nearest: usize,
-    gaussian_sampling_mean: f64,
-    gaussian_sampling_std: f64,
-    gaussian_sampling_iterations: usize,
-    linear_nearest: usize,
-    sheppard_power: f64,
-    sheppard_nearest: usize,
-) -> Result<String, String> {
-    let palette = match flavor.as_str() {
-        "mocha" => Palette::CatppuccinMocha.get(),
-        "macchiato" => Palette::CatppuccinMacchiato.get(),
-        "frappe" => Palette::CatppuccinFrappe.get(),
-        "latte" => Palette::CatppuccinLatte.get(),
-        _ => Palette::CatppuccinOled.get(),
+    let algorithm = match data.algorithm.as_str() {
+        "gaussian_rbf" => catppuccinifier_rs::generate::Algorithm::GaussianRBF,
+        "gaussian_sampling" => catppuccinifier_rs::generate::Algorithm::GaussianSampling,
+        "linear_rbf" => catppuccinifier_rs::generate::Algorithm::LinearRBF,
+        "nearest_neighbour" => catppuccinifier_rs::generate::Algorithm::NearestNeighbor,
+        _ => catppuccinifier_rs::generate::Algorithm::ShepardsMethod,
     };
 
-    let hald_clut = match conversion_method.as_str() {
-        "gaussian" => GaussianRemapper::new(&palette, gaussian_shape, gaussian_nearest)
-            .generate_lut(hald_level),
-
-        "gaussian_sampling" => GaussianSamplingRemapper::new(
-            &palette,
-            gaussian_sampling_mean,
-            gaussian_sampling_std,
-            gaussian_sampling_iterations,
-            SEED,
-            SimpleColorSpace::default(),
-        )
-        .generate_lut(hald_level),
-
-        "linear" => LinearRemapper::new(&palette, linear_nearest).generate_lut(hald_level),
-
-        "sheppard" => ShepardRemapper::new(&palette, sheppard_power, sheppard_nearest)
-            .generate_lut(hald_level),
-
-        _ => NearestNeighborRemapper::new(&palette, SimpleColorSpace::default())
-            .generate_lut(hald_level),
+    let flavor = match data.flavor.as_str() {
+        "latte" => catppuccinifier_rs::generate::Flavor::Latte,
+        "frappe" => catppuccinifier_rs::generate::Flavor::Frappe,
+        "macchiato" => catppuccinifier_rs::generate::Flavor::Macchiato,
+        "mocha" => catppuccinifier_rs::generate::Flavor::Mocha,
+        _ => catppuccinifier_rs::generate::Flavor::Oled,
     };
 
-    let lut_was_generated = match hald_clut.save(format!("{}lut.png", temp_path)) {
-        Err(_) => false,
-        Ok(_) => true,
+    return match catppuccinifier_rs::generate::generate_image(
+        GenerateProperties {
+            hald_level: data.hald,
+            luminosity: data.luminosity,
+            algorithm,
+            shape: data.shape,
+            nearest: data.nearest,
+            mean: data.mean,
+            std: data.std,
+            iterations: data.iterations,
+            power: data.power,
+        },
+        flavor,
+        Path::new(&data.image_path).to_path_buf(),
+        Path::new(&save_path.to_owned()).to_path_buf(),
+    ) {
+        Ok(()) => Ok(save_path.into_os_string().into_string().unwrap()),
+        Err(_) => Err("Error generating image".to_owned()),
     };
-
-    if lut_was_generated {
-        let mut new_image = open(image_path).unwrap().to_rgb8();
-        correct_image(&mut new_image, &hald_clut);
-
-        let save_path = format!("{}{}.{}", &temp_path, &random_name, &image_extension);
-
-        match new_image.save(&save_path) {
-            Ok(_) => return Ok(save_path.into()),
-            Err(_) => return Err("Error converting image".into()),
-        };
-    } else {
-        return Err("".into());
-    }
-}
-
-#[tauri::command]
-async fn get_os() -> String {
-    let os = env::consts::OS;
-    return os.to_string();
 }
 
 #[tauri::command]
 async fn clear_temp_folder() {
-    match env::consts::OS {
-        "linux" => {
-            if Path::new("/tmp/catppuccinifier/").exists() {
-                fs::remove_dir_all("/tmp/catppuccinifier").expect("Error deleting temp folder");
-            }
-        }
-        "windows" => {
-            if Path::new("C:\\Windows\\TEMP\\catppuccinifier").exists() {
-                fs::remove_dir_all("C:\\Windows\\TEMP\\catppuccinifier")
-                    .expect("Error deleting temp folder");
-            }
-        }
-        _ => {}
+    if get_temp_dir().exists() {
+        fs::remove_dir_all(get_temp_dir()).expect("Error deleting temp folder");
     }
 }
 
+fn get_temp_dir() -> PathBuf {
+    return match env::consts::OS {
+        "windows" => Path::new("C:\\Windows\\TEMP\\catppuccinifier").to_owned(),
+        _ => Path::new("/tmp/catppuccinifier/").to_owned(),
+    };
+}
+
 #[tauri::command(rename_all = "snake_case")]
-async fn save_image(image_path: String, saved_path: String) -> Result<String, String> {
-    return match fs::copy(&image_path, &saved_path) {
+async fn save_image(image_path: String, save_path: String) -> Result<String, String> {
+    return match fs::copy(&image_path, &save_path) {
         Ok(_) => Ok("Image saved successfully".into()),
         Err(_) => Err("Error saving image".into()),
     };
+}
+
+fn init_settings(app_handle: AppHandle) -> Result<(), ()> {
+    let mut settings_path = app_handle.path_resolver().app_config_dir().unwrap();
+    settings_path.push("settings.json");
+
+    //Creates the folder if it doesn't exist
+    if !settings_path.parent().unwrap().exists() {
+        fs::create_dir_all(settings_path.parent().unwrap().to_owned())
+            .expect("Error creating config folder");
+    }
+
+    //Creates the settings file if it doesn't exist
+    if !settings_path.exists() {
+        let mut file = match File::create(settings_path) {
+            Ok(file) => file,
+            Err(_) => panic!("Error creating settings file."),
+        };
+
+        let settings = Settings {
+            theme: "mocha".to_owned(),
+            accent: "blue".to_owned(),
+        };
+
+        let settings_json = match serde_json::to_string_pretty(&settings) {
+            Ok(json) => json,
+            Err(_) => panic!("Error obtaining json from settings struct."),
+        };
+
+        match file.write_all(settings_json.as_bytes()) {
+            Ok(()) => return Ok(()),
+            Err(_) => panic!("Error writing settings file."),
+        }
+    }
+
+    return Ok(());
 }
 
 fn main() {
@@ -219,8 +137,14 @@ fn main() {
             generate_image,
             clear_temp_folder,
             save_image,
-            get_os
+            get_setting,
+            update_setting
         ])
+        .setup(|app| {
+            init_settings(app.app_handle().to_owned()).unwrap();
+
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

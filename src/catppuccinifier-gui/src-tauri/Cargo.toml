@@ -17,9 +17,7 @@ serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.4.0", features = ["dialog-open", "dialog-save", "fs-all", "path-all", "protocol-asset", "shell-open", "window-create"] }
 rand = "0.8.5"
-lutgen = "0.6"
-exoquant = "0.2.0"
-image = "0.24.6"
+catppuccinifier-rs = {git = "https://github.com/lighttigerXIV/catppuccinifier-rs"}
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.

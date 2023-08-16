@@ -1,9 +1,9 @@
 import { createApp } from 'vue'
-import './app.css'
-import App from './App.vue'
-import Main from "./Main.vue"
-import Settings from "./pages/Settings.vue"
-import Preview from "./pages/Preview.vue"
+import '@/app.css'
+import App from '@/App.vue'
+import Root from "@/Root.vue"
+import Settings from "@pages/Settings.vue"
+import Preview from "@pages/Preview.vue"
 import { createRouter, createWebHistory } from "vue-router"
 
 
@@ -19,6 +19,6 @@ const router = createRouter({
 });
 
 
-const app = createApp(Main);
+const app = createApp(Root);
 app.use(router)
 app.mount("#app")

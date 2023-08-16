@@ -28,7 +28,7 @@
     --lavender: #b4befe;
   }
   
-  .Theme-Latte {
+  .theme-latte {
     --crust: #dce0e8;
     --mantle: #e6e9ef;
     --base: #eff1f5;
@@ -50,7 +50,7 @@
     --blue: #1e66f5;
     --lavender: #7287fd;
   }
-  .Theme-Frappe {
+  .theme-frappe {
     --crust: #232634;
     --mantle: #292c3c;
     --base: #303446;
@@ -72,7 +72,7 @@
     --blue: #8caaee;
     --lavender: #babbf1;
   }
-  .Theme-Macchiato {
+  .theme-macchiato {
     --crust: #181926;
     --mantle: #1e2030;
     --base: #24273a;
@@ -94,7 +94,7 @@
     --blue: #8aadf4;
     --lavender: #b7bdf8;
   }
-  .Theme-Mocha {
+  .theme-mocha {
     --crust: #11111b;
     --mantle: #181825;
     --base: #1e1e2e;

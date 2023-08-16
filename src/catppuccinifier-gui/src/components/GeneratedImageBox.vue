@@ -1,17 +1,26 @@
 <script setup lang="ts">
 import { WebviewWindow } from "@tauri-apps/api/window";
-import SaveSVG from "../assets/images/save.svg"
-import MaximizeSVG from "../assets/images/maximize.svg"
+import { onMounted, ref } from "vue";
+import { getSettings } from "@/settings";
+import PrimaryButton from "./PrimaryButton.vue";
+import LatteSVG from "@icons/sunflower.svg"
+import FrappeSVG from "@icons/pineapple.svg"
+import MacchiatoSVG from "@icons/lotus.svg"
+import MochaSVG from "@icons/branch.svg"
+import OledSVG from "@icons/moon.svg"
+
+const tailwindTheme = ref("");
 
 defineEmits([
-    "function:saveImage",
+    "save",
 ])
 
+onMounted(async () => {
+    let settings = await getSettings();
+    tailwindTheme.value = `${settings.theme}-${settings.accent}`;
+});
+
 const props = defineProps({
-    itemsAccent: {
-        required: true,
-        type: String
-    },
     disabled: {
         required: true,
         type: Boolean
@@ -26,69 +35,43 @@ const props = defineProps({
     }
 })
 
-function openPreview(path: string) {
-    const webview = new WebviewWindow('preview', {
-        url: "preview?path=" + path,
-        title: "Preview " + props.flavor
-    })
+function preview() {
 
-    webview.once('tauri://created', function () {})
-    webview.once('tauri://error', function (e) {
-        console.error(e);
-    })
+    new WebviewWindow('preview', {
+        url: `preview?path=${props.imagePath}`,
+        title: "Preview " + props.flavor,
+        width: 800,
+        height: 800,
+    });
 }
+
 
 </script>
 
 <template>
-    <div class="p-4 bg-skin-crust border border-skin-surface0 rounded-3xl aspect-square flex flex-col">
-
-        <div class="flex">
-
-            <button
-                class="bg-skin-mantle border border-skin-surface0 p-2 rounded-xl h-10 flex-grow mr-2 capitalize truncate hover:enabled:rounded-full disabled:bg-skin-crust disabled:border-skin-mantle"
-                :disabled="disabled" @click="$emit('function:saveImage', '')">
-
-                <div class="flex items-center justify-center">
-
-                    <div>
-
-                        <SaveSVG class="mr-2 h-5 w-5 stroke-skin-text fill-transparent" />
-                    </div>
-
-                    <div>
-                        Save {{ flavor }}
-                    </div>
-                </div>
-            </button>
-
-            <button
-                class="bg-skin-mantle border border-skin-surface0 p-2 rounded-xl h-10 hover:enabled:rounded-full disabled:bg-skin-crust disabled:border-skin-mantle"
-                :disabled="disabled" @click="openPreview(imagePath)">
-
-                <div class="flex items-center justify-center">
-
-                    <div>
-
-                        <MaximizeSVG class="mr-2 h-5 w-5 stroke-skin-text fill-transparent" />
-                    </div>
-
-                    <div>
-
-                        Preview
-                    </div>
-                </div>
-            </button>
+    <div class="p-4 bg-skin-crust border border-skin-surface0 rounded-3xl flex flex-col">
+        <div class="flex items-center">
+            <LatteSVG v-if="flavor === 'Latte'" class="w-6 h-6 fill-skin-text" />
+            <FrappeSVG v-if="flavor === 'Frappe'" class="w-6 h-6 fill-skin-text" />
+            <MacchiatoSVG v-if="flavor === 'Macchiato'" class="w-6 h-6 fill-none stroke-skin-text" />
+            <MochaSVG v-if="flavor === 'Mocha'" class="w-6 h-6 fill-skin-text" />
+            <OledSVG v-if="flavor === 'Oled'" class="w-6 h-6 stroke-skin-text stroke-2" />
+            <div class="text-2xl font-bold ml-3">{{ flavor }}</div>
         </div>
 
-        <div v-if="imagePath.length === 0">
-
-            <progress :data-theme="itemsAccent" class="progress progress-primary"></progress>
+        <div v-if="imagePath === ''">
+            <progress :data-theme="tailwindTheme" class="progress progress-primary"></progress>
         </div>
 
-        <div v-else class="flex flex-grow mt-4 justify-center  rounded-lg bg-skin-mantle border border-skin-surface0 p-2">
+        <div v-else class="">
+            <div class="flex mt-4">
+                <PrimaryButton icon="save" text="Save" :expand="true" :disabled="disabled"
+                    @click="$emit('save', { flavor: flavor.toLowerCase() })" />
+                <PrimaryButton @click="preview()" class="ml-4" icon="maximize" text="Preview" :disabled="disabled" />
+            </div>
 
-            <img :key="Math.random()" class="rounded-md object-contain" :src="imagePath">
+            <img :key="Math.random()" class="bg-skin-base rounded-3xl p-4 object-contain mt-4 aspect-square"
+                :src="imagePath">
         </div>
     </div>
 </template>

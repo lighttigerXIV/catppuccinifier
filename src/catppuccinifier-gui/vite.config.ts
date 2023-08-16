@@ -2,8 +2,17 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import svgLoader from 'vite-svg-loader'
 import { resolve } from '@tauri-apps/api/path'
+import path from "path"
 
 export default defineConfig({
+  resolve:{
+    alias:{
+      "@": path.resolve(__dirname, "./src"),
+      "@icons": path.resolve(__dirname, "./src/assets/icons"),
+      "@components": path.resolve(__dirname, "./src/components"),
+      "@pages": path.resolve(__dirname, "./src/pages")
+    }
+  },
   // prevent vite from obscuring rust errors
   clearScreen: false,
   // Tauri expects a fixed port, fail if that port is not available
