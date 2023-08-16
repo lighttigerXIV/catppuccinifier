@@ -4,8 +4,10 @@
 This project gives you a cli and a gui for catppuccinifying your wallpapers. It's available for Linux and Windows.
 
 <div align="center">
-<img src="https://github.com/lighttigerXIV/catppuccinifier/assets/35658492/6813d2c0-f45b-4871-b2d3-332655b07e57" width="600">
-<img src="https://user-images.githubusercontent.com/35658492/235938647-79fa5eef-a5e4-4f32-ad1b-ab265d7011cb.png" width="600">
+<h3>GUI</h3>
+<img src="https://github.com/lighttigerXIV/catppuccinifier/assets/35658492/047878ee-306f-45e6-9ad7-c814778bc55a" width="600">
+<h3>CLI</h3>
+<img src="https://github.com/lighttigerXIV/catppuccinifier/assets/35658492/84e13e34-ecea-4500-b794-6b5122b6bbf2" width="600">
 </div>
 
 
