@@ -71,27 +71,27 @@ export const Algorithms = {
 }
 
 export const Themes = {
-    latte: "Latte",
-    frappe: "Frappe",
-    macchiato: "Macchiato",
-    mocha: "Mocha"
+    latte: "latte",
+    frappe: "frappe",
+    macchiato: "macchiato",
+    mocha: "mocha"
 }
 
 export const Accents = {
-    rosewater: "Rosewater",
-    flamingo: "Flamingo",
-    pink: "Pink",
-    mauve: "Mauve",
-    red: "Red",
-    maroon: "Maroon",
-    peach: "Peach",
-    yellow: "Yellow",
-    green: "Green",
-    teal: "Teal",
-    sky: "Sky",
-    sapphire: "Sapphire",
-    blue: "Blue",
-    lavender: "Lavender"
+    rosewater: "rosewater",
+    flamingo: "flamingo",
+    pink: "pink",
+    mauve: "mauve",
+    red: "red",
+    maroon: "maroon",
+    peach: "peach",
+    yellow: "yellow",
+    green: "green",
+    teal: "teal",
+    sky: "sky",
+    sapphire: "sapphire",
+    blue: "blue",
+    lavender: "lavender"
 }
 
 export interface GenerationData {

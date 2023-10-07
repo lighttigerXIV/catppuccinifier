@@ -70,7 +70,7 @@ function preview() {
                 <PrimaryButton @click="preview()" class="ml-4" icon="maximize" text="Preview" :disabled="disabled" />
             </div>
 
-            <img :key="Math.random()" class="bg-skin-base rounded-3xl p-4 object-contain mt-4 aspect-square"
+            <img :key="Math.random()" loading="lazy" class="bg-skin-base rounded-3xl p-4 object-contain mt-4 aspect-square"
                 :src="imagePath">
         </div>
     </div>

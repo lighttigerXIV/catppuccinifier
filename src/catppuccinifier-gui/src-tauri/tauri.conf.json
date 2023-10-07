@@ -52,7 +52,7 @@
         "icons/icon.ico"
       ],
       "identifier": "com.lighttigerxiv.catppuccinifier",
-      "targets": "all"
+      "targets": ["msi", "app"]
     },
     "security": {
       "csp": null

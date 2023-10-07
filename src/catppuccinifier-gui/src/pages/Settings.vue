@@ -4,14 +4,23 @@ import SunflowerSVG from "@icons/sunflower.svg"
 import PineappleSVG from "@icons/pineapple.svg"
 import LotusSVG from "@icons/lotus.svg"
 import BranchSVG from "@icons/branch.svg"
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { emit } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/tauri";
+import { getSettings } from "@/settings";
 
-const theme = ref(localStorage.getItem("theme") ?? Themes.mocha);
-const accent = ref(localStorage.getItem("accent") ?? Accents.blue);
-const tailwindTheme = ref("Theme-" + theme.value);
+const theme = ref("");
+const accent = ref("");
+const tailwindTheme = ref("");
 
+
+onMounted(async () => {
+    let settings = await getSettings();
+    
+    theme.value = settings.theme;
+    accent.value = settings.accent;
+    tailwindTheme.value = `theme-${accent.value}`
+});
 
 function themesSettingClasses(setting: string) {
 

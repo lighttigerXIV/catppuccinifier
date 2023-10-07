@@ -22,6 +22,6 @@ onMounted(async () => {
 
 <template>
     <div class="h-screen min-w-full w-full bg-skin-base text-text p-4 flex justify-center" :class="theme">
-        <img class="object-contain rounded-md h-full" :src="imagePath">
+        <img class="object-contain rounded-md h-full" loading="lazy" :src="imagePath">
     </div>
 </template>
