@@ -5,24 +5,28 @@ Catppuccinfier is available for Linux and Windows
   
   ## Arch Linux
   Arch users have the option to install the programs through the AUR.
+
+  > [!WARNING]
+  > [catppuccinifier-gui-git](https://aur.archlinux.org/packages/catppuccinifier-gui-git) is currenly broken
   
   For the cli tool:
   
+    paru catppuccinifier-cli-bin
+    # Or
     paru catppuccinifier-cli-git
   
   For the gui tool:
   
-    paru catppuccinifier-gui-git
+    paru catppuccinifier-gui-bin
   
   For both tools:
   
-    paru catppuccinifier-cli-git
-    paru catppuccinifier-gui-git
+    paru -S catppuccinifier-cli-bin catppuccinifier-gui-bin
 
   ## NixOS
   Nix users have the option to install the CLI via a flake input.
 
-  > **note** <br>
+  > [!NOTE]
   > You can use https://isabelroses.cachix.org to access prebuilt binaries
 
   ### Flakes-Enabled Nix
