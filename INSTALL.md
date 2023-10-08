@@ -26,7 +26,7 @@ Catppuccinfier is available for Linux and Windows
   ## NixOS
   Nix users have the option to install the CLI via a flake input.
 
-  > **note** <br>
+  > [!NOTE]
   > You can use https://isabelroses.cachix.org to access prebuilt binaries
 
   ### Flakes-Enabled Nix
