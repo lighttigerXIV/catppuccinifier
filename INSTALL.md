@@ -13,7 +13,7 @@ Catppuccinfier is available for Linux and Windows
   
     paru catppuccinifier-cli-bin
     # Or
-    paru catppuccinifier-cli-gui
+    paru catppuccinifier-cli-git
   
   For the gui tool:
   
