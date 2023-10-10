@@ -21,7 +21,7 @@ Catppuccinfier is available for Linux and Windows
   
   For both tools:
   
-    paru -S catppuccinifier-cli-bin catppuccinifier-gui-bin
+    paru catppuccinifier-bin
 
   ## NixOS
   Nix users have the option to install the CLI via a flake input.
