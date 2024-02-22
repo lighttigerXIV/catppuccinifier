@@ -1,7 +1,7 @@
 <h1 align="center">Catppuccinifier</h1>
 
 ## About
-This project gives you a cli and a gui for catppuccinifying your wallpapers. It's available for Linux and Windows.
+This project gives you a cli and a gui for catppuccinifying your wallpapers. It's available for Linux and Windows. It uses [lutgen](https://github.com/ozwaldorf/lutgen-rs) under the hood
 
 <div align="center">
 <h3>GUI</h3>
