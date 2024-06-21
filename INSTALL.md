@@ -24,10 +24,9 @@ Catppuccinfier is available for Linux and Windows
     paru catppuccinifier-bin
 
   ## NixOS
-  Nix users have the option to install the CLI via a flake input.
+  Nix users can use the packages `catppuccinifier-gui` and `catppuccinifier-cli` provided by nixpkgs for the latest release.
 
-  > [!NOTE]
-  > You can use https://isabelroses.cachix.org to access prebuilt binaries
+  You also have the option to install the CLI via a flake input for a more up to date experince.
 
   ### Flakes-Enabled Nix
   For a flakes-enabled system, add this repo as a flake input:
@@ -42,9 +41,9 @@ Catppuccinfier is available for Linux and Windows
   };
   ```
 
-  If you're using `home-manager`, be sure to add `catppuccinifier` to your `extraSpecialArgs`:
+  If you're using `home-manager`:
   ```nix
-  outputs = { self, nixpkgs, home-manager, catppuccinifier, ... }@attrs:
+  outputs = { self, nixpkgs, home-manager, catppuccinifier, ... }@inputs:
     # ...
       nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
         # ...
@@ -54,7 +53,7 @@ Catppuccinfier is available for Linux and Windows
           ({config, ...}:{
             # ...
             home-manager.extraSpecialArgs = {
-              inherit (attrs) nixpkgs catppuccinifier;
+              inherit inputs;
             # ...
             };
           })
