@@ -88,9 +88,8 @@ fn main() {
     let power = cli.power;
 
     let temp_path = match env::consts::OS {
-        "linux" => "/tmp/catppuccinifier/".to_string(),
         "windows" => "C:\\Windows\\TEMP\\catppuccinifier\\".to_string(),
-        _ => "".to_string(),
+        _ => "/tmp/catppuccinifier/".to_string(),
     };
 
     if !Path::new(&temp_path).exists() {
@@ -189,7 +188,10 @@ fn main() {
                         save_path,
                     ) {
                         Ok(()) => {
-                            println!("{} generated successfully", get_flavor_name(flavor.to_owned()))
+                            println!(
+                                "{} generated successfully",
+                                get_flavor_name(flavor.to_owned())
+                            )
                         }
                         Err(e) => {
                             println!("{}", e)
@@ -249,7 +251,10 @@ fn main() {
                     save_path,
                 ) {
                     Ok(()) => {
-                        println!("{} generated successfully", get_flavor_name(image_flavor.to_owned()))
+                        println!(
+                            "{} generated successfully",
+                            get_flavor_name(image_flavor.to_owned())
+                        )
                     }
                     Err(e) => {
                         println!("{}", e)
