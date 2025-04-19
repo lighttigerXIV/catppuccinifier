@@ -4,6 +4,7 @@ use clap::Parser;
 use cli::{Algorithm, Cli, Flavor};
 use colored::Colorize;
 use inquire::Confirm;
+use std::env;
 use std::fs::create_dir_all;
 use std::path::{Path, PathBuf};
 use std::process::{exit, Command};
@@ -18,7 +19,7 @@ fn compatible_image<T: AsRef<Path>>(image: T) -> bool {
         ""
     };
 
-    ["jpg", "png", "webp"].contains(&extension)
+    ["jpg", "jpeg", "png", "webp"].contains(&extension)
 }
 
 pub fn get_output_path<P: AsRef<Path>>(
@@ -38,6 +39,7 @@ pub fn get_output_path<P: AsRef<Path>>(
     let flavor_str: String = format!("{flavor}");
 
     let full_path = format!("{parent}/{stem}-{flavor_str}.{extension}");
+    println!("path: {:?}", &full_path);
     PathBuf::from(&full_path)
 }
 
@@ -89,7 +91,7 @@ pub fn generate_image<P: AsRef<Path>>(
 fn main() {
     let cli = Cli::parse();
 
-    let mut target_path = cli.image.clone();
+    let mut target_path = env::current_dir().unwrap().join(cli.image.clone());
     let flavors = &cli.flavor;
 
     if !target_path.exists() {

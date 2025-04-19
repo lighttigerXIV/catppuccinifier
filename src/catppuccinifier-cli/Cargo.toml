@@ -10,4 +10,5 @@ dirs = "6.0.0"
 clap = { version = "4.5.37", features = ["derive"] }
 substring = "1.4.5"
 catppuccinifier-rs ={ git = "https://github.com/lighttigerXIV/catppuccinifier-rs" }
+# catppuccinifier-rs = {path = "/home/lighttigerxiv/dev/personal/pc/catppuccinifier-rs"}
 inquire = "0.7.5"

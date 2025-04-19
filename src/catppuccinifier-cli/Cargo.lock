@@ -233,8 +233,8 @@ dependencies = [
 
 [[package]]
 name = "catppuccinifier-rs"
-version = "1.1.1"
-source = "git+https://github.com/lighttigerXIV/catppuccinifier-rs#82f41bc2baae4b644ac30469dec3b8a3dc7f1835"
+version = "1.1.2"
+source = "git+https://github.com/lighttigerXIV/catppuccinifier-rs#1270b3c45fbdc8128c40585119a86fbf3246f131"
 dependencies = [
  "image",
  "lutgen",
@@ -1463,9 +1463,9 @@ dependencies = [
 
 [[package]]
 name = "signal-hook-registry"
-version = "1.4.2"
+version = "1.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a9e9e0b4211b72e7b8b6e85c807d36c212bdb33ea8587f7569562a84df5465b1"
+checksum = "c28b4eafe8a2d82f83559ef5941afff1ccba3da8e375c8f148efd75df181bf4f"
 dependencies = [
  "libc",
 ]
