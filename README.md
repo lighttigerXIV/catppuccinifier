@@ -5,20 +5,21 @@
 
 </div>
 
-## About
 This project gives you a cli and a gui for catppuccinifying your wallpapers. It's available for Linux and Windows. It uses [lutgen](https://github.com/ozwaldorf/lutgen-rs) under the hood
 
-<div align="center">
 <h3>GUI</h3>
-
+<div align="center">
 <img src="https://github.com/user-attachments/assets/a9c86c19-1c00-4c83-8b43-007086743ce1" width="1000">
+</div>
+
 <h3>CLI</h3>
+<div align="center">
 <img src="https://github.com/user-attachments/assets/86a3ebe8-8281-4120-80cb-c0fc20ff758e" width="1000">
 </div>
 
 
 ## How to use cli
-The cli version works by selecting the flavor, the noise level and the image to be generated.
+The cli version works by selecting the flavor, the advanced properties and the image to be generated.
 
 |Short|Full|Possible Values|Description|
 ------|----|---------------|-----------|
