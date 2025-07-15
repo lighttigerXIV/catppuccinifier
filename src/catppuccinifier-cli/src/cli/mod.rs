@@ -9,8 +9,8 @@ pub struct Cli {
     #[arg(short, long, num_args(0..=5), default_value = "all")]
     pub flavor: Vec<Flavor>,
 
-    #[arg(required = true, help = "The image to catppuccinify")]
-    pub image: PathBuf,
+    #[arg(required = true, help = "The images to catppuccinify")]
+    pub images: Vec<PathBuf>,
 
     #[arg(
         short = 'd',
