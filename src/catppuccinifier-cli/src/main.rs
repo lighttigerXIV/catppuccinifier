@@ -39,7 +39,7 @@ pub fn get_output_path<P: AsRef<Path>>(
     let flavor_str: String = format!("{flavor}");
 
     let full_path = format!("{parent}/{stem}-{flavor_str}.{extension}");
-    println!("path: {:?}", &full_path);
+    println!("Image: {:?}", &full_path);
     PathBuf::from(&full_path)
 }
 
@@ -70,8 +70,6 @@ pub fn generate_image<P: AsRef<Path>>(
     properties: &Properties,
     output_path: P,
 ) {
-    println!("{}", format!("✨ Generating {flavor} image"));
-
     match catppuccinify(
         properties,
         &flavor.as_gen_flavor(),
@@ -91,106 +89,112 @@ pub fn generate_image<P: AsRef<Path>>(
 fn main() {
     let cli = Cli::parse();
 
-    let mut target_path = env::current_dir().unwrap().join(cli.image.clone());
-    let flavors = &cli.flavor;
+    for image in cli.images.to_owned() {
+        let mut target_path = env::current_dir().unwrap().join(&image);
+        let flavors = &cli.flavor;
 
-    if !target_path.exists() {
-        println!("{}", "Invalid path".red());
-        exit(1);
-    }
+        println!("{:?}", &target_path);
 
-    if !target_path.is_file() {
-        println!("{}", "Image path isn't a file".red());
-        exit(1);
-    }
-
-    if !compatible_image(&target_path) {
-        println!(
-            "{}",
-            "Invalid image.\nCompatible types: [jpg, png, webp]".red(),
-        );
-
-        let convert = Confirm::new("Would you like to convert the image? (Requires image magick)")
-            .with_default(true)
-            .prompt()
-            .unwrap();
-
-        if convert {
-            let mut new_path = target_path.to_owned();
-            new_path.set_extension(".png");
-
-            let target_str: String = target_path
-                .to_owned()
-                .into_os_string()
-                .into_string()
-                .unwrap();
-
-            let output_str: String = new_path.to_owned().into_os_string().into_string().unwrap();
-
-            Command::new("magick")
-                .args([&target_str, &output_str])
-                .output()
-                .unwrap();
-
-            target_path = new_path;
-        } else {
+        if !target_path.exists() {
+            println!("{}", "Invalid path".red());
             exit(1);
         }
-    }
 
-    if let Some(output_dir) = &cli.output_dir {
-        if !output_dir.exists() {
-            create_dir_all(&output_dir).unwrap();
+        if !target_path.is_file() {
+            println!("{}", "Image path isn't a file".red());
+            exit(1);
         }
-    }
 
-    let properties = get_properties(&cli);
+        if !compatible_image(&target_path) {
+            println!(
+                "{}",
+                "Invalid image.\nCompatible types: [jpg, png, webp]".red(),
+            );
 
-    if flavors.iter().any(|f| f == &Flavor::All) {
-        generate_image(
-            &target_path,
-            &Flavor::Latte,
-            &properties,
-            &&get_output_path(&target_path, &cli.output_dir, &Flavor::Latte),
-        );
+            let convert =
+                Confirm::new("Would you like to convert the image? (Requires image magick)")
+                    .with_default(true)
+                    .prompt()
+                    .unwrap();
 
-        generate_image(
-            &target_path,
-            &Flavor::Frappe,
-            &properties,
-            &&get_output_path(&target_path, &cli.output_dir, &Flavor::Frappe),
-        );
+            if convert {
+                let mut new_path = target_path.to_owned();
+                new_path.set_extension(".png");
 
-        generate_image(
-            &target_path,
-            &Flavor::Macchiato,
-            &properties,
-            &&get_output_path(&target_path, &cli.output_dir, &Flavor::Macchiato),
-        );
+                let target_str: String = target_path
+                    .to_owned()
+                    .into_os_string()
+                    .into_string()
+                    .unwrap();
 
-        generate_image(
-            &target_path,
-            &Flavor::Mocha,
-            &properties,
-            &&get_output_path(&target_path, &cli.output_dir, &Flavor::Mocha),
-        );
+                let output_str: String =
+                    new_path.to_owned().into_os_string().into_string().unwrap();
 
-        generate_image(
-            &target_path,
-            &Flavor::Oled,
-            &properties,
-            &&get_output_path(&target_path, &cli.output_dir, &Flavor::Oled),
-        );
+                Command::new("magick")
+                    .args([&target_str, &output_str])
+                    .output()
+                    .unwrap();
 
-        exit(0);
-    }
+                target_path = new_path;
+            } else {
+                exit(1);
+            }
+        }
 
-    for flavor in flavors {
-        generate_image(
-            &target_path,
-            &flavor,
-            &properties,
-            &&get_output_path(&target_path, &cli.output_dir, &flavor),
-        );
+        if let Some(output_dir) = &cli.output_dir {
+            if !output_dir.exists() {
+                create_dir_all(&output_dir).unwrap();
+            }
+        }
+
+        let properties = get_properties(&cli);
+
+        if flavors.iter().any(|f| f == &Flavor::All) {
+            generate_image(
+                &target_path,
+                &Flavor::Latte,
+                &properties,
+                &&get_output_path(&target_path, &cli.output_dir, &Flavor::Latte),
+            );
+
+            generate_image(
+                &target_path,
+                &Flavor::Frappe,
+                &properties,
+                &&get_output_path(&target_path, &cli.output_dir, &Flavor::Frappe),
+            );
+
+            generate_image(
+                &target_path,
+                &Flavor::Macchiato,
+                &properties,
+                &&get_output_path(&target_path, &cli.output_dir, &Flavor::Macchiato),
+            );
+
+            generate_image(
+                &target_path,
+                &Flavor::Mocha,
+                &properties,
+                &&get_output_path(&target_path, &cli.output_dir, &Flavor::Mocha),
+            );
+
+            generate_image(
+                &target_path,
+                &Flavor::Oled,
+                &properties,
+                &&get_output_path(&target_path, &cli.output_dir, &Flavor::Oled),
+            );
+
+            continue;
+        }
+
+        for flavor in flavors {
+            generate_image(
+                &target_path,
+                &flavor,
+                &properties,
+                &&get_output_path(&target_path, &cli.output_dir, &flavor),
+            );
+        }
     }
 }

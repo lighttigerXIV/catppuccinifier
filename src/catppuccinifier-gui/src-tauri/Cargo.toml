@@ -1,26 +1,31 @@
 [package]
-name = "app"
+name = "catppuccinifier-gui"
 version = "0.1.0"
 description = "A Tauri App"
 authors = ["you"]
-license = ""
-repository = ""
-default-run = "app"
 edition = "2021"
-rust-version = "1.60"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "catppuccinifier_gui_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "1.4.0", features = [] }
+tauri-build = { version = "2", features = [] }
 
 [dependencies]
-serde_json = "1.0"
-serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.4.0", features = ["dialog-open", "dialog-save", "fs-all", "path-all", "protocol-asset", "shell-open", "window-create"] }
-rand = "0.8.5"
-catppuccinifier-rs = {git = "https://github.com/lighttigerXIV/catppuccinifier-rs"}
+tauri = { version = "2", features = ["protocol-asset"] }
+tauri-plugin-opener = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.9.2"
+dirs = "6.0.0"
+log = "0.4.27"
+tauri-plugin-dialog = "2"
+catppuccinifier-rs = { git = "https://github.com/lighttigerXIV/catppuccinifier-rs", version = "1.1.2" }
+rand = "0.9.1"
 
-[features]
-# this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.
-# If you use cargo directly instead of tauri's cli you can use this feature flag to switch between tauri's `dev` and `build` modes.
-# DO NOT REMOVE!!
-custom-protocol = [ "tauri/custom-protocol" ]
