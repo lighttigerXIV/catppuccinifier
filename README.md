@@ -1,13 +1,19 @@
-<h1 align="center">Catppuccinifier</h1>
+<div align="center">
+
+<img src="./src/assets/catppuccinifier.png" height="128" width="128">
+<h1>Catppuccinifier</h1>
+
+</div>
 
 ## About
 This project gives you a cli and a gui for catppuccinifying your wallpapers. It's available for Linux and Windows. It uses [lutgen](https://github.com/ozwaldorf/lutgen-rs) under the hood
 
 <div align="center">
 <h3>GUI</h3>
-<img src="https://github.com/lighttigerXIV/catppuccinifier/assets/35658492/047878ee-306f-45e6-9ad7-c814778bc55a" width="600">
+
+<img src="https://github.com/user-attachments/assets/a9c86c19-1c00-4c83-8b43-007086743ce1" width="1000">
 <h3>CLI</h3>
-<img src="https://github.com/lighttigerXIV/catppuccinifier/assets/35658492/84e13e34-ecea-4500-b794-6b5122b6bbf2" width="600">
+<img src="https://github.com/user-attachments/assets/86a3ebe8-8281-4120-80cb-c0fc20ff758e" width="1000">
 </div>
 
 
@@ -17,7 +23,7 @@ The cli version works by selecting the flavor, the noise level and the image to 
 |Short|Full|Possible Values|Description|
 ------|----|---------------|-----------|
 |-f|--flavor|latte frappe macchiato mocha oled all| Selects the flavor (multiple can be used) [Default: all]|
-|-i|--image| * | Selects the image to generate from. [Field Required] |
+|-i|--images| * | Selects the images to generate from. [Field Required] |
 |  |--hald| 2 .. 16 | Selects the hald level|
 |-a|--algorithm| shepards-method gaussian-rbf linear-rbf gaussian-sampling nearest-neighbor | Selects the algorithm|
 |  |--euclide| 0 .. 512 | Changes euclide value|
@@ -30,9 +36,9 @@ The cli version works by selecting the flavor, the noise level and the image to 
 |-V|--version| | Shows app version|
 
 ### Examples
-    catppuccinifier -i fuji.jpg
+    catppuccinifier fuji.jpg
 
-    catppuccinifier -f mocha macchiato -n 3 -i fuji.jpg
+    catppuccinifier wallpaper.png wallpaper.jpg -f mocha macchiato --nearest 3
 
 ## Installation
 To install catppuccinifier you can use steps presented in the [INSTALL.md](https://github.com/lighttigerXIV/catppuccinifier/blob/master/INSTALL.md)
