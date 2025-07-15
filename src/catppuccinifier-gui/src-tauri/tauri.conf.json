@@ -1,76 +1,45 @@
 {
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "catppuccinifier-gui",
+  "version": "0.1.0",
+  "identifier": "com.lighttigerxiv.catppuccinifier-gui",
   "build": {
-    "beforeDevCommand": "npm run dev",
-    "beforeBuildCommand": "npm run build",
-    "devPath": "http://localhost:5173",
-    "distDir": "../dist",
-    "withGlobalTauri": false
+    "beforeDevCommand": "yarn dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "yarn build",
+    "frontendDist": "../build"
   },
-  "package": {
-    "productName": "catppuccinifier-gui",
-    "version": "0.0.0"
-  },
-  "tauri": {
-    "allowlist": {
-      "all": false,
-      "shell": {
-        "all": false,
-        "open": true
-      },
-      "dialog": {
-        "open": true,
-        "save": true
-      },
-      "path": {
-        "all": true
-      },
-      "fs": {
-        "all": true,
-        "removeFile": true,
-        "readDir": true,
-        "scope": [
-          "**"
-        ]
-      },
-      "protocol": {
-        "asset": true,
-        "assetScope": [
-          "**"
-        ]
-      },
-      "window": {
-        "create": true
-      }
-    },
-    "bundle": {
-      "active": true,
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
-      "identifier": "com.lighttigerxiv.catppuccinifier",
-      "targets": ["msi", "app"]
-    },
-    "security": {
-      "csp": null
-    },
-    "updater": {
-      "active": false
-    },
+  "app": {
     "windows": [
       {
-        "fullscreen": false,
-        "resizable": true,
         "title": "Catppuccinifier",
-        "label": "main",
-        "width": 1000,
-        "minWidth": 1000,
+        "width": 800,
         "height": 600,
-        "minHeight": 600
+		"decorations": false
       }
+    ],
+    "security": {
+      "csp": null,
+      "assetProtocol": {
+        "enable": true,
+        "scope": {
+          "requireLiteralLeadingDot": false,
+          "allow": [
+            "**/*"
+          ]
+        }
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["deb", "msi"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
     ]
   }
 }

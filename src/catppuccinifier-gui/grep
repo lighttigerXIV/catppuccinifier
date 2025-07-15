@@ -1,0 +1,8 @@
+yarn run v1.22.22
+$ tauri dev allow-create
+$ vite dev
+
+  VITE v6.3.5  ready in 953 ms
+
+  ➜  Local:   http://localhost:1420/
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
