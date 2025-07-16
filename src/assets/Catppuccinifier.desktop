@@ -3,3 +3,5 @@ Name=Catppuccinifier
 Exec=catppuccinifier-gui
 Icon=catppuccinifier
 Type=Application
+Categories=Graphics
+Comment=A tool to catppuccinify your images
