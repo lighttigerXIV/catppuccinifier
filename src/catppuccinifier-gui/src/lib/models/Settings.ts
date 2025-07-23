@@ -1,4 +1,4 @@
-export type Settings = { theme: Theme, accent: Accent };
+export type Settings = { theme: Theme, accent: Accent, show_titlebar: boolean };
 
 export enum Theme {
 	Mocha = "Mocha",

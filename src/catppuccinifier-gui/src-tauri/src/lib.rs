@@ -1,8 +1,9 @@
 use std::env;
 
+use tauri::Manager;
 use view_models::{
     main_vm::{vm_clear_outputs, vm_generate_image, vm_save_image},
-    settings_vm::{vm_get_settings, vm_save_settings},
+    settings_vm::{vm_get_settings, vm_save_settings, vm_set_show_titlebar},
 };
 
 pub mod view_models;
@@ -30,8 +31,18 @@ pub fn run() {
             vm_generate_image,
             vm_clear_outputs,
             vm_save_image,
-            vm_save_settings
+            vm_save_settings,
+            vm_set_show_titlebar
         ])
+        .setup(|app| {
+            let window = app.handle().get_webview_window("main").unwrap();
+
+            window
+                .set_decorations(vm_get_settings().unwrap().show_titlebar)
+                .unwrap();
+
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

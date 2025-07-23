@@ -596,7 +596,7 @@ dependencies = [
 
 [[package]]
 name = "catppuccinifier-gui"
-version = "0.1.0"
+version = "9.1.0"
 dependencies = [
  "catppuccinifier-rs",
  "dirs",
