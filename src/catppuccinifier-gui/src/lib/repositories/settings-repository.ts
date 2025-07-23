@@ -134,6 +134,13 @@ export class SettingsRepository {
 		this.save();
 	}
 
+	setShowTitlebar(value: boolean) {
+		this.settings!!.show_titlebar = value;
+		this.save();
+
+		invoke("vm_set_show_titlebar");
+	}
+
 	private async save() {
 		let settings = this.getSettings();
 		await invoke("vm_save_settings", { settings: settings });

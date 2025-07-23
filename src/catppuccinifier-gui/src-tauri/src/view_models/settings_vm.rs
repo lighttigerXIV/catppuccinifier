@@ -2,11 +2,13 @@ use std::fs;
 
 use log::{info, warn};
 use serde::{Deserialize, Serialize};
+use tauri::Window;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Settings {
-    theme: Theme,
-    accent: Accent,
+    pub theme: Theme,
+    pub accent: Accent,
+    pub show_titlebar: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -39,7 +41,19 @@ fn get_default_settings() -> Settings {
     Settings {
         theme: Theme::Mocha,
         accent: Accent::Yellow,
+        show_titlebar: true,
     }
+}
+
+#[tauri::command]
+pub fn vm_set_show_titlebar(window: Window) -> Result<(), String> {
+    let show_decorations = vm_get_settings().map_err(|e| e.to_string())?.show_titlebar;
+
+    window
+        .set_decorations(show_decorations)
+        .map_err(|e| e.to_string())?;
+
+    Ok(())
 }
 
 #[tauri::command]

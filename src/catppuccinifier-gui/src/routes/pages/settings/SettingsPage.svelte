@@ -194,6 +194,30 @@
 	>
 </div>
 
+<h2 class="text-lg font-medium mt-4">Titlebar</h2>
+
+<div class="rounded-full space-x-1 bg-n1 flex w-fit mt-2">
+	<button
+		class={`p-4 cursor-pointer tab-begin hover-bg-accent hover-text-n0 ${$state.show_titlebar ? "bg-accent text-n0" : ""}`}
+		onclick={() => {
+			vm.onAction({
+				action: "show-titlebar-click",
+				value: true,
+			});
+		}}>On</button
+	>
+
+	<button
+		class={`p-4 cursor-pointer tab-end hover-bg-accent hover-text-n0 ${!$state.show_titlebar ? "bg-accent text-n0" : ""}`}
+		onclick={() => {
+			vm.onAction({
+				action: "show-titlebar-click",
+				value: false,
+			});
+		}}>Off</button
+	>
+</div>
+
 <style scoped>
 	.tab-begin {
 		border-radius: 4px;

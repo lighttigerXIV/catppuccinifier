@@ -1,6 +1,6 @@
 [package]
 name = "catppuccinifier-gui"
-version = "0.1.0"
+version = "9.1.0"
 description = "A Tauri App"
 authors = ["you"]
 edition = "2021"
