@@ -69,7 +69,7 @@ Catppuccinfier is available for Linux and Windows
   
   ##### Arch Linux
   ```bash 
-  sudo pacman -S libadwaita webkit2gtk base-devel curl wget openssl appmenu-gtk-module gtk3 libappindicator-gtk3 librsvg libvips
+  sudo pacman -S --needed webkit2gtk-4.1 base-devel curl wget file openssl appmenu-gtk-module libappindicator-gtk3 librsvg xdotool
   ```
   ##### Debian / Ubuntu
   ```bash
