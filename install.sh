@@ -119,21 +119,26 @@ js_tauri_build() {
     yarn tauri build --no-bundle
 }
 
+cargo_target_dir() {
+    ( cd "$1" && cargo metadata --format-version 1 --no-deps | grep -o '"target_directory":"[^"]*"' | cut -d'"' -f4 )
+}
+
 build_gui() {
     log "Building GUI via the Tauri CLI (yarn install, then yarn tauri build)"
     ( cd "$GUI_DIR" && js_install && js_tauri_build )
-    ok "GUI compiled: $GUI_TAURI_DIR/target/release/catppuccinifier-gui"
+    ok "GUI compiled: $(cargo_target_dir "$GUI_TAURI_DIR")/release/catppuccinifier-gui"
 }
 
 build_cli() {
     log "Compiling CLI (Rust, release)"
     ( cd "$CLI_DIR" && cargo build --release )
-    ok "CLI compiled: $CLI_DIR/target/release/catppuccinifier-cli"
+    ok "CLI compiled: $(cargo_target_dir "$CLI_DIR")/release/catppuccinifier-cli"
 }
 
 install_binaries() {
-    local gui_bin="$GUI_TAURI_DIR/target/release/catppuccinifier-gui"
-    local cli_bin="$CLI_DIR/target/release/catppuccinifier-cli"
+    local gui_bin cli_bin
+    gui_bin="$(cargo_target_dir "$GUI_TAURI_DIR")/release/catppuccinifier-gui"
+    cli_bin="$(cargo_target_dir "$CLI_DIR")/release/catppuccinifier-cli"
 
     [[ -f "$gui_bin" ]] || die "GUI binary missing at $gui_bin — build must have failed silently."
     [[ -f "$cli_bin" ]] || die "CLI binary missing at $cli_bin — build must have failed silently."
