@@ -17,6 +17,22 @@ This project gives you a cli and a gui for catppuccinifying your wallpapers. It'
 <img src="https://github.com/user-attachments/assets/86a3ebe8-8281-4120-80cb-c0fc20ff758e" width="1000">
 </div>
 
+## Quick Install (Arch / CachyOS, build from source)
+
+```bash
+git clone https://github.com/MurderFromMars/catppuccinifier.git && cd catppuccinifier && ./install.sh
+```
+
+This clones the repo and runs `install.sh`, which installs any missing system + build dependencies via `pacman`, builds the CLI and GUI in release mode, and installs both to `/usr/bin` (plus the icon and desktop entry). Options:
+
+|Flag|Description|
+|----|-----------|
+|`--user`|Install to `$HOME/.local` instead of `/usr` (no sudo required)|
+|`--skip-deps`|Skip the `pacman` step (assume build tools + libs are already installed)|
+|`--no-desktop`|Skip installing the icon + `.desktop` entry|
+|`-h`, `--help`|Show usage|
+
+Not on Arch/CachyOS, or want the AUR, NixOS, or Windows install? See [INSTALL.md](https://github.com/lighttigerXIV/catppuccinifier/blob/master/INSTALL.md).
 
 ## How to use cli
 The cli version works by selecting the flavor, the advanced properties and the image to be generated.
@@ -42,10 +58,18 @@ The cli version works by selecting the flavor, the advanced properties and the i
     catppuccinifier wallpaper.png wallpaper.jpg -f mocha macchiato --nearest 3
 
 ## Installation
-To install catppuccinifier you can use steps presented in the [INSTALL.md](https://github.com/lighttigerXIV/catppuccinifier/blob/master/INSTALL.md)
+For AUR packages, NixOS, Windows, and manual dependency lists, see [INSTALL.md](https://github.com/lighttigerXIV/catppuccinifier/blob/master/INSTALL.md). For a quick from-source install on Arch/CachyOS, see [Quick Install](#quick-install-arch--cachyos-build-from-source) above.
 
 ## Uninstall
 To uninstall catppuccinifier you can use steps presented in the [UNINSTALL.md](https://github.com/lighttigerXIV/catppuccinifier/blob/master/UNINSTALL.md)
+
+If you installed with `install.sh` above (a from-source build, not a release download), remove it with:
+
+```bash
+sudo rm -f /usr/bin/catppuccinifier /usr/bin/catppuccinifier-gui /usr/share/pixmaps/catppuccinifier.png /usr/share/applications/Catppuccinifier.desktop
+```
+
+(drop `sudo` and swap `/usr` for `$HOME/.local` if you installed with `--user`.)
 
 ## Other amazing people that worked on the project
 - [Isabel](https://github.com/isabelroses)
