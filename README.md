@@ -17,22 +17,58 @@ This project gives you a cli and a gui for catppuccinifying your wallpapers. It'
 <img src="https://github.com/user-attachments/assets/86a3ebe8-8281-4120-80cb-c0fc20ff758e" width="1000">
 </div>
 
-## Quick Install (Arch / CachyOS, build from source)
+## Quick Install (Linux, build from source)
 
 ```bash
-git clone https://github.com/MurderFromMars/catppuccinifier.git && cd catppuccinifier && ./install.sh
+git clone https://github.com/SuicideFromVenus/catppuccinifier.git && cd catppuccinifier && ./install.sh
 ```
 
-This clones the repo and runs `install.sh`, which installs any missing system + build dependencies via `pacman`, builds the CLI and GUI in release mode, and installs both to `/usr/bin` (plus the icon and desktop entry). Options:
+This clones the repo and runs `install.sh`, which detects your distro, installs any missing system + build dependencies, builds the CLI and GUI in release mode, and installs both to `/usr/bin` (plus the icon and desktop entry).
+
+Supported distro families (and their derivatives):
+
+|Family|Examples|Package manager|
+|------|--------|---------------|
+|Arch|Arch, CachyOS, Manjaro, EndeavourOS|`pacman`|
+|Debian|Debian 12+, Ubuntu 22.04+, Linux Mint, Pop!_OS|`apt`|
+|Fedora|Fedora, Nobara, RHEL-likes|`dnf`|
+
+The family is read from `/etc/os-release` (`ID` / `ID_LIKE`), falling back to whichever package manager is available. On any other distro the script stops and asks you to install the dependencies yourself and re-run with `--skip-deps`.
+
+Options:
 
 |Flag|Description|
 |----|-----------|
-|`--user`|Install to `$HOME/.local` instead of `/usr` (no sudo required)|
-|`--skip-deps`|Skip the `pacman` step (assume build tools + libs are already installed)|
+|`--user`|Install to `$HOME/.local` instead of `/usr` (no sudo needed for the install itself)|
+|`--skip-deps`|Don't install system dependencies (assume build tools + libs are already installed)|
 |`--no-desktop`|Skip installing the icon + `.desktop` entry|
+|`--distro FAMILY`|Force the distro family: `arch`, `debian` or `fedora` (normally auto-detected)|
 |`-h`, `--help`|Show usage|
 
-Not on Arch/CachyOS, or want the AUR, NixOS, or Windows install? See [INSTALL.md](https://github.com/lighttigerXIV/catppuccinifier/blob/master/INSTALL.md).
+<details>
+  <summary>What the script installs and checks</summary>
+
+  **System packages**
+  - **Arch:** `webkit2gtk-4.1 base-devel curl wget file openssl appmenu-gtk-module libappindicator-gtk3 librsvg xdotool desktop-file-utils git nodejs yarn` (plus `rust` if there is no Rust toolchain)
+  - **Debian / Ubuntu:** `build-essential pkg-config libwebkit2gtk-4.1-dev libssl-dev libxdo-dev libayatana-appindicator3-dev librsvg2-dev curl wget file desktop-file-utils git nodejs npm`
+  - **Fedora:** `gcc gcc-c++ make pkgconf-pkg-config webkit2gtk4.1-devel openssl-devel libxdo-devel libappindicator-gtk3-devel librsvg2-devel curl wget file desktop-file-utils git nodejs npm` (plus `rust cargo` if there is no Rust toolchain)
+
+  An existing Node.js, npm or Yarn install (nvm, `nodejs-lts-*`, ...) is left alone.
+
+  **Toolchain**
+  - **Rust 1.82 or newer.** If it is missing or older (common on Debian/Ubuntu), the script installs the stable toolchain through [rustup](https://rustup.rs).
+  - **Node.js 18 or newer.** The script stops with a message if yours is older. Ubuntu 22.04's packaged Node is too old, so use [nvm](https://github.com/nvm-sh/nvm) or NodeSource there.
+  - **Yarn Classic (v1).** Installed through npm if missing. Yarn Berry (v2+) is rejected because `yarn.lock` is v1.
+
+</details>
+
+Notes:
+- You need internet access during the build: the Rust crates, the npm packages and the `catppuccinifier-rs` git dependency are all fetched at build time.
+- Debian 11 and Ubuntu 20.04 are not supported because they don't ship `libwebkit2gtk-4.1-dev`, which the Tauri v2 GUI needs.
+- Immutable systems (Silverblue, Kinoite, ...) can't use `dnf` installs directly. Build inside a toolbox/distrobox container, or install the dependencies yourself and use `--skip-deps`.
+- With `--user`, make sure `$HOME/.local/bin` is on your `PATH`.
+
+Want the AUR, NixOS, or Windows install? See [INSTALL.md](https://github.com/lighttigerXIV/catppuccinifier/blob/master/INSTALL.md).
 
 ## How to use cli
 The cli version works by selecting the flavor, the advanced properties and the image to be generated.
@@ -58,7 +94,7 @@ The cli version works by selecting the flavor, the advanced properties and the i
     catppuccinifier wallpaper.png wallpaper.jpg -f mocha macchiato --nearest 3
 
 ## Installation
-For AUR packages, NixOS, Windows, and manual dependency lists, see [INSTALL.md](https://github.com/lighttigerXIV/catppuccinifier/blob/master/INSTALL.md). For a quick from-source install on Arch/CachyOS, see [Quick Install](#quick-install-arch--cachyos-build-from-source) above.
+For AUR packages, NixOS, Windows, and manual dependency lists, see [INSTALL.md](https://github.com/lighttigerXIV/catppuccinifier/blob/master/INSTALL.md). For a from-source install on Arch, Debian/Ubuntu or Fedora, see [Quick Install](#quick-install-linux-build-from-source) above.
 
 ## Uninstall
 To uninstall catppuccinifier you can use steps presented in the [UNINSTALL.md](https://github.com/lighttigerXIV/catppuccinifier/blob/master/UNINSTALL.md)
