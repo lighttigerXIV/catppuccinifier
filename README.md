@@ -20,7 +20,7 @@ This project gives you a cli and a gui for catppuccinifying your wallpapers. It'
 ## Quick Install (Linux, build from source)
 
 ```bash
-git clone https://github.com/MurderFromMars/catppuccinifier.git && cd catppuccinifier && ./install.sh
+git clone https://github.com/SuicideFromVenus/catppuccinifier.git && cd catppuccinifier && ./install.sh
 ```
 
 This clones the repo and runs `install.sh`, which detects your distro, installs any missing system + build dependencies, builds the CLI and GUI in release mode, and installs both to `/usr/bin` (plus the icon and desktop entry).
